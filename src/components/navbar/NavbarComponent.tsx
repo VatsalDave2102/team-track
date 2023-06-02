@@ -52,9 +52,9 @@ function NavbarComponent() {
       <Container maxWidth="xl">
         <Toolbar
           disableGutters
-          sx={{ display:'flex', justifyContent:'space-between' }}
+          sx={{ display: "flex", justifyContent: "space-between" }}
         >
-           {isAuth && (
+          {isAuth && (
             <Box sx={{ display: { xs: "flex", md: "none" } }}>
               <IconButton
                 size="large"
@@ -92,7 +92,7 @@ function NavbarComponent() {
           )}
 
           <Stack direction="row" alignItems="center">
-            <AdbIcon sx={{  mr: 1 }} />
+            <AdbIcon sx={{ mr: 1 }} />
             <Typography
               variant="h5"
               noWrap
@@ -108,8 +108,6 @@ function NavbarComponent() {
               TeamTrack
             </Typography>
           </Stack>
-         
-           
 
           {isAuth && (
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
@@ -159,7 +157,12 @@ function NavbarComponent() {
 
           {!isAuth && (
             <Stack direction="row" spacing={2}>
-              <Button sx={{ color: "white" }} component={Link} to={"/login"}>
+              <Button
+                variant="contained"
+                color="secondary"
+                component={Link}
+                to={"/login"}
+              >
                 Login
               </Button>
             </Stack>
