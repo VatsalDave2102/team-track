@@ -2,16 +2,11 @@ import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import GOODTEAM from "../../assets/goodTeam.svg";
 import TEAMSELECT from "../../assets/teamSelection.svg";
 import ENGINEERTEAM from "../../assets/engineeringTeam.svg";
+import { Link } from "react-router-dom";
 const LandingPage = () => {
   return (
-    <Container maxWidth="lg" disableGutters sx={{ paddingTop: "2rem" }}>
-      <Grid
-        container
-        spacing={2}
-        alignItems="center"
-        pt={2}
-        mb={5}
-      >
+    <Container maxWidth="lg" sx={{ paddingTop: "2rem" }}>
+      <Grid container spacing={2} alignItems="center" pt={2} mb={5}>
         <Grid item xs={12} sm={5}>
           <Box p={3}>
             <Typography variant="h3" color="primary" fontWeight={700}>
@@ -23,7 +18,7 @@ const LandingPage = () => {
               assumenda provident ratione dolor impedit, modi culpa nobis beatae
               ex consequuntur enim omnis?
             </Typography>
-            <Button variant="contained">Get started</Button>
+            <Button variant="contained" component={Link} to={'/signup'}>Get started</Button>
           </Box>
         </Grid>
         <Grid item xs={7} sx={{ display: { xs: "none", sm: "block" } }}>
@@ -39,12 +34,8 @@ const LandingPage = () => {
         alignItems="center"
         pt={2}
         mb={5}
+        flexDirection="row-reverse"
       >
-        <Grid item xs={7} sx={{ display: { xs: "none", sm: "block" } }}>
-          <Box p={3}>
-            <img src={TEAMSELECT} style={{ maxWidth: "100%" }} />
-          </Box>
-        </Grid>
         <Grid item xs={12} sm={5}>
           <Box p={3}>
             <Typography variant="h3" color="primary" fontWeight={700}>
@@ -58,15 +49,14 @@ const LandingPage = () => {
             </Typography>
           </Box>
         </Grid>
+        <Grid item xs={7} sx={{ display: { xs: "none", sm: "block" } }}>
+          <Box p={3}>
+            <img src={TEAMSELECT} style={{ maxWidth: "100%" }} />
+          </Box>
+        </Grid>
       </Grid>
 
-      <Grid
-        container
-        spacing={2}
-        alignItems="center"
-        pt={2}
-        mb={5}
-      >
+      <Grid container spacing={2} alignItems="center" pt={2} mb={5}>
         <Grid item xs={12} sm={5}>
           <Box p={3}>
             <Typography variant="h3" color="primary" fontWeight={700}>

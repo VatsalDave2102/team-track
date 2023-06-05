@@ -14,4 +14,16 @@ export const theme = createTheme({
     fontFamily: ["Poppins", "sans-serif"].join(","),
     fontSize: 14,
   },
+  components:{
+    MuiInputBase:{
+      styleOverrides:{
+        root:{
+          backgroundColor: '#fff',
+        },
+        input:{
+          backgroundColor: '#fff'
+        }
+      }
+    }
+  }
 });

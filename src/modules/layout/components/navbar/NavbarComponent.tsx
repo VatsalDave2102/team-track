@@ -11,7 +11,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
+import TEAMTRACK from  "../../../../assets/TeamTrack.svg"
 import InboxIcon from "@mui/icons-material/Inbox";
 import DraftsIcon from "@mui/icons-material/Drafts";
 import {
@@ -92,7 +92,9 @@ function NavbarComponent() {
           )}
 
           <Stack direction="row" alignItems="center">
-            <AdbIcon sx={{ mr: 1 }} />
+            <Box>
+             <img src={TEAMTRACK} width={60}/>
+             </Box>
             <Typography
               variant="h5"
               noWrap
