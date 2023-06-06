@@ -2,7 +2,7 @@ import { Box, Container, Grid, Grow, Link, Stack, Typography } from "@mui/materi
 import SIGNUP from "../../../../assets/signup.svg";
 import TEAMTRACKGREEN from "../../../../assets/TeamTrackGreen.svg";
 import { useEffect, useState } from "react";
-import SignUpForm from "../../components/signup-form/SignUpForm";
+import SignUpForm from "../../components/SignUpForm";
 import { Link as RouterLink } from "react-router-dom";
 const Signup = () => {
   const [showForm, setShowForm] = useState(false);

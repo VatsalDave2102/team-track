@@ -2,9 +2,9 @@ import { Box, Button, Stack } from "@mui/material";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import InputField from "../../common/components/InputField";
-import { LoginInitialValues } from "../../../utils/types";
+import { LoginUserValues } from "../../../utils/types";
 
-const initialValues: LoginInitialValues = {
+const initialValues: LoginUserValues = {
   email: "",
   password: "",
 };

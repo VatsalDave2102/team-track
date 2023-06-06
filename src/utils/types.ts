@@ -1,12 +1,12 @@
-interface SignUpInitialValues{
+interface SignUpUserValues{
     name: string;
     email:string;
     phone: string;
     password: string;
     confirmPassword: string;
   }
-interface LoginInitialValues{
+interface LoginUserValues{
   email: string;
   password: string;
 }
-  export type {SignUpInitialValues}
+  export type {SignUpUserValues, LoginUserValues}

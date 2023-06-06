@@ -1,6 +1,5 @@
 import { Box, Container, Grid, Grow, Link, Stack, Typography } from "@mui/material";
 import TEAMTRACKGREEN from "../../../../assets/TeamTrackGreen.svg";
-import SIGNUP from "../../../../assets/signup.svg";
 import { useEffect, useState } from "react";
 import LoginForm from "../../components/LoginForm";
 import { Link as RouterLink } from "react-router-dom";
@@ -43,14 +42,14 @@ const Login = () => {
           <Grid item xs={5} sx={{ display: { xs: "none", md: "flex" } }}>
             <Box>
               <img
-                src={SIGNUP}
+                src={TEAMTRACKGREEN}
                 alt="signup logo"
                 style={{ maxWidth: "100%" }}
               />
             </Box>
           </Grid>
         </Grid>
-        <Typography variant="h6"mt={2} textAlign={'center'}>New user? <Link component={RouterLink} color="primary.main" to='/login'>Sign up here</Link></Typography>
+        <Typography variant="h6"mt={2} textAlign={'center'}>New user? <Link component={RouterLink} color="primary.main" to='/signup'>Sign up here</Link></Typography>
       </Container>
     </Grow>
   );

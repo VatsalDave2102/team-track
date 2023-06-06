@@ -1,10 +1,10 @@
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { Box, Button, Stack } from "@mui/material";
-import InputField from "../../../common/components/InputField";
-import { SignUpInitialValues } from "../../../../utils/types";
+import InputField from "../../common/components/InputField";
+import { SignUpUserValues } from "../../../utils/types";
 
-const initialValues: SignUpInitialValues = {
+const initialValues: SignUpUserValues = {
   name: "",
   email: "",
   phone: "",
@@ -37,15 +37,16 @@ const validationSchema = Yup.object({
     .required("Enter password again to confirm!"),
 });
 const SignUpForm = () => {
-   
+  const handleSumbit = (values: typeof initialValues) => {
+    console.log(values);
+  };
+
   return (
     <Box>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={(values: typeof initialValues) => {
-          console.log(values);
-        }}
+        onSubmit={handleSumbit}
         validateOnChange
       >
         {(formikProps) => {
@@ -62,8 +63,18 @@ const SignUpForm = () => {
                 />
                 <InputField name="phone" label="Phone number" type="text" />
                 <Stack direction={"row"} spacing={3}>
-                  <Button type="submit" variant="contained">Sign Up</Button>
-                  <Button type="reset" variant="contained" color="warning" onClick={()=> (formikProps.resetForm())}> Reset</Button>
+                  <Button type="submit" variant="contained">
+                    Sign Up
+                  </Button>
+                  <Button
+                    type="reset"
+                    variant="contained"
+                    color="warning"
+                    onClick={() => formikProps.resetForm()}
+                  >
+                    {" "}
+                    Reset
+                  </Button>
                 </Stack>
               </Stack>
             </Form>
