@@ -1,8 +1,13 @@
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import InputField from "../../common/components/InputField";
 import { LoginUserValues } from "../../../utils/types";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useNavigate } from "react-router-dom";
+import { login } from "../../../app/auth/authServices";
+import { useEffect } from "react";
+import { setError } from "../../../app/auth/authSlice";
 
 const initialValues: LoginUserValues = {
   email: "",
@@ -19,15 +24,40 @@ const validationSchema = Yup.object({
     .min(6, "Password must be atleast 6 characters long")
     .required("Password is required!"),
 });
+const token = localStorage.getItem("token");
 const LoginForm = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const error = useAppSelector((state) => state.root.auth.error);
+
+  useEffect(() => {
+    if (token) {
+      navigate("/dashboard");
+    } else {
+      return;
+    }
+  });
+
+  const handleSubmit = async (values: typeof initialValues) => {
+    const { email, password } = values;
+
+    const userExists = await dispatch(login({ email, password }));
+    if (userExists.meta.requestStatus != "rejected") {
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 2000);
+    } 
+     setTimeout(() => {
+      setError(null)
+     }, 1000);
+  };
+
   return (
     <Box>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={(values: typeof initialValues) => {
-          console.log(values);
-        }}
+        onSubmit={handleSubmit}
         validateOnChange
       >
         {(formikProps) => {
@@ -50,6 +80,11 @@ const LoginForm = () => {
                     Reset
                   </Button>
                 </Stack>
+                {error && (
+                  <Typography variant="subtitle1" color={"red"}>
+                    Email not found
+                  </Typography>
+                )}
               </Stack>
             </Form>
           );

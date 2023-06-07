@@ -1,9 +1,18 @@
-import { Box, Container, Grid, Grow, Link, Stack, Typography } from "@mui/material";
-import TEAMTRACKGREEN from "../../../../assets/TeamTrackGreen.svg";
+import {
+  Box,
+  Container,
+  Grid,
+  Grow,
+  Link,
+  Stack,
+  Typography,
+} from "@mui/material";
+import SIGNUP from "../../../assets/signup.svg";
+import TEAMTRACKGREEN from "../../../assets/TeamTrackGreen.svg";
 import { useEffect, useState } from "react";
-import LoginForm from "../../components/LoginForm";
+import SignUpForm from "../components/SignUpForm";
 import { Link as RouterLink } from "react-router-dom";
-const Login = () => {
+const Signup = () => {
   const [showForm, setShowForm] = useState(false);
   useEffect(() => {
     setShowForm(true);
@@ -25,7 +34,8 @@ const Login = () => {
           </Typography>
         </Stack>
         <Typography variant="h6" color="primary" mb={2} textAlign="center">
-        Access Your Tasks with Ease - Log In and Stay Organized!
+          Streamline Your Task Management Journey - Sign Up and Get Started
+          Today!
         </Typography>
         <Grid
           container
@@ -34,25 +44,29 @@ const Login = () => {
           borderTop={2}
           borderBottom={2}
           borderColor={"primary.main"}
-          direction={'row-reverse'}
         >
           <Grid item xs={12} md={7}>
-             <LoginForm/>
+            <SignUpForm />
           </Grid>
           <Grid item xs={5} sx={{ display: { xs: "none", md: "flex" } }}>
             <Box>
               <img
-                src={TEAMTRACKGREEN}
+                src={SIGNUP}
                 alt="signup logo"
                 style={{ maxWidth: "100%" }}
               />
             </Box>
           </Grid>
         </Grid>
-        <Typography variant="h6"mt={2} textAlign={'center'}>New user? <Link component={RouterLink} color="primary.main" to='/signup'>Sign up here</Link></Typography>
+        <Typography variant="h6" mt={2} textAlign={"center"}>
+          Already a user?{" "}
+          <Link component={RouterLink} color="primary.main" to="/login">
+            Log in here
+          </Link>
+        </Typography>
       </Container>
     </Grow>
   );
 };
 
-export default Login;
+export default Signup;

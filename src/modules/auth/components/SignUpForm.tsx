@@ -1,8 +1,12 @@
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import InputField from "../../common/components/InputField";
 import { SignUpUserValues } from "../../../utils/types";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useNavigate } from "react-router-dom";
+import { signup } from "../../../app/auth/authServices";
+import { useEffect } from "react";
 
 const initialValues: SignUpUserValues = {
   name: "",
@@ -36,9 +40,28 @@ const validationSchema = Yup.object({
     .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Enter password again to confirm!"),
 });
+const token = localStorage.getItem("token");
 const SignUpForm = () => {
-  const handleSumbit = (values: typeof initialValues) => {
-    console.log(values);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const error = useAppSelector((state) => state.root.auth.error);
+  useEffect(() => {
+    if (token) {
+      navigate("/dashboard");
+    } else {
+      return;
+    }
+  });
+  const handleSumbit = async (values: typeof initialValues) => {
+    const { name, email, password } = values;
+    const newUser = await dispatch(signup({name, email, password}));
+    console.log(newUser.meta.requestStatus);
+    
+    if (newUser.meta.requestStatus !== 'rejected') {
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 2000);
+    }
   };
 
   return (
@@ -76,6 +99,7 @@ const SignUpForm = () => {
                     Reset
                   </Button>
                 </Stack>
+                {error && <Typography variant="subtitle1" color={'red'}>User already exists!</Typography>}
               </Stack>
             </Form>
           );

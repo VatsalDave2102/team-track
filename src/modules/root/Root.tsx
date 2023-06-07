@@ -7,7 +7,7 @@ const Root = () => {
       <NavbarComponent />
       <Outlet />
     </>
-  )
+  );
 };
 
 export default Root;

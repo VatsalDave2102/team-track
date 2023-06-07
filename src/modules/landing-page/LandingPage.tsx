@@ -2,8 +2,19 @@ import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import GOODTEAM from "../../assets/goodTeam.svg";
 import TEAMSELECT from "../../assets/teamSelection.svg";
 import ENGINEERTEAM from "../../assets/engineeringTeam.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
+const token = localStorage.getItem("token");
 const LandingPage = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (token) {
+      navigate("/dashboard");
+    } else {
+      return;
+    }
+  });
   return (
     <Container maxWidth="lg" sx={{ paddingTop: "2rem" }}>
       <Grid container spacing={2} alignItems="center" pt={2} mb={5}>
@@ -18,7 +29,9 @@ const LandingPage = () => {
               assumenda provident ratione dolor impedit, modi culpa nobis beatae
               ex consequuntur enim omnis?
             </Typography>
-            <Button variant="contained" component={Link} to={'/signup'}>Get started</Button>
+            <Button variant="contained" component={Link} to={"/signup"}>
+              Get started
+            </Button>
           </Box>
         </Grid>
         <Grid item xs={7} sx={{ display: { xs: "none", sm: "block" } }}>
