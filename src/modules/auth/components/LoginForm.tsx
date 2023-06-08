@@ -42,7 +42,7 @@ const LoginForm = () => {
     const { email, password } = values;
 
     const userExists = await dispatch(login({ email, password }));
-    if (userExists.meta.requestStatus != "rejected") {
+    if (userExists.meta.requestStatus === "rejected") {
       dispatch(setError("User not found!"));
 
       setTimeout(() => {
