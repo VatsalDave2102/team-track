@@ -42,8 +42,11 @@ export const signup = createAsyncThunk(
 );
 
 export const login = createAsyncThunk(
-  'auth/login',
-  async (credentials: { email: string; password: string }, {  rejectWithValue }) => {
+  "auth/login",
+  async (
+    credentials: { email: string; password: string },
+    { rejectWithValue }
+  ) => {
     try {
       const { email, password } = credentials;
       const { user } = await signInWithEmailAndPassword(auth, email, password);
@@ -61,17 +64,18 @@ export const login = createAsyncThunk(
   }
 );
 
-export const logout = (): AppThunk => async (dispatch) => {
-  dispatch(setLoading(true));
-  try {
-    await signOut(auth);
-    dispatch(setUser(null));
-  } catch (error) {
-    if (error instanceof FirebaseError) dispatch(setError(error.message));
-  } finally {
-    dispatch(setLoading(false));
+export const logout = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return rejectWithValue(error.message);
+      }
+    }
   }
-};
+);
 
 export const trackCurrentUser = (): AppThunk => (dispatch) => {
   dispatch(setLoading(true));
@@ -93,6 +97,7 @@ export const trackCurrentUser = (): AppThunk => (dispatch) => {
     }
   });
 };
+
 export const checkToken = (): AppThunk => (dispatch) => {
   const token = localStorage.getItem("token");
   if (token) {

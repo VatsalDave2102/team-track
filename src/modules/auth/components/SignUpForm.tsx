@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { signup } from "../../../app/auth/authServices";
 import { useEffect } from "react";
+import { setError } from "../../../app/auth/authSlice";
 
 const initialValues: SignUpUserValues = {
   name: "",
@@ -54,13 +55,16 @@ const SignUpForm = () => {
   });
   const handleSumbit = async (values: typeof initialValues) => {
     const { name, email, password } = values;
-    const newUser = await dispatch(signup({name, email, password}));
-    console.log(newUser.meta.requestStatus);
-    
-    if (newUser.meta.requestStatus !== 'rejected') {
+    const newUser = await dispatch(signup({ name, email, password }));
+
+    if (newUser.meta.requestStatus === "rejected") {
+      dispatch(setError("User already exists!"));
+
       setTimeout(() => {
-        navigate("/dashboard");
-      }, 2000);
+        dispatch(setError(null));
+      }, 5000);
+    } else {
+      navigate("/dashboard");
     }
   };
 
@@ -95,11 +99,14 @@ const SignUpForm = () => {
                     color="warning"
                     onClick={() => formikProps.resetForm()}
                   >
-                    {" "}
                     Reset
                   </Button>
                 </Stack>
-                {error && <Typography variant="subtitle1" color={'red'}>User already exists!</Typography>}
+                {error && (
+                  <Typography variant="subtitle1" color={"red"}>
+                    {error}
+                  </Typography>
+                )}
               </Stack>
             </Form>
           );

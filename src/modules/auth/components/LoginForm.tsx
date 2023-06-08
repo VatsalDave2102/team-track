@@ -43,13 +43,14 @@ const LoginForm = () => {
 
     const userExists = await dispatch(login({ email, password }));
     if (userExists.meta.requestStatus != "rejected") {
+      dispatch(setError("User not found!"));
+
       setTimeout(() => {
-        navigate("/dashboard");
-      }, 2000);
-    } 
-     setTimeout(() => {
-      setError(null)
-     }, 1000);
+        dispatch(setError(null));
+      }, 5000);
+    } else {
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -82,7 +83,7 @@ const LoginForm = () => {
                 </Stack>
                 {error && (
                   <Typography variant="subtitle1" color={"red"}>
-                    Email not found
+                    {error}
                   </Typography>
                 )}
               </Stack>

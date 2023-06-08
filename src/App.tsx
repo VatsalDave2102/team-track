@@ -15,7 +15,6 @@ function App() {
     dispatch(checkToken());
     dispatch(trackCurrentUser());
   }, [dispatch]);
-  console.log("app");
 
   return (
     <ThemeProvider theme={theme}>
