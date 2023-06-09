@@ -14,4 +14,14 @@ interface User {
   email: string;
   uid: string;
 }
-export type { SignUpUserValues, LoginUserValues, User };
+
+interface CustomListInfo{
+  label: string;
+  link: string;
+  icon: JSX.Element;
+}
+interface CustomListItem {
+  info: CustomListInfo
+  children?: CustomListInfo[]
+}
+export type { SignUpUserValues, LoginUserValues, User, CustomListItem };

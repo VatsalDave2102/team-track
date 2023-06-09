@@ -1,7 +1,7 @@
 import { RouterProvider } from "react-router-dom";
 
 import { ThemeProvider } from "@emotion/react";
-import { theme } from "./utils/themeProvider";
+import theme from "./utils/themeProvider";
 // import { router } from "./router/Router";
 import { useEffect } from "react";
 import { useAppDispatch } from "./app/hooks";

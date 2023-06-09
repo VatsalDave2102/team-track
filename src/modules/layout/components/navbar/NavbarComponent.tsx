@@ -26,13 +26,14 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { logout } from "../../../../app/auth/authServices";
+import { setError } from "../../../../app/auth/authSlice";
 
 const pages = ["Dashboard", "Teams"];
 
 function NavbarComponent() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const user = useAppSelector(state => state.root.auth.user)
+  const user = useAppSelector((state) => state.root.auth.user);
   const [anchorElNav, setAnchorElNav] = useState<boolean>(false);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -50,9 +51,17 @@ function NavbarComponent() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/login");
+  const handleLogout = async () => {
+    const logoutStatus = await dispatch(logout());
+    if (logoutStatus.meta.requestStatus === "rejected") {
+      dispatch(setError("Cannot logout"));
+
+      setTimeout(() => {
+        dispatch(setError(null));
+      }, 5000);
+    } else {
+      navigate("/login");
+    }
   };
   return (
     <AppBar position="static">
