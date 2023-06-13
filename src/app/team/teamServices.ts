@@ -1,6 +1,13 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { TeamMemberData, TeamOwnerData } from "../../utils/types";
-import { addDoc, collection } from "firebase/firestore";
+import { TeamData, TeamMemberData, TeamOwnerData } from "../../utils/types";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  or,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import { FirebaseError } from "firebase/app";
 
@@ -18,11 +25,39 @@ export const createTeam = createAsyncThunk(
     try {
       const { teamName, overview, members, owner } = teamData;
       await addDoc(collection(db, "teams"), {
-        name: teamName,
+        teamName: teamName,
         overview: overview,
         members: members,
         owner: owner,
       });
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+export const getCurrentUserTeams = createAsyncThunk(
+  "teams/getCurrentUserTeams",
+  async (currentUser: { name: string; email: string }, { rejectWithValue }) => {
+    try {
+      const teamsRef = collection(db, "teams");
+      const teamsQuery = query(
+        teamsRef,
+        or(
+          where("owner.email", "==", currentUser.email),
+          where("members", "array-contains", currentUser.email)
+        )
+      );
+
+      const querySnapshot = await getDocs(teamsQuery);
+      const teams: TeamData[] = [];
+      querySnapshot.forEach((doc) => {
+        const team = { ...doc.data(), id: doc.id } as TeamData;
+        teams.push(team);
+      });
+      return teams;
     } catch (error) {
       if (error instanceof FirebaseError) {
         return rejectWithValue(error.message);

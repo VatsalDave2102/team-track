@@ -38,6 +38,11 @@ interface CreateTeamValues {
   overview: string;
   members: TeamMemberData[];
 }
+interface TeamData extends CreateTeamValues{
+  owner: TeamOwnerData
+  id: string
+  image?:string
+}
 export type {
   SignUpUserValues,
   LoginUserValues,
@@ -46,4 +51,5 @@ export type {
   TeamMemberData,
   CreateTeamValues,
   TeamOwnerData,
+  TeamData
 };

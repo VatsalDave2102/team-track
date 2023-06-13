@@ -17,17 +17,27 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { CustomListItem } from "../../../utils/types";
 import React, { useState } from "react";
+import { useAppSelector } from "../../../app/hooks";
 
-const items: CustomListItem[] = [
-  {
-    info: { label: "Dashboard", link: "/dashboard", icon: <Dashboard /> },
-  },
-  {
-    info: { label: "Teams", link: "", icon: <Group /> },
-    children: [{ label: "Project1", link: "teams/1", icon: <Star /> }],
-  },
-];
 const Sidebar = () => {
+  const currentUserTeams = useAppSelector((state) => state.root.team.teamList);
+  const items: CustomListItem[] = [
+    {
+      info: { label: "Dashboard", link: "/dashboard", icon: <Dashboard /> },
+    },
+    {
+      info: { label: "Teams", link: "", icon: <Group /> },
+      children: [],
+    },
+  ];
+  currentUserTeams.map((team) => {
+    items[1].children?.push({
+      label: team.teamName,
+      link: `teams/${team.teamName.split(" ").join("")}`,
+      icon: <Star />,
+    });
+  });
+
   const [open, setOpen] = useState(true);
   const location = useLocation();
 
@@ -39,23 +49,24 @@ const Sidebar = () => {
       <List>
         {items.map((item) =>
           item.children ? (
-            item.children.map((childItem, childIndex) => (
-              <React.Fragment key={`${item.info.label}-${childIndex}`}>
-                <ListItemButton
-                  key={item.info.label}
-                  sx={{ borderRadius: "20px", p: 0 }}
-                  onClick={handleClick}
-                >
-                  <ListItem>
-                    <ListItemIcon sx={{ display: { xs: "none", md: "block" } }}>
-                      {item.info.icon}
-                    </ListItemIcon>
-                    <ListItemText primary={item.info.label} />
-                    {open ? <ExpandLess /> : <ExpandMore />}
-                  </ListItem>
-                </ListItemButton>
-                <Collapse in={open} timeout={"auto"} unmountOnExit>
-                  <List>
+            <React.Fragment key={`${item.info.label}`}>
+              <ListItemButton
+                key={item.info.label}
+                sx={{ borderRadius: "20px",   }}
+                onClick={handleClick}
+              >
+                <ListItem>
+                  <ListItemIcon  >
+                    {item.info.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.info.label} />
+                  {open ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+              </ListItemButton>
+
+              <Collapse in={open} timeout={"auto"} unmountOnExit>
+                <List>
+                  {item.children?.map((childItem) => (
                     <ListItemButton
                       key={childItem.label}
                       selected={
@@ -63,22 +74,22 @@ const Sidebar = () => {
                       }
                       component={Link}
                       to={childItem.link}
-                      sx={{ borderRadius: "20px", p: 0, pl: 3 }}
+                      sx={{ borderRadius: "20px",  pl:5 }}
                     >
                       <ListItemIcon>{childItem.icon}</ListItemIcon>
                       <ListItemText primary={childItem.label} />
                     </ListItemButton>
-                  </List>
-                </Collapse>
-              </React.Fragment>
-            ))
+                  ))}
+                </List>
+              </Collapse>
+            </React.Fragment>
           ) : (
             <ListItemButton
               key={item.info.label}
               selected={location.pathname === `/dashboard`}
               component={Link}
               to={item.info.link}
-              sx={{ borderRadius: "20px", p: 0 }}
+              sx={{ borderRadius: "20px",  }}
             >
               <ListItem>
                 <ListItemIcon>{item.info.icon}</ListItemIcon>

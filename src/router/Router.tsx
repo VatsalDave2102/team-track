@@ -24,7 +24,6 @@ export const router = createBrowserRouter([
             element: <ProtectedRoute Component={Teams} />,
           },
           { path: "teams/:teamId", element: <TeamContent /> },
-          {path: 'create-team' }
         ],
       },
     ],
