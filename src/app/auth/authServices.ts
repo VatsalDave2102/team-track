@@ -7,11 +7,12 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
 import { setError, setLoading, setUser } from "./authSlice";
 import { FirebaseError } from "firebase/app";
 import { AppThunk } from "../store";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { doc, setDoc } from "firebase/firestore";
 
 export const signup = createAsyncThunk(
   "auth/signup",
@@ -26,12 +27,15 @@ export const signup = createAsyncThunk(
         email,
         password
       );
+
       await updateProfile(user, { displayName: name });
       const userData = {
         name: user.displayName,
         email: user.email,
         uid: user.uid,
       };
+
+      await setDoc(doc(db, "users", user.uid), userData);
       return userData;
     } catch (error) {
       if (error instanceof FirebaseError) {

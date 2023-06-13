@@ -15,13 +15,35 @@ interface User {
   uid: string;
 }
 
-interface CustomListInfo{
+interface CustomListInfo {
   label: string;
   link: string;
   icon: JSX.Element;
 }
 interface CustomListItem {
-  info: CustomListInfo
-  children?: CustomListInfo[]
+  info: CustomListInfo;
+  children?: CustomListInfo[];
 }
-export type { SignUpUserValues, LoginUserValues, User, CustomListItem };
+
+interface TeamMemberData {
+  name: string;
+  email: string;
+}
+interface TeamOwnerData {
+  name: string;
+  email: string;
+}
+interface CreateTeamValues {
+  teamName: string;
+  overview: string;
+  members: TeamMemberData[];
+}
+export type {
+  SignUpUserValues,
+  LoginUserValues,
+  User,
+  CustomListItem,
+  TeamMemberData,
+  CreateTeamValues,
+  TeamOwnerData,
+};
