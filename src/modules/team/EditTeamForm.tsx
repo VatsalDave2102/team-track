@@ -1,59 +1,47 @@
-import {
-  Button,
-  CircularProgress,
-  FormControl,
-  FormHelperText,
-  Stack,
-} from "@mui/material";
-import {
-  ErrorMessage,
-  Field,
-  FieldProps,
-  Form,
-  Formik,
-  FormikProps,
-} from "formik";
-import * as Yup from "yup";
+import { Button, CircularProgress, FormControl, Stack } from "@mui/material";
+import { Field, FieldProps, Form, Formik, FormikProps } from "formik";
 import InputField from "../common/components/InputField";
 import AutoCompleteField from "./AutoCompleteField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { createTeam, getCurrentUserTeams } from "../../app/team/teamServices";
-import { CreateTeamValues } from "../../utils/types";
+import useTeam from "../../custom-hook/useTeam";
+import * as Yup from "yup";
+import { getCurrentUserTeams, updateTeam } from "../../app/team/teamServices";
+import { TeamMemberData } from "../../utils/types";
 
-const initialValues: CreateTeamValues = {
-  teamName: "",
-  overview: "",
-  members: [],
-};
 const validationSchema = Yup.object({
-  // teamName validation
-  teamName: Yup.string().required("Team name is required!"),
-
   // overview validation
   overview: Yup.string()
     .min(20, "Overview must be atleast 20 characters long")
     .required("Overview is required!"),
 
-  // members validation
-  members: Yup.array()
-    .min(1, "Must add atleast one member!")
-    .required("Must add atleast one member!"),
+  //   // members validation
+  //   members: Yup.array()
+  //     .min(1, "Must add atleast one member!")
+  //      ,
 });
-
-const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
-  const currentUser = useAppSelector((state) => state.root.auth.user);
-  const isLoading = useAppSelector((state) => state.root.team.isLoading);
-
+interface UpdateTeamValues {
+  overview: string;
+  members: TeamMemberData[];
+}
+const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
   const dispatch = useAppDispatch();
+  const isLoading = useAppSelector((state) => state.root.team.isLoading);
+  const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
+  const currentUser = useAppSelector((state) => state.root.auth.user);
+  const activeTeam = useTeam(activeTeamId as string);
+  const initialValues: UpdateTeamValues = {
+    overview: activeTeam?.overview as string,
+    members: [],
+  };
   const handleSubmit = (values: typeof initialValues) => {
-    if (currentUser) {
-      const teamData = {
-        teamName: values.teamName,
-        overview: values.overview,
-        members: values.members,
-        owner: { name: currentUser.name, email: currentUser.email },
-      };
-      dispatch(createTeam(teamData)).then(() => {
+    if (currentUser)
+      dispatch(
+        updateTeam({
+          teamId: activeTeamId as string,
+          newOverview: values.overview,
+          newMembers: values.members,
+        })
+      ).then(() => {
         dispatch(
           getCurrentUserTeams({
             name: currentUser.name,
@@ -61,9 +49,9 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
           })
         );
       });
-      handleClose();
-    }
+    handleClose();
   };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -80,7 +68,6 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
           m={"auto"}
           p={2}
         >
-          <InputField name="teamName" label="Team name" type="text" />
           <InputField
             name="overview"
             label="Overview"
@@ -101,19 +88,13 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
                 <AutoCompleteField
                   {...field}
                   setFieldValue={form.setFieldValue}
-                  mode="create"
+                  mode="edit"
                 />
               )}
             </Field>
-
-            <ErrorMessage
-              name="members"
-              component={FormHelperText}
-              className="error"
-            />
           </FormControl>
           <Button type="submit" variant="contained" disabled={isLoading}>
-            Create team
+            Edit team
             {isLoading && (
               <CircularProgress
                 size={24}
@@ -133,4 +114,4 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
   );
 };
 
-export default CreateTeamForm;
+export default EditTeamForm;

@@ -2,10 +2,13 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { TeamData, TeamMemberData, TeamOwnerData } from "../../utils/types";
 import {
   addDoc,
+  arrayUnion,
   collection,
+  doc,
   getDocs,
   or,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -58,6 +61,30 @@ export const getCurrentUserTeams = createAsyncThunk(
         teams.push(team);
       });
       return teams;
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+export const updateTeam = createAsyncThunk(
+  "team/updateTeam",
+  async (
+    {
+      teamId,
+      newOverview,
+      newMembers,
+    }: { teamId: string; newOverview: string; newMembers: TeamMemberData[] },
+    { rejectWithValue }
+  ) => {
+    try {
+      const teamRef = doc(db, "teams", teamId);
+      await updateDoc(teamRef, {
+        overview: newOverview,
+        members: arrayUnion(...newMembers),
+      });
     } catch (error) {
       if (error instanceof FirebaseError) {
         return rejectWithValue(error.message);

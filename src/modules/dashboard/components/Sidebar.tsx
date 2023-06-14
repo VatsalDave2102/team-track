@@ -33,7 +33,7 @@ const Sidebar = () => {
   currentUserTeams.map((team) => {
     items[1].children?.push({
       label: team.teamName,
-      link: `teams/${team.teamName.split(" ").join("")}`,
+      link: `teams/${team.id}`,
       icon: <Star />,
     });
   });

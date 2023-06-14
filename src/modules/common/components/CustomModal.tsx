@@ -16,7 +16,7 @@ const CustomModal: React.FC<CustomModalProps> = ({
   children,
 }) => {
   return (
-    <Dialog open={isOpen} onClose={handleClose}>
+    <Dialog open={isOpen} onClose={handleClose} fullWidth>
       <DialogTitle variant="h5">{title}</DialogTitle>
       <DialogContent>{children}</DialogContent>
     </Dialog>

@@ -8,7 +8,7 @@ import {
 import CustomModal from "../common/components/CustomModal";
 import { useState } from "react";
 import CreateTeamForm from "./CreateTeamForm";
-import DEFAULTTEAM from  '../../assets/team-creation.svg'
+import DEFAULTTEAM from "../../assets/team-creation.svg";
 const CreateTeamCard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const handleModalOpen = () => {
@@ -29,7 +29,11 @@ const CreateTeamCard = () => {
         <CardActionArea
           onClick={handleModalOpen}
           sx={{
-            "&:hover": { backgroundColor: "primary.light", color: "white" },
+            "&:hover": {
+              backgroundColor: "primary.light",
+              color: "white",
+              borderRadius: 0,
+            },
           }}
         >
           <CardContent>

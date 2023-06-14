@@ -1,22 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createTeam, getCurrentUserTeams } from "./teamServices";
+import { createTeam, getCurrentUserTeams, updateTeam } from "./teamServices";
 import { TeamData } from "../../utils/types";
 
 interface TeamState {
   teamList: TeamData[];
   error: string | null;
   isLoading: boolean;
+  activeTeam: string | null;
 }
 const initialState: TeamState = {
   teamList: [],
   error: null,
   isLoading: false,
+  activeTeam: null,
 };
 
 export const teamSlice = createSlice({
   name: "team",
   initialState,
-  reducers: {},
+  reducers: {
+    setActiveTeam: (state, action) => {
+      state.activeTeam = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createTeam.pending, (state) => {
@@ -36,11 +42,19 @@ export const teamSlice = createSlice({
       .addCase(getCurrentUserTeams.fulfilled, (state, action) => {
         state.isLoading = false;
         state.teamList = action.payload as TeamData[];
-        console.log(action.payload);
       })
       .addCase(getCurrentUserTeams.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
-      });
+      }).addCase(updateTeam.pending, (state)=>{
+        state.isLoading = true
+      }).addCase(updateTeam.fulfilled, (state)=>{
+        state.isLoading = false
+      }).addCase(updateTeam.rejected, (state, action)=>{
+        state.isLoading = true
+        state.error = action.payload as string
+      })
   },
 });
+
+export const { setActiveTeam } = teamSlice.actions;

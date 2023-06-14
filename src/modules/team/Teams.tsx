@@ -8,10 +8,15 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import CreateTeamCard from "./CreateTeamCard";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import DEFAULTTEAM from "../../assets/team-creation.svg";
+import { setActiveTeam } from "../../app/team/teamSlice";
 const Teams = () => {
   const currentUserTeams = useAppSelector((state) => state.root.team.teamList);
+  const dispatch = useAppDispatch();
+  const handleTeamClick = (teamId: string) => {
+    dispatch(setActiveTeam(teamId));
+  };
   return (
     <>
       <Typography
@@ -31,7 +36,13 @@ const Teams = () => {
                 height="100"
                 image={team.image ? team.image : DEFAULTTEAM}
               />
-              <CardActionArea component={Link} to={`teams/${team.teamName.split(' ').join('')}`}>
+              <CardActionArea
+                component={Link}
+                to={`teams/${team.id}`}
+                onClick={() => {
+                  handleTeamClick(team.id);
+                }}
+              >
                 <CardContent
                   sx={{
                     "&:hover": {
