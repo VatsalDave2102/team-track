@@ -15,7 +15,7 @@ import {
 } from "formik";
 import * as Yup from "yup";
 import InputField from "../common/components/InputField";
-import AutoCompleteField from "./AutoCompleteField";
+import AutoCompleteField from "../common/components/AutoCompleteField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { createTeam, getCurrentUserTeams } from "../../app/team/teamServices";
 import { CreateTeamValues } from "../../utils/types";
@@ -101,7 +101,8 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
                 <AutoCompleteField
                   {...field}
                   setFieldValue={form.setFieldValue}
-                  mode="create"
+                  mode="team-create"
+                  fieldName="members"
                 />
               )}
             </Field>

@@ -61,7 +61,7 @@ const TeamHeader = () => {
         isOpen={isOpen}
         handleClose={handleModalClose}
         title="Edit team"
-        children={<EditTeamForm handleClose={handleModalClose}/>}
+        children={<EditTeamForm handleClose={handleModalClose} />}
       />
     </>
   );

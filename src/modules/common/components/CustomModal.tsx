@@ -1,8 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@mui/material";
+import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 interface CustomModalProps {
   isOpen: boolean;
   handleClose: () => void;
@@ -17,7 +13,9 @@ const CustomModal: React.FC<CustomModalProps> = ({
 }) => {
   return (
     <Dialog open={isOpen} onClose={handleClose} fullWidth>
-      <DialogTitle variant="h5">{title}</DialogTitle>
+      <DialogTitle variant="h5" textAlign={"center"}>
+        {title}
+      </DialogTitle>
       <DialogContent>{children}</DialogContent>
     </Dialog>
   );

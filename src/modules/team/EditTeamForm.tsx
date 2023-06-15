@@ -1,7 +1,7 @@
 import { Button, CircularProgress, FormControl, Stack } from "@mui/material";
 import { Field, FieldProps, Form, Formik, FormikProps } from "formik";
 import InputField from "../common/components/InputField";
-import AutoCompleteField from "./AutoCompleteField";
+import AutoCompleteField from "../common/components/AutoCompleteField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import useTeam from "../../custom-hook/useTeam";
 import * as Yup from "yup";
@@ -88,7 +88,8 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
                 <AutoCompleteField
                   {...field}
                   setFieldValue={form.setFieldValue}
-                  mode="edit"
+                  mode="team-edit"
+                  fieldName="members"
                 />
               )}
             </Field>

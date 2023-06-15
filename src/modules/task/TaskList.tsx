@@ -19,7 +19,7 @@ const TaskList = ({ type }: { type: string }) => {
         alignItems={"center"}
         borderBottom={"1px #ddd solid"}
       >
-        <Typography variant="h5" fontSize={"1.2rem"}>
+        <Typography variant="h6" fontSize={"1.2rem"}>
           {type}
         </Typography>
         <IconButton>
@@ -46,7 +46,6 @@ const TaskList = ({ type }: { type: string }) => {
                   sx={{ m: 1 }}
                 />
               </Box>
-              
             </Stack>
             <Button startIcon={<Comment />}>
               <Typography
@@ -88,9 +87,11 @@ const TaskList = ({ type }: { type: string }) => {
             </Button>
           </CardContent>
         </Card>
-        <Button variant="outlined" endIcon={<Add />}>
-          Add Task
-        </Button>
+        {type == "TO DO" && (
+          <Button variant="outlined" endIcon={<Add />}>
+            Add Task
+          </Button>
+        )}
       </Stack>
     </>
   );

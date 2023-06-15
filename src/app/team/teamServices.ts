@@ -1,13 +1,20 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { TeamData, TeamMemberData, TeamOwnerData } from "../../utils/types";
+import {
+  Task,
+  TeamData,
+  TeamMemberData,
+  TeamOwnerData,
+} from "../../utils/types";
 import {
   addDoc,
   arrayUnion,
   collection,
   doc,
+  getDoc,
   getDocs,
   or,
   query,
+  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -85,6 +92,31 @@ export const updateTeam = createAsyncThunk(
         overview: newOverview,
         members: arrayUnion(...newMembers),
       });
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+export const assignTasks = createAsyncThunk(
+  "team/assignTask",
+  async (
+    { teamId, taskData }: { teamId: string; taskData: Task },
+    { rejectWithValue }
+  ) => {
+    try {
+      const teamRef = doc(db, "teams", teamId);
+
+      const team = await getDoc(teamRef);
+      if (team.data()?.tasks) {
+        await updateDoc(teamRef, {
+          tasks: arrayUnion(taskData),
+        });
+      } else {
+        await setDoc(teamRef, { tasks: [taskData] }, { merge: true });
+      }
     } catch (error) {
       if (error instanceof FirebaseError) {
         return rejectWithValue(error.message);

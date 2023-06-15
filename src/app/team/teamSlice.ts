@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createTeam, getCurrentUserTeams, updateTeam } from "./teamServices";
+import {
+  assignTasks,
+  createTeam,
+  getCurrentUserTeams,
+  updateTeam,
+} from "./teamServices";
 import { TeamData } from "../../utils/types";
 
 interface TeamState {
@@ -46,14 +51,27 @@ export const teamSlice = createSlice({
       .addCase(getCurrentUserTeams.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
-      }).addCase(updateTeam.pending, (state)=>{
-        state.isLoading = true
-      }).addCase(updateTeam.fulfilled, (state)=>{
-        state.isLoading = false
-      }).addCase(updateTeam.rejected, (state, action)=>{
-        state.isLoading = true
-        state.error = action.payload as string
       })
+      .addCase(updateTeam.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateTeam.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(updateTeam.rejected, (state, action) => {
+        state.isLoading = true;
+        state.error = action.payload as string;
+      })
+      .addCase(assignTasks.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(assignTasks.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(assignTasks.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
