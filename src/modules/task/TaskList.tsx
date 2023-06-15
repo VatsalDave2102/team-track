@@ -3,14 +3,17 @@ import {
   Box,
   Button,
   Card,
+  CardActionArea,
+  CardActions,
   CardContent,
-  Chip,
+  CardHeader,
   IconButton,
   Stack,
   Typography,
 } from "@mui/material";
+import { Task } from "../../utils/types";
 
-const TaskList = ({ type }: { type: string }) => {
+const TaskList = ({ status, tasks }: { status: string; tasks: Task[] }) => {
   return (
     <>
       <Box
@@ -19,75 +22,47 @@ const TaskList = ({ type }: { type: string }) => {
         alignItems={"center"}
         borderBottom={"1px #ddd solid"}
       >
-        <Typography variant="h6" fontSize={"1.2rem"}>
-          {type}
-        </Typography>
+        <Typography variant="h6">{status}</Typography>
         <IconButton>
           <MoreHoriz />
         </IconButton>
       </Box>
-      <Stack spacing={2} mb={1}>
-        <Card>
-          <CardContent>
-            <Stack spacing={2}>
-              <Typography variant="h6">Task title</Typography>
-              <Box>
-                <Chip
-                  size="small"
-                  label="Medium"
-                  color="warning"
-                  sx={{ m: 1 }}
-                />
-                <Chip size="small" label="Design" color="info" sx={{ m: 1 }} />
-                <Chip
-                  size="small"
-                  label="Tomorrow"
-                  color="error"
-                  sx={{ m: 1 }}
-                />
-              </Box>
-            </Stack>
-            <Button startIcon={<Comment />}>
+      <Stack spacing={2} my={1}>
+        {tasks.map((task) => (
+          <Card key={task.id}>
+            <CardActionArea>
+            <Typography
+              variant="h6"
+              sx={{
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                p: 1,
+              }}
+              component="h6"
+            >
+              {task.title}
+            </Typography>
+
+            <CardContent>
               <Typography
-                variant="subtitle2"
-                display={{ xs: "none", sm: "block" }}
+                variant="body2"
+                sx={{
+                  textOverflow: "ellipsis",
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                }}
+                component="div"
+                color={"GrayText"}
               >
-                Comment
+                {task.description}
               </Typography>
-            </Button>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <Stack spacing={2} mb={1}>
-              <Typography variant="h6">Task title</Typography>
-              <Box>
-                <Chip
-                  size="small"
-                  label="Medium"
-                  color="warning"
-                  sx={{ m: 1 }}
-                />
-                <Chip size="small" label="Design" color="info" sx={{ m: 1 }} />
-                <Chip
-                  size="small"
-                  label="Tomorrow"
-                  color="error"
-                  sx={{ m: 1 }}
-                />
-              </Box>
-            </Stack>
-            <Button startIcon={<Comment />}>
-              <Typography
-                variant="subtitle2"
-                display={{ xs: "none", sm: "block" }}
-              >
-                Comment
-              </Typography>
-            </Button>
-          </CardContent>
-        </Card>
-        {type == "TO DO" && (
+            </CardContent>
+            </CardActionArea>
+          </Card>
+        ))}
+
+        {status == "TO DO" && (
           <Button variant="outlined" endIcon={<Add />}>
             Add Task
           </Button>

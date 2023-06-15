@@ -25,7 +25,7 @@ const TeamHeader = () => {
   };
 
   return (
-    <>
+    <Box sx={{bgcolor:'primary.light'}} p={2} borderRadius={3} color={'white'}>
       <Typography variant="h4" mb={2}>
         {activeTeam?.teamName}
       </Typography>
@@ -36,7 +36,7 @@ const TeamHeader = () => {
         alignItems={{ xs: "start", sm: "center" }}
       >
         <Box display={"flex"} alignItems={"center"}>
-          <People color="primary" />
+          <People />
           <Typography variant="subtitle2" px={1}>
             Members
           </Typography>
@@ -48,7 +48,7 @@ const TeamHeader = () => {
         </Box>
         <Button
           variant="contained"
-          color="primary"
+          color="secondary"
           startIcon={<Edit />}
           sx={{ borderRadius: "20px" }}
           disableElevation
@@ -63,7 +63,7 @@ const TeamHeader = () => {
         title="Edit team"
         children={<EditTeamForm handleClose={handleModalClose} />}
       />
-    </>
+    </Box>
   );
 };
 
