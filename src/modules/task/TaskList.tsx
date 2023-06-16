@@ -4,16 +4,27 @@ import {
   Button,
   Card,
   CardActionArea,
-  CardActions,
   CardContent,
-  CardHeader,
   IconButton,
   Stack,
   Typography,
 } from "@mui/material";
 import { Task } from "../../utils/types";
+import CustomModal from "../common/components/CustomModal";
+import { useState } from "react";
+import EditTaskForm from "./EditTaskForm";
 
 const TaskList = ({ status, tasks }: { status: string; tasks: Task[] }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [focusedTask, setFocusedTask] = useState<Task | null>(null);
+  const handleModalOpen = (task: Task) => {
+    setFocusedTask(task);
+    setIsOpen(true);
+  };
+  const handleModalClose = () => {
+    setFocusedTask(null);
+    setIsOpen(false);
+  };
   return (
     <>
       <Box
@@ -29,37 +40,29 @@ const TaskList = ({ status, tasks }: { status: string; tasks: Task[] }) => {
       </Box>
       <Stack spacing={2} my={1}>
         {tasks.map((task) => (
-          <Card key={task.id}>
-            <CardActionArea>
-            <Typography
-              variant="h6"
-              sx={{
-                textOverflow: "ellipsis",
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                p: 1,
-              }}
-              component="h6"
-            >
-              {task.title}
-            </Typography>
-
-            <CardContent>
-              <Typography
-                variant="body2"
-                sx={{
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                }}
-                component="div"
-                color={"GrayText"}
-              >
-                {task.description}
-              </Typography>
-            </CardContent>
-            </CardActionArea>
-          </Card>
+          <>
+            <Card key={task.id}>
+              <CardActionArea onClick={() => handleModalOpen(task)}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                    p: 1,
+                  }}
+                  component="div"
+                >
+                  {task.title}
+                </Typography>
+                {task.comments && (
+                  <CardContent sx={{ p: 1 }}>
+                    <Comment color={"disabled"} />
+                  </CardContent>
+                )}
+              </CardActionArea>
+            </Card>
+          </>
         ))}
 
         {status == "TO DO" && (
@@ -68,6 +71,14 @@ const TaskList = ({ status, tasks }: { status: string; tasks: Task[] }) => {
           </Button>
         )}
       </Stack>
+      {focusedTask && (
+        <CustomModal
+          isOpen={isOpen}
+          handleClose={handleModalClose}
+          title={focusedTask.title}
+          children={<EditTaskForm task={focusedTask} />}
+        />
+      )}
     </>
   );
 };

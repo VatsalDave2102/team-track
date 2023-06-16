@@ -15,6 +15,7 @@ const AutoCompleteField = ({
   setFieldValue,
   mode,
   fieldName,
+  value,
 }: {
   setFieldValue: (
     field: string,
@@ -23,6 +24,7 @@ const AutoCompleteField = ({
   ) => void;
   mode: "team-create" | "team-edit" | "task-assign";
   fieldName: string;
+  value?: TeamMemberData[];
 }) => {
   const [searchResults, setSearchResults] = useState<TeamMemberData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -86,6 +88,7 @@ const AutoCompleteField = ({
       getOptionLabel={(option) => option.name}
       onChange={(event, value) => handleChange(value)}
       onInputChange={(event, value) => handleSearch(value)}
+      value={value}
       renderInput={(params) => (
         <TextField
           {...params}

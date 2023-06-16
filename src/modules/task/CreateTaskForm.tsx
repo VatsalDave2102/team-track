@@ -44,6 +44,7 @@ const initialValues: Task = {
   assignedTo: [],
   status: "todo",
   id: genreateId(6),
+  comments: [],
 };
 
 const validationSchema = Yup.object({

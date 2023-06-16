@@ -3,6 +3,8 @@ import {
   assignTasks,
   createTeam,
   getCurrentUserTeams,
+  postComment,
+  updateTask,
   updateTeam,
 } from "./teamServices";
 import { TeamData } from "../../utils/types";
@@ -70,6 +72,27 @@ export const teamSlice = createSlice({
       })
       .addCase(assignTasks.rejected, (state, action) => {
         state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateTask.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(updateTask.fulfilled, (state) => {
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(updateTask.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(postComment.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(postComment.fulfilled, (state) => {
+        state.error = null;
+      })
+      .addCase(postComment.rejected, (state, action) => {
         state.error = action.payload as string;
       });
   },

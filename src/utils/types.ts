@@ -38,6 +38,12 @@ interface CreateTeamValues {
   overview: string;
   members: TeamMemberData[];
 }
+interface Comment {
+  id: string;
+  postedBy: User;
+  text: string;
+  commentedOn: string;
+}
 interface Task {
   title: string;
   description: string;
@@ -46,6 +52,7 @@ interface Task {
   assignedTo: TeamMemberData[];
   status: string;
   id: string;
+  comments: Comment[];
 }
 
 interface TeamData extends CreateTeamValues {
@@ -64,4 +71,5 @@ export type {
   TeamOwnerData,
   Task,
   TeamData,
+  Comment,
 };
