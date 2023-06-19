@@ -7,7 +7,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Comment } from "../../utils/types";
+import { Comment, Tasks } from "../../utils/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import useTeam from "../../custom-hook/useTeam";
@@ -15,15 +15,21 @@ import { useAppSelector } from "../../app/hooks";
 
 dayjs.extend(relativeTime);
 
-const CommentList = ({ taskId }: { taskId: string }) => {
+const CommentList = ({
+  taskId,
+  column,
+}: {
+  taskId: string;
+  column: keyof Tasks;
+}) => {
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const activeTeam = useTeam(activeTeamId as string);
   let comments: Comment[] = [];
   if (activeTeam?.tasks) {
-    const taskIndex = activeTeam?.tasks?.findIndex(
+    const taskIndex = activeTeam?.tasks[column].findIndex(
       (task) => task.id === taskId
     );
-    comments = activeTeam?.tasks[taskIndex as number].comments;
+    comments = activeTeam?.tasks[column][taskIndex].comments;
   }
 
   return (

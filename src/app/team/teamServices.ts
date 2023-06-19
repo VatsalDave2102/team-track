@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   Comment,
   Task,
+  Tasks,
   TeamData,
   TeamMemberData,
   TeamOwnerData,
@@ -113,10 +115,16 @@ export const assignTasks = createAsyncThunk(
       const team = await getDoc(teamRef);
       if (team.data()?.tasks) {
         await updateDoc(teamRef, {
-          tasks: arrayUnion(taskData),
+          "tasks.todo": arrayUnion(taskData),
         });
       } else {
-        await setDoc(teamRef, { tasks: [taskData] }, { merge: true });
+        await setDoc(
+          teamRef,
+          {
+            tasks: { todo: [taskData], ongoing: [], review: [], completed: [] },
+          },
+          { merge: true }
+        );
       }
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -147,27 +155,31 @@ export const updateTask = createAsyncThunk(
     try {
       const teamRef = doc(db, "teams", teamId);
       const teamDoc = await getDoc(teamRef);
+
+      const updateTaskArray = (taskArray: Task[] | undefined) => {
+        return taskArray?.map((task) => {
+          if (task.id === taskData.id) {
+            return {
+              ...task,
+              ...taskData,
+            };
+          }
+          return task;
+        });
+      };
       if (teamDoc.exists()) {
         const teamData: TeamData = teamDoc.data() as TeamData;
 
-        // Finding the index of the task within the tasks array
-        const taskIndex = teamData.tasks?.findIndex(
-          (task) => task.id === taskData.id
-        );
-        console.log(taskIndex);
+        const { tasks } = teamData;
+        const updatedTask = {
+          ...tasks,
+          todo: updateTaskArray(tasks?.todo),
+          ongoing: updateTaskArray(tasks?.ongoing),
+          review: updateTaskArray(tasks?.review),
+          completed: updateTaskArray(tasks?.completed),
+        };
 
-        // Modifying the task object with new taskData
-        if (taskIndex !== -1 && teamData.tasks) {
-          teamData.tasks[taskIndex as number] = {
-            ...teamData.tasks[taskIndex as number],
-            ...taskData,
-          };
-        }
-
-        // Updating the tasks array in firestore
-        await updateDoc(teamRef, {
-          tasks: teamData.tasks,
-        });
+        await updateDoc(teamRef, { tasks: updatedTask });
       }
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -184,29 +196,31 @@ export const postComment = createAsyncThunk(
       teamId,
       taskId,
       newComment,
+      column,
     }: {
       teamId: string;
       taskId: string;
       newComment: Comment;
+      column: keyof Tasks;
     },
     { rejectWithValue }
   ) => {
     try {
       const teamRef = doc(db, "teams", teamId);
       const teamDoc = await getDoc(teamRef);
+
       if (teamDoc.exists()) {
         const teamData: TeamData = teamDoc.data() as TeamData;
 
         // Finding the index of the task within the tasks array
-        const taskIndex = teamData.tasks?.findIndex(
-          (task) => task.id === taskId
-        );
+        const taskArray = teamData.tasks![column];
+        const taskIndex = taskArray?.findIndex((task) => task.id === taskId);
 
         // Modifying the task object with new taskData
         if (taskIndex !== -1 && teamData.tasks) {
-          const existingComments = teamData.tasks[taskIndex as number].comments;
-          teamData.tasks[taskIndex as number] = {
-            ...teamData.tasks[taskIndex as number],
+          const existingComments = teamData.tasks[column][taskIndex].comments;
+          teamData.tasks[column][taskIndex] = {
+            ...teamData.tasks[column][taskIndex],
             comments: [...existingComments, newComment],
           };
         }
@@ -216,6 +230,30 @@ export const postComment = createAsyncThunk(
           tasks: teamData.tasks,
         });
       }
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+export const updateTaskOrderSameColumn = createAsyncThunk(
+  "team/updateTaskOrderSameColumn",
+  async (
+    {
+      teamId,
+      updatedTasks,
+      column,
+    }: { teamId: string; updatedTasks: Task[]; column: keyof Tasks },
+    { rejectWithValue }
+  ) => {
+    try {
+      const teamRef = doc(db, "teams", teamId);
+
+      await updateDoc(teamRef, {
+        ["tasks." + column]: updatedTasks,
+      });
     } catch (error) {
       if (error instanceof FirebaseError) {
         return rejectWithValue(error.message);

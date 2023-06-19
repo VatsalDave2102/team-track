@@ -50,16 +50,20 @@ interface Task {
   priority: string;
   deadline: string;
   assignedTo: TeamMemberData[];
-  status: string;
   id: string;
   comments: Comment[];
 }
-
+interface Tasks {
+  todo: Task[];
+  ongoing: Task[];
+  review: Task[];
+  completed: Task[];
+}
 interface TeamData extends CreateTeamValues {
   owner: TeamOwnerData;
   id: string;
   image?: string;
-  tasks?: Task[];
+  tasks?: Tasks;
 }
 export type {
   SignUpUserValues,
@@ -72,4 +76,5 @@ export type {
   Task,
   TeamData,
   Comment,
+  Tasks,
 };

@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createSlice } from "@reduxjs/toolkit";
 import {
   assignTasks,
   createTeam,
   getCurrentUserTeams,
   postComment,
+  // postComment,
   updateTask,
   updateTeam,
 } from "./teamServices";
-import { TeamData } from "../../utils/types";
+import { Task, Tasks, TeamData } from "../../utils/types";
 
 interface TeamState {
   teamList: TeamData[];
@@ -28,6 +30,20 @@ export const teamSlice = createSlice({
   reducers: {
     setActiveTeam: (state, action) => {
       state.activeTeam = action.payload;
+    },
+    updateTaskOrder: (state, action) => {
+      try {
+        const {
+          updatedTasks,
+          column,
+        }: { updatedTasks: Task[]; column: keyof Tasks } = action.payload;
+        const teamIndex = state.teamList.findIndex(
+          (team) => team.id === state.activeTeam
+        );
+        state.teamList[teamIndex].tasks![column] = updatedTasks;
+      } catch (error) {
+        state.error = error as string;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -98,4 +114,4 @@ export const teamSlice = createSlice({
   },
 });
 
-export const { setActiveTeam } = teamSlice.actions;
+export const { setActiveTeam, updateTaskOrder } = teamSlice.actions;

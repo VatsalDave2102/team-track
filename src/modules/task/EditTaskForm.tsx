@@ -25,7 +25,7 @@ import InputField from "../common/components/InputField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import * as Yup from "yup";
 import dayjs from "dayjs";
-import { Comment, Task, User } from "../../utils/types";
+import { Comment, Task, Tasks, User } from "../../utils/types";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import AutoCompleteField from "../common/components/AutoCompleteField";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -66,7 +66,7 @@ const validationSchema = Yup.object({
     .required("Must add atleast one member!"),
 });
 
-const EditTaskForm = ({ task }: { task: Task }) => {
+const EditTaskForm = ({ task, column }: { task: Task; column: string }) => {
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const isLoading = useAppSelector((state) => state.root.team.isLoading);
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
@@ -80,7 +80,6 @@ const EditTaskForm = ({ task }: { task: Task }) => {
     assignedTo: task.assignedTo,
   };
   const handleSubmit = (values: typeof initialValues) => {
-    console.log(values);
     if (currentUser) {
       dispatch(
         updateTask({ teamId: activeTeamId as string, taskData: values })
@@ -105,12 +104,14 @@ const EditTaskForm = ({ task }: { task: Task }) => {
       text: comment,
       commentedOn: dayjs().toString(),
     };
+
     if (currentUser) {
       dispatch(
         postComment({
           teamId: activeTeamId as string,
           taskId: task.id,
           newComment: commentData,
+          column: column.toLowerCase() as keyof Tasks,
         })
       ).then(() => {
         dispatch(
@@ -268,7 +269,11 @@ const EditTaskForm = ({ task }: { task: Task }) => {
                   }}
                 />
               </Stack>
-              <CommentList taskId={task.id} />
+
+              <CommentList
+                taskId={task.id}
+                column={column.toLowerCase() as keyof Tasks}
+              />
             </Stack>
           </Form>
         );
