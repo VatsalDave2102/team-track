@@ -261,3 +261,26 @@ export const updateTaskOrderSameColumn = createAsyncThunk(
     }
   }
 );
+
+export const updateTaskOrderDifferentColumn = createAsyncThunk(
+  "team/updateTaskOrderDifferentColumn",
+  async (
+    {
+      teamId,
+      updatedTasksObject,
+    }: { teamId: string; updatedTasksObject: Tasks },
+    { rejectWithValue }
+  ) => {
+    try {
+      const teamRef = doc(db, "teams", teamId);
+
+      await updateDoc(teamRef, {
+        tasks: updatedTasksObject,
+      });
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);

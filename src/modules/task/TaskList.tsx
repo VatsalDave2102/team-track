@@ -66,6 +66,12 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
                     {...draggableProvided.draggableProps}
                     {...draggableProvided.dragHandleProps}
                     onClick={() => handleEditModalOpen(task)}
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "#edf3f3",
+                      },
+                      borderRadius: 3,
+                    }}
                   >
                     <Typography
                       variant="subtitle1"

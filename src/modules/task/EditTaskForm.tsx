@@ -43,6 +43,7 @@ import {
   postComment,
   updateTask,
 } from "../../app/team/teamServices";
+import { addComment } from "../../app/team/teamSlice";
 
 enum PriorityOption {
   Low,
@@ -69,6 +70,9 @@ const validationSchema = Yup.object({
 const EditTaskForm = ({ task, column }: { task: Task; column: string }) => {
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const isLoading = useAppSelector((state) => state.root.team.isLoading);
+  const uploadComment = useAppSelector(
+    (state) => state.root.team.uploadComment
+  );
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const dispatch = useAppDispatch();
   const [comment, setComment] = useState("");
@@ -104,8 +108,16 @@ const EditTaskForm = ({ task, column }: { task: Task; column: string }) => {
       text: comment,
       commentedOn: dayjs().toString(),
     };
+    console.log("method called");
 
     if (currentUser) {
+      dispatch(
+        addComment({
+          taskId: task.id,
+          commentData,
+          column: column.toLowerCase() as keyof Tasks,
+        })
+      );
       dispatch(
         postComment({
           teamId: activeTeamId as string,
@@ -113,16 +125,10 @@ const EditTaskForm = ({ task, column }: { task: Task; column: string }) => {
           newComment: commentData,
           column: column.toLowerCase() as keyof Tasks,
         })
-      ).then(() => {
-        dispatch(
-          getCurrentUserTeams({
-            name: currentUser.name,
-            email: currentUser.email,
-          })
-        );
-      });
+      );
     }
   };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -135,7 +141,7 @@ const EditTaskForm = ({ task, column }: { task: Task; column: string }) => {
           <Form>
             <Stack
               spacing={2}
-              alignItems={"flex-start"}
+              alignItems={"stretch"}
               justifyContent={"center"}
               width={500}
               m={"auto"}
@@ -151,6 +157,7 @@ const EditTaskForm = ({ task, column }: { task: Task; column: string }) => {
                 type="text"
                 rows={5}
                 multiline
+                sx={{ width: "100%" }}
               />
               <FormControl>
                 <FormLabel id="priority-radio-buttons">Priority</FormLabel>
@@ -243,12 +250,12 @@ const EditTaskForm = ({ task, column }: { task: Task; column: string }) => {
                   />
                 )}
               </Button>
-              <Stack direction={"row"} alignItems={"center"} spacing={1}>
+              <Stack direction={"row"} alignItems={"center"} spacing={1} mt={5}>
                 <CommentIcon sx={{ color: "GrayText" }} />
                 <Typography variant="h6">Comments</Typography>
               </Stack>
               <Stack direction={"row"} spacing={1} alignItems={"flex-start"}>
-                <Avatar alt={currentUser?.name} src="sfds" />
+                <Avatar alt={currentUser?.name} src="sfds" sx={{ mt: 1 }} />
                 <InputField
                   name="comment"
                   label="Comment"
@@ -257,23 +264,46 @@ const EditTaskForm = ({ task, column }: { task: Task; column: string }) => {
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton
-                          edge="end"
-                          disabled={comment.trim() === ""}
-                          onClick={() => handlePostComment(comment)}
-                        >
-                          <Send color="primary" />
-                        </IconButton>
+                        {uploadComment ? (
+                          <CircularProgress
+                            size={24}
+                            sx={{
+                              position: "absolute",
+                              top: "50%",
+                              left: "50%",
+                              marginTop: "-12px",
+                              marginLeft: "-12px",
+                            }}
+                          />
+                        ) : (
+                          <IconButton
+                            edge="end"
+                            disabled={comment.trim() === ""}
+                            onClick={() => handlePostComment(comment)}
+                          >
+                            <Send color="primary" />
+                          </IconButton>
+                        )}
                       </InputAdornment>
                     ),
                   }}
                 />
               </Stack>
-
-              <CommentList
-                taskId={task.id}
-                column={column.toLowerCase() as keyof Tasks}
-              />
+              {task.comments.length > 0 ? (
+                <CommentList
+                  taskId={task.id}
+                  column={column.toLowerCase() as keyof Tasks}
+                />
+              ) : (
+                <Typography
+                  variant="body1"
+                  mb={2}
+                  textAlign={"center"}
+                  color={"gray"}
+                >
+                  No comments yet!
+                </Typography>
+              )}
             </Stack>
           </Form>
         );

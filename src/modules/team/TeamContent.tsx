@@ -9,7 +9,7 @@ import { useLocation } from "react-router-dom";
 import useTeam from "../../custom-hook/useTeam";
 
 const TeamContent = () => {
-  const [value, setValue] = useState("1");
+  const [value, setValue] = useState("2");
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const dispatch = useAppDispatch();
   const location = useLocation();

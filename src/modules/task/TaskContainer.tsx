@@ -7,12 +7,17 @@ import CustomModal from "../common/components/CustomModal";
 import CreateTaskForm from "./CreateTaskForm";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { Tasks } from "../../utils/types";
-import { updateTaskOrderSameColumn } from "../../app/team/teamServices";
-import { updateTaskOrder } from "../../app/team/teamSlice";
+import {
+  updateTaskOrderDifferentColumn,
+  updateTaskOrderSameColumn,
+} from "../../app/team/teamServices";
+import {
+  updateTaskOrderDifferent,
+  updateTaskOrderSame,
+} from "../../app/team/teamSlice";
 
 const TaskContainer = () => {
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
-  const currentUser = useAppSelector((state) => state.root.auth.user);
   const activeTeam = useTeam(activeTeamId as string);
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
@@ -45,7 +50,7 @@ const TaskContainer = () => {
         const [movedTask] = updatedTasks.splice(source.index, 1);
         updatedTasks.splice(destination.index, 0, movedTask);
 
-        if (activeTeamId && currentUser) {
+        if (activeTeamId) {
           dispatch(
             updateTaskOrderSameColumn({
               teamId: activeTeamId,
@@ -53,11 +58,32 @@ const TaskContainer = () => {
               column,
             })
           );
-          dispatch(updateTaskOrder({ updatedTasks, column }));
+          dispatch(updateTaskOrderSame({ updatedTasks, column }));
         }
       }
     }
     // if user drop in another column
+    if (destination.droppableId !== source.droppableId) {
+      const sourceCol = source.droppableId.toLowerCase() as keyof Tasks;
+      const destinationCol =
+        destination.droppableId.toLowerCase() as keyof Tasks;
+      const updatedTasksObject = structuredClone(activeTeam?.tasks) as Tasks;
+      const [movedTask] = updatedTasksObject[sourceCol].splice(source.index, 1);
+      updatedTasksObject[destinationCol].splice(
+        destination.index,
+        0,
+        movedTask
+      );
+      if (activeTeam) {
+        dispatch(
+          updateTaskOrderDifferentColumn({
+            teamId: activeTeamId as string,
+            updatedTasksObject,
+          })
+        );
+        dispatch(updateTaskOrderDifferent(updatedTasksObject));
+      }
+    }
   };
 
   return (
