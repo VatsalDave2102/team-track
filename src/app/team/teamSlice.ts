@@ -4,6 +4,7 @@ import {
   assignTasks,
   createTeam,
   deleteTask,
+  deleteTeam,
   getCurrentUserTeams,
   postComment,
   updateTask,
@@ -19,6 +20,8 @@ interface TeamState {
   isLoading: boolean;
   activeTeam: string | null;
   uploadComment: boolean;
+  isTaskDelete: boolean;
+  isTeamDelete: boolean;
 }
 const initialState: TeamState = {
   teamList: [],
@@ -26,6 +29,8 @@ const initialState: TeamState = {
   isLoading: false,
   activeTeam: null,
   uploadComment: false,
+  isTaskDelete: false,
+  isTeamDelete: false,
 };
 
 export const teamSlice = createSlice({
@@ -168,10 +173,10 @@ export const teamSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(deleteTask.pending, (state) => {
-        state.isLoading = true;
+        state.isTaskDelete = true;
       })
       .addCase(deleteTask.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.isTaskDelete = false;
         state.error = null;
         const { taskId, column } = action.payload as {
           taskId: string;
@@ -187,8 +192,18 @@ export const teamSlice = createSlice({
         }
       })
       .addCase(deleteTask.rejected, (state, action) => {
-        state.isLoading = false;
+        state.isTaskDelete = false;
         state.error = action.payload as string;
+      })
+      .addCase(deleteTeam.pending, (state) => {
+        state.isTeamDelete = true;
+      })
+      .addCase(deleteTeam.fulfilled, (state, action) => {
+        const deleteTeamId = action.payload as string;
+        state.isTeamDelete = false;
+        state.teamList = state.teamList.filter(
+          (team) => team.id !== deleteTeamId
+        );
       });
   },
 });

@@ -5,8 +5,13 @@ import AutoCompleteField from "../common/components/AutoCompleteField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import useTeam from "../../custom-hook/useTeam";
 import * as Yup from "yup";
-import { getCurrentUserTeams, updateTeam } from "../../app/team/teamServices";
+import {
+  deleteTeam,
+  getCurrentUserTeams,
+  updateTeam,
+} from "../../app/team/teamServices";
 import { TeamMemberData } from "../../utils/types";
+import { useNavigate } from "react-router-dom";
 
 const validationSchema = Yup.object({
   // overview validation
@@ -25,7 +30,9 @@ interface UpdateTeamValues {
 }
 const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const isLoading = useAppSelector((state) => state.root.team.isLoading);
+  const isTeamDelete = useAppSelector((state) => state.root.team.isTeamDelete);
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const activeTeam = useTeam(activeTeamId as string);
@@ -51,7 +58,13 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
       });
     handleClose();
   };
-
+  const handleDeleteTeam = (teamId: string) => {
+    console.log(teamId);
+    dispatch(deleteTeam(teamId)).then(() => {
+      handleClose();
+      navigate("/dashboard");
+    });
+  };
   return (
     <Formik
       initialValues={initialValues}
@@ -62,9 +75,9 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
       <Form>
         <Stack
           spacing={1}
-          alignItems={"center"}
+          alignItems={"stretch"}
           justifyContent={"center"}
-          width={300}
+          width={500}
           m={"auto"}
           p={2}
         >
@@ -74,7 +87,7 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
             type="text"
             rows={5}
             multiline
-            sx={{ p: 0 }}
+            sx={{ width: "100%" }}
           />
           <FormControl error fullWidth>
             <Field name="members">
@@ -94,21 +107,50 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
               )}
             </Field>
           </FormControl>
-          <Button type="submit" variant="contained" disabled={isLoading}>
-            Edit team
-            {isLoading && (
-              <CircularProgress
-                size={24}
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  marginTop: "-12px",
-                  marginLeft: "-12px",
-                }}
-              />
-            )}
-          </Button>
+          <Stack direction={"row"} justifyContent={"space-evenly"}>
+            <Button type="submit" variant="contained" disabled={isLoading}>
+              Save
+              {isLoading && (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    marginTop: "-12px",
+                    marginLeft: "-12px",
+                  }}
+                />
+              )}
+            </Button>
+            <Button
+              color="error"
+              variant="contained"
+              disabled={isTeamDelete}
+              onClick={() => handleDeleteTeam(activeTeamId as string)}
+            >
+              Delete team
+              {isTeamDelete && (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    marginTop: "-12px",
+                    marginLeft: "-12px",
+                  }}
+                />
+              )}
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleClose()}
+            >
+              Back
+            </Button>
+          </Stack>
         </Stack>
       </Form>
     </Formik>

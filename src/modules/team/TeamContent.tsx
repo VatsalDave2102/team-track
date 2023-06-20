@@ -16,7 +16,7 @@ const TeamContent = () => {
   const url = location.pathname;
   const endpoints = url.split("/");
   const teamId = endpoints[endpoints.length - 1];
-  const activeTeam = useTeam(activeTeamId as string)
+  const activeTeam = useTeam(activeTeamId as string);
   useEffect(() => {
     dispatch(setActiveTeam(teamId));
     return () => {

@@ -19,6 +19,8 @@ import {
 const TaskContainer = () => {
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const activeTeam = useTeam(activeTeamId as string);
+  const currentUser = useAppSelector((state) => state.root.auth.user);
+  const isOwner = currentUser?.email == activeTeam?.owner.email;
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
   const handleModalOpen = () => {
@@ -111,18 +113,31 @@ const TaskContainer = () => {
         ) : (
           <Grid item xs={12}>
             <Box display={"flex"} flexDirection={"column"}>
-              <Typography
-                variant="h5"
-                mb={2}
-                textAlign={"center"}
-                color={"gray"}
-              >
-                Ready to conquer your goals? Let's get started by assigning some
-                tasks!
-              </Typography>
-              <Button size="large" onClick={handleModalOpen}>
-                Assign tasks
-              </Button>
+              {isOwner ? (
+                <>
+                  <Typography
+                    variant="h5"
+                    mb={2}
+                    textAlign={"center"}
+                    color={"gray"}
+                  >
+                    Ready to conquer your goals? Let's get started by assigning
+                    some tasks!
+                  </Typography>
+                  <Button size="large" onClick={handleModalOpen}>
+                    Assign tasks
+                  </Button>
+                </>
+              ) : (
+                <Typography
+                  variant="h5"
+                  mb={2}
+                  textAlign={"center"}
+                  color={"gray"}
+                >
+                  Ready and waiting for your next task assignment. Stay tuned!
+                </Typography>
+              )}
             </Box>
           </Grid>
         )}

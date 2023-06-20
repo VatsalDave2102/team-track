@@ -1,7 +1,6 @@
-import { Add, Comment, MoreHoriz } from "@mui/icons-material";
+import { Comment, MoreHoriz } from "@mui/icons-material";
 import {
   Box,
-  Button,
   Card,
   CardContent,
   IconButton,
@@ -13,11 +12,9 @@ import CustomModal from "../common/components/CustomModal";
 import { useState } from "react";
 import EditTaskForm from "./EditTaskForm";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
-import CreateTaskForm from "./CreateTaskForm";
 
 const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [focusedTask, setFocusedTask] = useState<Task | null>(null);
 
   const handleEditModalOpen = (task: Task) => {
@@ -27,12 +24,6 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
   const handleEditModalClose = () => {
     setFocusedTask(null);
     setIsEditModalOpen(false);
-  };
-  const handleCreateModalOpen = () => {
-    setIsCreateModalOpen(true);
-  };
-  const handleCreateModalClose = () => {
-    setIsCreateModalOpen(false);
   };
 
   return (
@@ -95,15 +86,6 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
               </Draggable>
             ))}
             {droppableProvided.placeholder}
-            {column == "TODO" && (
-              <Button
-                variant="outlined"
-                endIcon={<Add />}
-                onClick={handleCreateModalOpen}
-              >
-                Add Task
-              </Button>
-            )}
           </Stack>
         )}
       </Droppable>
@@ -112,15 +94,15 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
           isOpen={isEditModalOpen}
           handleClose={handleEditModalClose}
           title={focusedTask.title}
-          children={<EditTaskForm task={focusedTask} column={column} handleClose={handleEditModalClose} />}
+          children={
+            <EditTaskForm
+              task={focusedTask}
+              column={column}
+              handleClose={handleEditModalClose}
+            />
+          }
         />
       )}
-      <CustomModal
-        isOpen={isCreateModalOpen}
-        handleClose={handleCreateModalClose}
-        title="Assign Task"
-        children={<CreateTaskForm handleClose={handleCreateModalClose} />}
-      />
     </>
   );
 };

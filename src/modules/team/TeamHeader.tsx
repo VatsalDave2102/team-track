@@ -1,4 +1,4 @@
-import { Edit, People } from "@mui/icons-material";
+import { Add, InfoOutlined, People } from "@mui/icons-material";
 import {
   Avatar,
   AvatarGroup,
@@ -11,21 +11,36 @@ import { useAppSelector } from "../../app/hooks";
 import useTeam from "../../custom-hook/useTeam";
 import { useState } from "react";
 import CustomModal from "../common/components/CustomModal";
-import EditTeamForm from "./EditTeamForm";
+import CreateTaskForm from "../task/CreateTaskForm";
+import InfoModal from "./InfoModal";
 
 const TeamHeader = () => {
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const activeTeam = useTeam(activeTeamId as string);
+  const currentUser = useAppSelector((state) => state.root.auth.user);
+  const isOwner = currentUser?.email == activeTeam?.owner.email;
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
   const [isOpen, setIsOpen] = useState(false);
-  const handleModalOpen = () => {
+  const handleInfoModalOpen = () => {
     setIsOpen(true);
   };
-  const handleModalClose = () => {
+  const handleInfoModalClose = () => {
     setIsOpen(false);
   };
-
+  const handleCreateModalOpen = () => {
+    setIsCreateModalOpen(true);
+  };
+  const handleCreateModalClose = () => {
+    setIsCreateModalOpen(false);
+  };
   return (
-    <Box sx={{bgcolor:'primary.light'}} p={2} borderRadius={3} color={'white'}>
+    <Box
+      sx={{ bgcolor: "primary.light" }}
+      p={2}
+      borderRadius={3}
+      color={"white"}
+    >
       <Typography variant="h4" mb={2}>
         {activeTeam?.teamName}
       </Typography>
@@ -49,19 +64,37 @@ const TeamHeader = () => {
         <Button
           variant="contained"
           color="secondary"
-          startIcon={<Edit />}
-          sx={{ borderRadius: "20px" }}
+          endIcon={<InfoOutlined />}
+          sx={{ borderRadius: "20px", color: "#333" }}
           disableElevation
-          onClick={handleModalOpen}
+          onClick={handleInfoModalOpen}
         >
-          Edit team
+          Team info
         </Button>
+        {isOwner && (
+          <Button
+            variant="contained"
+            color="secondary"
+            endIcon={<Add />}
+            sx={{ borderRadius: "20px", color: "#333" }}
+            disableElevation
+            onClick={handleCreateModalOpen}
+          >
+            Add Task
+          </Button>
+        )}
       </Stack>
       <CustomModal
         isOpen={isOpen}
-        handleClose={handleModalClose}
-        title="Edit team"
-        children={<EditTeamForm handleClose={handleModalClose} />}
+        handleClose={handleInfoModalClose}
+        title={activeTeam?.teamName as string}
+        children={<InfoModal />}
+      />
+      <CustomModal
+        isOpen={isCreateModalOpen}
+        handleClose={handleCreateModalClose}
+        title="Assign Task"
+        children={<CreateTaskForm handleClose={handleCreateModalClose} />}
       />
     </Box>
   );

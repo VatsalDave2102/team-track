@@ -12,6 +12,7 @@ import {
   addDoc,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -60,7 +61,7 @@ export const getCurrentUserTeams = createAsyncThunk(
         teamsRef,
         or(
           where("owner.email", "==", currentUser.email),
-          where("members", "array-contains", currentUser.email)
+          where("members", "array-contains", currentUser)
         )
       );
 
@@ -95,6 +96,22 @@ export const updateTeam = createAsyncThunk(
         overview: newOverview,
         members: arrayUnion(...newMembers),
       });
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
+export const deleteTeam = createAsyncThunk(
+  "team/deleteTeam",
+  async (teamId: string, { rejectWithValue }) => {
+    try {
+      const teamRef = doc(db, "teams", teamId);
+      await deleteDoc(teamRef);
+
+      return teamId;
     } catch (error) {
       if (error instanceof FirebaseError) {
         return rejectWithValue(error.message);
