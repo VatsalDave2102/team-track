@@ -42,7 +42,7 @@ const initialValues: Task = {
   priority: PriorityOption.Medium.toString(),
   deadline: dayjs().toString(),
   assignedTo: [],
-  id: genreateId(6),
+  id: "",
   comments: [],
 };
 
@@ -73,6 +73,8 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const dispatch = useAppDispatch();
   const handleSubmit = (values: typeof initialValues) => {
+    values.id = genreateId(6);
+
     if (activeTeamId && currentUser) {
       dispatch(assignTasks({ teamId: activeTeamId, taskData: values })).then(
         () => {

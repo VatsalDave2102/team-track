@@ -3,6 +3,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import {
   assignTasks,
   createTeam,
+  deleteTask,
   getCurrentUserTeams,
   postComment,
   updateTask,
@@ -163,6 +164,29 @@ export const teamSlice = createSlice({
         state.error = null;
       })
       .addCase(updateTaskOrderDifferentColumn.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(deleteTask.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteTask.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        const { taskId, column } = action.payload as {
+          taskId: string;
+          column: keyof Tasks;
+        };
+        const teamIndex = state.teamList.findIndex(
+          (team) => team.id === state.activeTeam
+        );
+        if (teamIndex !== -1 && state.teamList[teamIndex]?.tasks) {
+          const tasks = state.teamList[teamIndex].tasks;
+          if (tasks)
+            tasks[column] = tasks[column].filter((task) => task.id !== taskId);
+        }
+      })
+      .addCase(deleteTask.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });

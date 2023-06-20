@@ -39,11 +39,13 @@ import CommentList from "./CommentList";
 import { genreateId } from "../../utils/utils";
 import { useState } from "react";
 import {
+  deleteTask,
   getCurrentUserTeams,
   postComment,
   updateTask,
 } from "../../app/team/teamServices";
 import { addComment } from "../../app/team/teamSlice";
+import useTeam from "../../custom-hook/useTeam";
 
 enum PriorityOption {
   Low,
@@ -67,13 +69,22 @@ const validationSchema = Yup.object({
     .required("Must add atleast one member!"),
 });
 
-const EditTaskForm = ({ task, column }: { task: Task; column: string }) => {
+const EditTaskForm = ({
+  task,
+  column,
+  handleClose,
+}: {
+  task: Task;
+  column: string;
+  handleClose: () => void;
+}) => {
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const isLoading = useAppSelector((state) => state.root.team.isLoading);
   const uploadComment = useAppSelector(
     (state) => state.root.team.uploadComment
   );
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
+  const activeTeam = useTeam(activeTeamId as string);
   const dispatch = useAppDispatch();
   const [comment, setComment] = useState("");
   const initialValues = {
@@ -94,10 +105,29 @@ const EditTaskForm = ({ task, column }: { task: Task; column: string }) => {
             email: currentUser.email,
           })
         );
+        handleClose();
       });
     }
   };
-
+  const handleTaskDelete = (taskId: string, column: keyof Tasks) => {
+    if (activeTeam?.tasks) {
+      const updatedTasksArray = Array.from(activeTeam.tasks[column]);
+      const taskIndex = updatedTasksArray.findIndex(
+        (task) => task.id === taskId
+      );
+      updatedTasksArray.splice(taskIndex, 1);
+      dispatch(
+        deleteTask({
+          teamId: activeTeamId as string,
+          taskId,
+          updatedTasksArray,
+          column,
+        })
+      ).then(() => {
+        handleClose();
+      });
+    }
+  };
   const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setComment(event.target.value);
   };
@@ -235,21 +265,48 @@ const EditTaskForm = ({ task, column }: { task: Task; column: string }) => {
                   />
                 </DemoContainer>
               </LocalizationProvider>
-              <Button type="submit" variant="contained" disabled={isLoading}>
-                Save changes
-                {isLoading && (
-                  <CircularProgress
-                    size={24}
-                    sx={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      marginTop: "-12px",
-                      marginLeft: "-12px",
-                    }}
-                  />
-                )}
-              </Button>
+              <Stack direction={"row"} justifyContent={"space-evenly"}>
+                <Button type="submit" variant="contained" disabled={isLoading}>
+                  Save changes
+                  {isLoading && (
+                    <CircularProgress
+                      size={24}
+                      sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        marginTop: "-12px",
+                        marginLeft: "-12px",
+                      }}
+                    />
+                  )}
+                </Button>
+                <Button
+                  variant="contained"
+                  disabled={isLoading}
+                  onClick={() =>
+                    handleTaskDelete(
+                      task.id,
+                      column.toLowerCase() as keyof Tasks
+                    )
+                  }
+                  color="error"
+                >
+                  Delete task
+                  {isLoading && (
+                    <CircularProgress
+                      size={24}
+                      sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        marginTop: "-12px",
+                        marginLeft: "-12px",
+                      }}
+                    />
+                  )}
+                </Button>
+              </Stack>
               <Stack direction={"row"} alignItems={"center"} spacing={1} mt={5}>
                 <CommentIcon sx={{ color: "GrayText" }} />
                 <Typography variant="h6">Comments</Typography>

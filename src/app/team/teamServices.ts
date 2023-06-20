@@ -284,3 +284,34 @@ export const updateTaskOrderDifferentColumn = createAsyncThunk(
     }
   }
 );
+
+export const deleteTask = createAsyncThunk(
+  "team/deletTask",
+  async (
+    {
+      teamId,
+      taskId,
+      updatedTasksArray,
+      column,
+    }: {
+      teamId: string;
+      taskId: string;
+      updatedTasksArray: Task[];
+      column: keyof Tasks;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const teamRef = doc(db, "teams", teamId);
+
+      await updateDoc(teamRef, {
+        ["tasks." + column]: updatedTasksArray,
+      });
+      return { taskId, column };
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);

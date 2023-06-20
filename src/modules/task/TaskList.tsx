@@ -112,7 +112,7 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
           isOpen={isEditModalOpen}
           handleClose={handleEditModalClose}
           title={focusedTask.title}
-          children={<EditTaskForm task={focusedTask} column={column} />}
+          children={<EditTaskForm task={focusedTask} column={column} handleClose={handleEditModalClose} />}
         />
       )}
       <CustomModal
