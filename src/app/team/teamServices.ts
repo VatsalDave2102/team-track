@@ -94,7 +94,7 @@ export const updateTeam = createAsyncThunk(
       const teamRef = doc(db, "teams", teamId);
       await updateDoc(teamRef, {
         overview: newOverview,
-        members: arrayUnion(...newMembers),
+        members: newMembers,
       });
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -246,6 +246,7 @@ export const postComment = createAsyncThunk(
         await updateDoc(teamRef, {
           tasks: teamData.tasks,
         });
+        return {taskId, newComment, column}
       }
     } catch (error) {
       if (error instanceof FirebaseError) {

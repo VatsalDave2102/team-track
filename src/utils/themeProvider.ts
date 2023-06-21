@@ -1,6 +1,6 @@
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
- let theme = createTheme({
+let theme = createTheme({
   palette: {
     mode: "light",
     primary: {
@@ -9,23 +9,26 @@ import { createTheme, responsiveFontSizes } from "@mui/material/styles";
     secondary: {
       main: "#d9b08c",
     },
+    info: {
+      main: "#fcba03",
+    },
   },
   typography: {
     fontFamily: ["Poppins", "sans-serif"].join(","),
     fontSize: 14,
   },
-  components:{
-    MuiInputBase:{
-      styleOverrides:{
-        root:{
-          backgroundColor: '#fff',
+  components: {
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#fff",
         },
-        input:{
-          backgroundColor: '#fff'
-        }
-      }
-    }
-  }
+        input: {
+          backgroundColor: "#fff",
+        },
+      },
+    },
+  },
 });
 
-export  default theme = responsiveFontSizes(theme)
+export default theme = responsiveFontSizes(theme);

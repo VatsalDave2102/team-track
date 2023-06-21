@@ -1,17 +1,13 @@
 import {
-  Avatar,
   Button,
   CircularProgress,
   FormControl,
   FormControlLabel,
   FormHelperText,
   FormLabel,
-  IconButton,
-  InputAdornment,
   Radio,
   RadioGroup,
   Stack,
-  Typography,
 } from "@mui/material";
 import {
   ErrorMessage,
@@ -25,34 +21,17 @@ import InputField from "../common/components/InputField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import * as Yup from "yup";
 import dayjs from "dayjs";
-import { Comment, Task, Tasks, User } from "../../utils/types";
+import { PriorityOption, Task, Tasks } from "../../utils/types";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import AutoCompleteField from "../common/components/AutoCompleteField";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import {
-  Comment as CommentIcon,
-  FormatListBulleted,
-  Send,
-} from "@mui/icons-material";
-import CommentList from "./CommentList";
-import { genreateId } from "../../utils/utils";
-import { useState } from "react";
-import {
   deleteTask,
   getCurrentUserTeams,
-  postComment,
   updateTask,
 } from "../../app/team/teamServices";
-import { addComment } from "../../app/team/teamSlice";
 import useTeam from "../../custom-hook/useTeam";
-
-enum PriorityOption {
-  Low,
-  Medium,
-  High,
-  Urgent,
-}
 
 const validationSchema = Yup.object({
   // description validation
@@ -72,21 +51,20 @@ const validationSchema = Yup.object({
 const EditTaskForm = ({
   task,
   column,
-  handleClose,
+  handleModalClose,
+  handleFormClose,
 }: {
   task: Task;
   column: string;
-  handleClose: () => void;
+  handleModalClose: () => void;
+  handleFormClose: () => void;
 }) => {
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const isLoading = useAppSelector((state) => state.root.team.isLoading);
-  const uploadComment = useAppSelector(
-    (state) => state.root.team.uploadComment
-  );
+  const isTaskDelete = useAppSelector((state) => state.root.team.isTaskDelete);
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const activeTeam = useTeam(activeTeamId as string);
   const dispatch = useAppDispatch();
-  const [comment, setComment] = useState("");
   const initialValues = {
     id: task.id,
     description: task.description,
@@ -105,7 +83,6 @@ const EditTaskForm = ({
             email: currentUser.email,
           })
         );
-        handleClose();
       });
     }
   };
@@ -124,38 +101,8 @@ const EditTaskForm = ({
           column,
         })
       ).then(() => {
-        handleClose();
+        handleModalClose();
       });
-    }
-  };
-  const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setComment(event.target.value);
-  };
-  const handlePostComment = (comment: string) => {
-    const commentData: Comment = {
-      id: genreateId(6),
-      postedBy: currentUser as User,
-      text: comment,
-      commentedOn: dayjs().toString(),
-    };
-    console.log("method called");
-
-    if (currentUser) {
-      dispatch(
-        addComment({
-          taskId: task.id,
-          commentData,
-          column: column.toLowerCase() as keyof Tasks,
-        })
-      );
-      dispatch(
-        postComment({
-          teamId: activeTeamId as string,
-          taskId: task.id,
-          newComment: commentData,
-          column: column.toLowerCase() as keyof Tasks,
-        })
-      );
     }
   };
 
@@ -175,12 +122,8 @@ const EditTaskForm = ({
               justifyContent={"center"}
               width={500}
               m={"auto"}
-              p={1}
+              p={2}
             >
-              <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                <FormatListBulleted sx={{ color: "GrayText" }} />
-                <Typography variant="h6">Task details</Typography>
-              </Stack>
               <InputField
                 name="description"
                 label="Description"
@@ -266,6 +209,38 @@ const EditTaskForm = ({
                 </DemoContainer>
               </LocalizationProvider>
               <Stack direction={"row"} justifyContent={"space-evenly"}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => handleFormClose()}
+                >
+                  Back
+                </Button>
+                <Button
+                  variant="contained"
+                  disabled={isTaskDelete}
+                  onClick={() =>
+                    handleTaskDelete(
+                      task.id,
+                      column.toLowerCase() as keyof Tasks
+                    )
+                  }
+                  color="error"
+                >
+                  Delete task
+                  {isTaskDelete && (
+                    <CircularProgress
+                      size={24}
+                      sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        marginTop: "-12px",
+                        marginLeft: "-12px",
+                      }}
+                    />
+                  )}
+                </Button>
                 <Button type="submit" variant="contained" disabled={isLoading}>
                   Save changes
                   {isLoading && (
@@ -281,86 +256,7 @@ const EditTaskForm = ({
                     />
                   )}
                 </Button>
-                <Button
-                  variant="contained"
-                  disabled={isLoading}
-                  onClick={() =>
-                    handleTaskDelete(
-                      task.id,
-                      column.toLowerCase() as keyof Tasks
-                    )
-                  }
-                  color="error"
-                >
-                  Delete task
-                  {isLoading && (
-                    <CircularProgress
-                      size={24}
-                      sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        marginTop: "-12px",
-                        marginLeft: "-12px",
-                      }}
-                    />
-                  )}
-                </Button>
               </Stack>
-              <Stack direction={"row"} alignItems={"center"} spacing={1} mt={5}>
-                <CommentIcon sx={{ color: "GrayText" }} />
-                <Typography variant="h6">Comments</Typography>
-              </Stack>
-              <Stack direction={"row"} spacing={1} alignItems={"flex-start"}>
-                <Avatar alt={currentUser?.name} src="sfds" sx={{ mt: 1 }} />
-                <InputField
-                  name="comment"
-                  label="Comment"
-                  onChange={handleCommentChange}
-                  value={comment}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        {uploadComment ? (
-                          <CircularProgress
-                            size={24}
-                            sx={{
-                              position: "absolute",
-                              top: "50%",
-                              left: "50%",
-                              marginTop: "-12px",
-                              marginLeft: "-12px",
-                            }}
-                          />
-                        ) : (
-                          <IconButton
-                            edge="end"
-                            disabled={comment.trim() === ""}
-                            onClick={() => handlePostComment(comment)}
-                          >
-                            <Send color="primary" />
-                          </IconButton>
-                        )}
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Stack>
-              {task.comments.length > 0 ? (
-                <CommentList
-                  taskId={task.id}
-                  column={column.toLowerCase() as keyof Tasks}
-                />
-              ) : (
-                <Typography
-                  variant="body1"
-                  mb={2}
-                  textAlign={"center"}
-                  color={"gray"}
-                >
-                  No comments yet!
-                </Typography>
-              )}
             </Stack>
           </Form>
         );

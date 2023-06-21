@@ -4,6 +4,7 @@ import {
   Button,
   Chip,
   Collapse,
+  Divider,
   Stack,
   Typography,
 } from "@mui/material";
@@ -52,6 +53,7 @@ const InfoModal = () => {
             </Typography>
             <Typography variant="body1">{activeTeam?.overview}</Typography>
           </Box>
+          <Divider />
           <Box>
             <Typography variant="h6" mb={1}>
               Owner
@@ -67,13 +69,14 @@ const InfoModal = () => {
               variant="outlined"
             />
           </Box>
-
+          <Divider />
           <Box>
             <Typography variant="h6" mb={1}>
               Members
             </Typography>
             {activeTeam?.members.map((member) => (
               <Chip
+                key={member.email}
                 avatar={
                   <Avatar alt={member.name} src="/static/images/avatar/1.jpg" />
                 }
@@ -84,7 +87,7 @@ const InfoModal = () => {
             ))}
           </Box>
           {isOwner && (
-            <Box>
+            <Box display={"flex"} justifyContent={"flex-end"}>
               <Button
                 sx={{ mt: "15px" }}
                 startIcon={<Edit />}

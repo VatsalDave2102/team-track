@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import {
   assignTasks,
   createTeam,
@@ -22,12 +22,14 @@ interface TeamState {
   uploadComment: boolean;
   isTaskDelete: boolean;
   isTeamDelete: boolean;
+  activeTask: string | null;
 }
 const initialState: TeamState = {
   teamList: [],
   error: null,
   isLoading: false,
   activeTeam: null,
+  activeTask: null,
   uploadComment: false,
   isTaskDelete: false,
   isTeamDelete: false,
@@ -57,29 +59,9 @@ export const teamSlice = createSlice({
       );
       state.teamList[teamIndex].tasks = updatedTasksObject;
     },
-    addComment: (
-      state,
-      action: PayloadAction<{
-        taskId: string;
-        commentData: Comment;
-        column: keyof Tasks;
-      }>
-    ) => {
-      const { taskId, commentData, column } = action.payload;
-      const teamIndex = state.teamList.findIndex(
-        (team) => team.id === state.activeTeam
-      );
 
-      if (state.teamList[teamIndex].tasks) {
-        const taskIndex = state.teamList[teamIndex].tasks![column].findIndex(
-          (task) => task.id === taskId
-        );
-        if (taskIndex !== -1) {
-          state.teamList[teamIndex].tasks![column][taskIndex].comments.push(
-            commentData
-          );
-        }
-      }
+    setActiveTask: (state, action) => {
+      state.activeTask = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -142,9 +124,28 @@ export const teamSlice = createSlice({
         state.error = null;
         state.uploadComment = true;
       })
-      .addCase(postComment.fulfilled, (state) => {
+      .addCase(postComment.fulfilled, (state, action) => {
         state.error = null;
         state.uploadComment = false;
+        const { taskId, newComment, column } = action.payload as {
+          taskId: string;
+          newComment: Comment;
+          column: keyof Tasks;
+        };
+        const teamIndex = state.teamList.findIndex(
+          (team) => team.id === state.activeTeam
+        );
+
+        if (state.teamList[teamIndex].tasks) {
+          const taskIndex = state.teamList[teamIndex].tasks![column].findIndex(
+            (task) => task.id === taskId
+          );
+          if (taskIndex !== -1) {
+            state.teamList[teamIndex].tasks![column][taskIndex].comments.push(
+              newComment
+            );
+          }
+        }
       })
       .addCase(postComment.rejected, (state, action) => {
         state.error = action.payload as string;
@@ -212,5 +213,5 @@ export const {
   setActiveTeam,
   updateTaskOrderSame,
   updateTaskOrderDifferent,
-  addComment,
+  setActiveTask,
 } = teamSlice.actions;

@@ -1,3 +1,5 @@
+import { TaskColor } from "./types";
+
 const MAX_SIZE = 2 * 1024 * 1024;
 
 function genreateId(length: number) {
@@ -12,4 +14,6 @@ function genreateId(length: number) {
   }
   return result;
 }
-export { MAX_SIZE, genreateId };
+
+const taskColor: TaskColor[] = ["primary", "info", "warning", "error"];
+export { MAX_SIZE, genreateId, taskColor };

@@ -12,7 +12,7 @@ import useTeam from "../../custom-hook/useTeam";
 import { useState } from "react";
 import CustomModal from "../common/components/CustomModal";
 import CreateTaskForm from "../task/CreateTaskForm";
-import InfoModal from "./InfoModal";
+import TeamInfo from "./TeamInfo";
 
 const TeamHeader = () => {
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
@@ -88,7 +88,7 @@ const TeamHeader = () => {
         isOpen={isOpen}
         handleClose={handleInfoModalClose}
         title={activeTeam?.teamName as string}
-        children={<InfoModal />}
+        children={<TeamInfo />}
       />
       <CustomModal
         isOpen={isCreateModalOpen}

@@ -44,6 +44,12 @@ interface Comment {
   text: string;
   commentedOn: string;
 }
+export enum PriorityOption {
+  Low,
+  Medium,
+  High,
+  Urgent,
+}
 interface Task {
   title: string;
   description: string;
@@ -65,6 +71,7 @@ interface TeamData extends CreateTeamValues {
   image?: string;
   tasks?: Tasks;
 }
+type TaskColor = "primary" | "info" | "warning" | "error";
 export type {
   SignUpUserValues,
   LoginUserValues,
@@ -77,4 +84,5 @@ export type {
   TeamData,
   Comment,
   Tasks,
+  TaskColor,
 };

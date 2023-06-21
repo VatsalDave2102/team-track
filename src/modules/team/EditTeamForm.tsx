@@ -19,10 +19,10 @@ const validationSchema = Yup.object({
     .min(20, "Overview must be atleast 20 characters long")
     .required("Overview is required!"),
 
-  //   // members validation
-  //   members: Yup.array()
-  //     .min(1, "Must add atleast one member!")
-  //      ,
+    // members validation
+    members: Yup.array()
+      .min(1, "Must add atleast one member!")
+       ,
 });
 interface UpdateTeamValues {
   overview: string;
@@ -38,9 +38,10 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
   const activeTeam = useTeam(activeTeamId as string);
   const initialValues: UpdateTeamValues = {
     overview: activeTeam?.overview as string,
-    members: [],
+    members: activeTeam?.members as TeamMemberData[],
   };
   const handleSubmit = (values: typeof initialValues) => {
+    console.log(values.members);
     if (currentUser)
       dispatch(
         updateTeam({
@@ -56,10 +57,8 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
           })
         );
       });
-    handleClose();
   };
   const handleDeleteTeam = (teamId: string) => {
-    console.log(teamId);
     dispatch(deleteTeam(teamId)).then(() => {
       handleClose();
       navigate("/dashboard");
@@ -72,87 +71,93 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
       onSubmit={handleSubmit}
       validateOnChange
     >
-      <Form>
-        <Stack
-          spacing={1}
-          alignItems={"stretch"}
-          justifyContent={"center"}
-          width={500}
-          m={"auto"}
-          p={2}
-        >
-          <InputField
-            name="overview"
-            label="Overview"
-            type="text"
-            rows={5}
-            multiline
-            sx={{ width: "100%" }}
-          />
-          <FormControl error fullWidth>
-            <Field name="members">
-              {({
-                field,
-                form,
-              }: {
-                field: FieldProps["field"];
-                form: FormikProps<FormData>;
-              }) => (
-                <AutoCompleteField
-                  {...field}
-                  setFieldValue={form.setFieldValue}
-                  mode="team-edit"
-                  fieldName="members"
-                />
-              )}
-            </Field>
-          </FormControl>
-          <Stack direction={"row"} justifyContent={"space-evenly"}>
-            <Button type="submit" variant="contained" disabled={isLoading}>
-              Save
-              {isLoading && (
-                <CircularProgress
-                  size={24}
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    marginTop: "-12px",
-                    marginLeft: "-12px",
-                  }}
-                />
-              )}
-            </Button>
-            <Button
-              color="error"
-              variant="contained"
-              disabled={isTeamDelete}
-              onClick={() => handleDeleteTeam(activeTeamId as string)}
+      {(formikProps) => {
+        return (
+          <Form>
+            <Stack
+              spacing={1}
+              alignItems={"stretch"}
+              justifyContent={"center"}
+              width={500}
+              m={"auto"}
+              p={2}
             >
-              Delete team
-              {isTeamDelete && (
-                <CircularProgress
-                  size={24}
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    marginTop: "-12px",
-                    marginLeft: "-12px",
-                  }}
-                />
-              )}
-            </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => handleClose()}
-            >
-              Back
-            </Button>
-          </Stack>
-        </Stack>
-      </Form>
+              <InputField
+                name="overview"
+                label="Overview"
+                type="text"
+                rows={5}
+                multiline
+                sx={{ width: "100%" }}
+              />
+              <FormControl error fullWidth>
+                <Field name="members">
+                  {({
+                    field,
+                    form,
+                  }: {
+                    field: FieldProps["field"];
+                    form: FormikProps<FormData>;
+                  }) => (
+                    <AutoCompleteField
+                      {...field}
+                      setFieldValue={form.setFieldValue}
+                      mode="team-edit"
+                      fieldName="members"
+                      value={formikProps.values.members}
+                    />
+                  )}
+                </Field>
+              </FormControl>
+              <Stack direction={"row"} justifyContent={"space-evenly"}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => handleClose()}
+                >
+                  Back
+                </Button>
+
+                <Button
+                  color="error"
+                  variant="contained"
+                  disabled={isTeamDelete}
+                  onClick={() => handleDeleteTeam(activeTeamId as string)}
+                >
+                  Delete team
+                  {isTeamDelete && (
+                    <CircularProgress
+                      size={24}
+                      sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        marginTop: "-12px",
+                        marginLeft: "-12px",
+                      }}
+                    />
+                  )}
+                </Button>
+                <Button type="submit" variant="contained" disabled={isLoading}>
+                  Save
+                  {isLoading && (
+                    <CircularProgress
+                      size={24}
+                      sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        marginTop: "-12px",
+                        marginLeft: "-12px",
+                      }}
+                    />
+                  )}
+                </Button>
+              </Stack>
+            </Stack>
+          </Form>
+        );
+      }}
     </Formik>
   );
 };

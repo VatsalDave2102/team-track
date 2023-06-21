@@ -54,9 +54,7 @@ const AutoCompleteField = ({
         querySnaphot.forEach((doc) => {
           if (
             currentUser?.email !== doc.data().email &&
-            !activeTeam?.members.some(
-              (member) => member.email === doc.data().email
-            )
+            !value?.some((member) => member.email === doc.data().email)
           )
             results.push({ name: doc.data().name, email: doc.data().email });
         });

@@ -13,7 +13,12 @@ const CustomModal: React.FC<CustomModalProps> = ({
 }) => {
   return (
     <Dialog open={isOpen} onClose={handleClose} fullWidth scroll="paper">
-      <DialogTitle variant="h5" textAlign={"center"}>
+      <DialogTitle
+        variant="h5"
+        textAlign={"center"}
+        bgcolor={"primary.main"}
+        color={"white"}
+      >
         {title}
       </DialogTitle>
       <DialogContent dividers={true}>{children}</DialogContent>

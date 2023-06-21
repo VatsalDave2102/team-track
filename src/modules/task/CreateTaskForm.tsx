@@ -20,7 +20,7 @@ import {
 } from "formik";
 import InputField from "../common/components/InputField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Task } from "../../utils/types";
+import { PriorityOption, Task } from "../../utils/types";
 import * as Yup from "yup";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -30,12 +30,6 @@ import AutoCompleteField from "../common/components/AutoCompleteField";
 import { assignTasks, getCurrentUserTeams } from "../../app/team/teamServices";
 import { genreateId } from "../../utils/utils";
 
-enum PriorityOption {
-  Low,
-  Medium,
-  High,
-  Urgent,
-}
 const initialValues: Task = {
   title: "",
   description: "",

@@ -10,19 +10,22 @@ import {
 import { Task } from "../../utils/types";
 import CustomModal from "../common/components/CustomModal";
 import { useState } from "react";
-import EditTaskForm from "./EditTaskForm";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
+import TaskInfo from "./TaskInfo";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { setActiveTask } from "../../app/team/teamSlice";
 
 const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [focusedTask, setFocusedTask] = useState<Task | null>(null);
+  const dispatch = useAppDispatch();
+  const activeTask = useAppSelector((state) => state.root.team.activeTask);
 
-  const handleEditModalOpen = (task: Task) => {
-    setFocusedTask(task);
+  const handleTaskInfoModalOpen = (task: Task) => {
+    dispatch(setActiveTask(task.id));
     setIsEditModalOpen(true);
   };
-  const handleEditModalClose = () => {
-    setFocusedTask(null);
+  const handleTaskInfoModalClose = () => {
+    dispatch(setActiveTask(null));
     setIsEditModalOpen(false);
   };
 
@@ -46,6 +49,9 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
           <Stack
             spacing={2}
             my={1}
+            p={1}
+            bgcolor={"#eee"}
+            borderRadius={2}
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
           >
@@ -56,7 +62,7 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
                     ref={draggableProvided.innerRef}
                     {...draggableProvided.draggableProps}
                     {...draggableProvided.dragHandleProps}
-                    onClick={() => handleEditModalOpen(task)}
+                    onClick={() => handleTaskInfoModalOpen(task)}
                     sx={{
                       "&:hover": {
                         backgroundColor: "#edf3f3",
@@ -89,17 +95,13 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
           </Stack>
         )}
       </Droppable>
-      {focusedTask && (
+      {activeTask && (
         <CustomModal
           isOpen={isEditModalOpen}
-          handleClose={handleEditModalClose}
-          title={focusedTask.title}
+          handleClose={handleTaskInfoModalClose}
+          title={`In ${column}`}
           children={
-            <EditTaskForm
-              task={focusedTask}
-              column={column}
-              handleClose={handleEditModalClose}
-            />
+            <TaskInfo handleTaskInfoModalClose={handleTaskInfoModalClose} />
           }
         />
       )}
