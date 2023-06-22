@@ -1,13 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  Comment,
-  Task,
-  Tasks,
-  TeamData,
-  TeamMemberData,
-  TeamOwnerData,
-} from "../../utils/types";
+import { Comment, Task, Tasks, TeamData, TeamMemberData } from "../../utils/types";
 import {
   addDoc,
   arrayUnion,
@@ -31,19 +24,22 @@ export const createTeam = createAsyncThunk(
     teamData: {
       teamName: string;
       overview: string;
-      members: TeamMemberData[];
-      owner: TeamOwnerData;
+      members: string[];
+      owner: string;
     },
     { rejectWithValue }
   ) => {
     try {
       const { teamName, overview, members, owner } = teamData;
-      await addDoc(collection(db, "teams"), {
+      const refData = await addDoc(collection(db, "teams"), {
         teamName: teamName,
         overview: overview,
         members: members,
         owner: owner,
       });
+
+      const newTeamData = { id: refData.id, ...teamData };
+      return newTeamData;
     } catch (error) {
       if (error instanceof FirebaseError) {
         return rejectWithValue(error.message);
@@ -54,13 +50,13 @@ export const createTeam = createAsyncThunk(
 
 export const getCurrentUserTeams = createAsyncThunk(
   "teams/getCurrentUserTeams",
-  async (currentUser: { name: string; email: string }, { rejectWithValue }) => {
+  async (currentUser: string, { rejectWithValue }) => {
     try {
       const teamsRef = collection(db, "teams");
       const teamsQuery = query(
         teamsRef,
         or(
-          where("owner.email", "==", currentUser.email),
+          where("owner", "==", currentUser),
           where("members", "array-contains", currentUser)
         )
       );
@@ -79,7 +75,31 @@ export const getCurrentUserTeams = createAsyncThunk(
     }
   }
 );
+export const fetchMembers = createAsyncThunk(
+  "team/fetchMembers",
+  async (uids: string[], { rejectWithValue }) => {
+    try {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("uid", "in", uids));
+      const querySnapshot = await getDocs(q);
 
+      const membersData: TeamMemberData[] = querySnapshot.docs.map((doc) => {
+        return {
+          name: doc.data().name,
+          email: doc.data().email,
+          uid: doc.data().uid,
+        };
+      });
+      console.log(membersData);
+      
+      return membersData;
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
 export const updateTeam = createAsyncThunk(
   "team/updateTeam",
   async (
@@ -87,7 +107,7 @@ export const updateTeam = createAsyncThunk(
       teamId,
       newOverview,
       newMembers,
-    }: { teamId: string; newOverview: string; newMembers: TeamMemberData[] },
+    }: { teamId: string; newOverview: string; newMembers: string[] },
     { rejectWithValue }
   ) => {
     try {
@@ -164,7 +184,7 @@ export const updateTask = createAsyncThunk(
         description: string;
         deadline: string;
         priority: string;
-        assignedTo: TeamMemberData[];
+        assignedTo: string[];
       };
     },
     { rejectWithValue }
@@ -246,7 +266,7 @@ export const postComment = createAsyncThunk(
         await updateDoc(teamRef, {
           tasks: teamData.tasks,
         });
-        return {taskId, newComment, column}
+        return { taskId, newComment, column };
       }
     } catch (error) {
       if (error instanceof FirebaseError) {

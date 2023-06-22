@@ -17,9 +17,13 @@ import EditTeamForm from "./EditTeamForm";
 const InfoModal = () => {
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const currentUser = useAppSelector((state) => state.root.auth.user);
+  const teamMembers = useAppSelector(
+    (state) => state.root.team.activeTeamMembers
+  );
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const activeTeam = useTeam(activeTeamId as string);
-  const isOwner = currentUser?.email == activeTeam?.owner.email;
+  const isOwner = currentUser?.uid == activeTeam?.owner;
+  const owner = teamMembers?.find((member) => member.uid === activeTeam?.owner);
   const handleEditFormOpen = () => {
     setIsEditFormOpen(true);
   };
@@ -60,12 +64,9 @@ const InfoModal = () => {
             </Typography>
             <Chip
               avatar={
-                <Avatar
-                  alt={activeTeam?.owner.name}
-                  src="/static/images/avatar/1.jpg"
-                />
+                <Avatar alt={owner?.name} src="/static/images/avatar/1.jpg" />
               }
-              label={activeTeam?.owner.name}
+              label={owner?.name}
               variant="outlined"
             />
           </Box>
@@ -74,7 +75,7 @@ const InfoModal = () => {
             <Typography variant="h6" mb={1}>
               Members
             </Typography>
-            {activeTeam?.members.map((member) => (
+            {teamMembers?.map((member) => (
               <Chip
                 key={member.email}
                 avatar={

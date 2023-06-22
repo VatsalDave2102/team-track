@@ -28,6 +28,7 @@ interface CustomListItem {
 interface TeamMemberData {
   name: string;
   email: string;
+  uid: string;
 }
 interface TeamOwnerData {
   name: string;
@@ -36,11 +37,11 @@ interface TeamOwnerData {
 interface CreateTeamValues {
   teamName: string;
   overview: string;
-  members: TeamMemberData[];
+  members: string[];
 }
 interface Comment {
   id: string;
-  postedBy: User;
+  postedBy: string;
   text: string;
   commentedOn: string;
 }
@@ -55,7 +56,7 @@ interface Task {
   description: string;
   priority: string;
   deadline: string;
-  assignedTo: TeamMemberData[];
+  assignedTo: string[];
   id: string;
   comments: Comment[];
 }
@@ -66,7 +67,7 @@ interface Tasks {
   completed: Task[];
 }
 interface TeamData extends CreateTeamValues {
-  owner: TeamOwnerData;
+  owner: string;
   id: string;
   image?: string;
   tasks?: Tasks;

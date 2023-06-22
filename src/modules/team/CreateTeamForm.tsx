@@ -17,7 +17,7 @@ import * as Yup from "yup";
 import InputField from "../common/components/InputField";
 import AutoCompleteField from "../common/components/AutoCompleteField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { createTeam, getCurrentUserTeams } from "../../app/team/teamServices";
+import { createTeam } from "../../app/team/teamServices";
 import { CreateTeamValues } from "../../utils/types";
 
 const initialValues: CreateTeamValues = {
@@ -51,16 +51,9 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
         teamName: values.teamName,
         overview: values.overview,
         members: values.members,
-        owner: { name: currentUser.name, email: currentUser.email },
+        owner: currentUser.uid,
       };
-      dispatch(createTeam(teamData)).then(() => {
-        dispatch(
-          getCurrentUserTeams({
-            name: currentUser.name,
-            email: currentUser.email,
-          })
-        );
-      });
+      dispatch(createTeam(teamData));
       handleClose();
     }
   };

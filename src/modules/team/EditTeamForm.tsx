@@ -19,14 +19,12 @@ const validationSchema = Yup.object({
     .min(20, "Overview must be atleast 20 characters long")
     .required("Overview is required!"),
 
-    // members validation
-    members: Yup.array()
-      .min(1, "Must add atleast one member!")
-       ,
+  // members validation
+  members: Yup.array().min(1, "Must add atleast one member!"),
 });
 interface UpdateTeamValues {
   overview: string;
-  members: TeamMemberData[];
+  members: string[];
 }
 const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
   const dispatch = useAppDispatch();
@@ -35,10 +33,13 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
   const isTeamDelete = useAppSelector((state) => state.root.team.isTeamDelete);
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const currentUser = useAppSelector((state) => state.root.auth.user);
+  const teamMembers = useAppSelector(
+    (state) => state.root.team.activeTeamMembers
+  );
   const activeTeam = useTeam(activeTeamId as string);
   const initialValues: UpdateTeamValues = {
     overview: activeTeam?.overview as string,
-    members: activeTeam?.members as TeamMemberData[],
+    members: activeTeam?.members as string[],
   };
   const handleSubmit = (values: typeof initialValues) => {
     console.log(values.members);
@@ -50,12 +51,7 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
           newMembers: values.members,
         })
       ).then(() => {
-        dispatch(
-          getCurrentUserTeams({
-            name: currentUser.name,
-            email: currentUser.email,
-          })
-        );
+        dispatch(getCurrentUserTeams(currentUser.uid));
       });
   };
   const handleDeleteTeam = (teamId: string) => {
@@ -71,7 +67,11 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
       onSubmit={handleSubmit}
       validateOnChange
     >
-      {(formikProps) => {
+      {() => {
+        // getting data of assigned users from teamMembers in redux using their uid
+        const members: TeamMemberData[] = teamMembers?.filter(
+          (member) => member.uid !== activeTeam?.owner
+        ) as TeamMemberData[];
         return (
           <Form>
             <Stack
@@ -104,7 +104,7 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
                       setFieldValue={form.setFieldValue}
                       mode="team-edit"
                       fieldName="members"
-                      value={formikProps.values.members}
+                      existingValue={members}
                     />
                   )}
                 </Field>

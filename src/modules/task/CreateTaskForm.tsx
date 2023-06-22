@@ -72,12 +72,7 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
     if (activeTeamId && currentUser) {
       dispatch(assignTasks({ teamId: activeTeamId, taskData: values })).then(
         () => {
-          dispatch(
-            getCurrentUserTeams({
-              name: currentUser.name,
-              email: currentUser.email,
-            })
-          );
+          dispatch(getCurrentUserTeams(currentUser.uid));
         }
       );
       handleClose();

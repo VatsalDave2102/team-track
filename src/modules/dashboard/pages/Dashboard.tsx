@@ -9,14 +9,7 @@ const Dashboard = () => {
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const dispatch = useAppDispatch();
   useEffect(() => {
-    
-    if (currentUser)
-      dispatch(
-        getCurrentUserTeams({
-          name: currentUser.name,
-          email: currentUser.email,
-        })
-      );
+    if (currentUser) dispatch(getCurrentUserTeams(currentUser.uid));
   }, [dispatch, currentUser]);
 
   return (

@@ -15,7 +15,7 @@ const AutoCompleteField = ({
   setFieldValue,
   mode,
   fieldName,
-  value,
+  existingValue,
 }: {
   setFieldValue: (
     field: string,
@@ -24,49 +24,82 @@ const AutoCompleteField = ({
   ) => void;
   mode: "team-create" | "team-edit" | "task-assign";
   fieldName: string;
-  value?: TeamMemberData[];
+  existingValue?: TeamMemberData[];
 }) => {
   const [searchResults, setSearchResults] = useState<TeamMemberData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedValue, setSelectedValue] = useState<TeamMemberData[]>(
+    existingValue || []
+  );
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const activeTeam = useTeam(activeTeamId as string);
 
-  const handleSearch = debounce(async (searchQuery) => {
+  const handleSearch = debounce(async (searchQuery: string) => {
     try {
-      setIsLoading(true);
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("name", ">=", searchQuery));
-      const results: TeamMemberData[] = [];
-
-      if (mode == "team-create") {
+      if (searchQuery.length > 0) {
+        const results: TeamMemberData[] = [];
+        setIsLoading(true);
+        const usersRef = collection(db, "users");
+        const q = query(
+          usersRef,
+          where("name", ">=", searchQuery),
+          where("name", "<=", searchQuery + "\uf8ff")
+        );
         const querySnaphot = await getDocs(q);
 
-        querySnaphot.forEach((doc) => {
-          if (currentUser?.email !== doc.data().email)
-            results.push({ name: doc.data().name, email: doc.data().email });
-        });
-        setSearchResults(results);
-        setIsLoading(false);
-      }
-      if (mode == "team-edit") {
-        const querySnaphot = await getDocs(q);
-        querySnaphot.forEach((doc) => {
-          if (
-            currentUser?.email !== doc.data().email &&
-            !value?.some((member) => member.email === doc.data().email)
-          )
-            results.push({ name: doc.data().name, email: doc.data().email });
-        });
-        setSearchResults(results);
-        setIsLoading(false);
-      }
-      if (mode == "task-assign") {
-        activeTeam?.members.forEach((member) => {
-          results.push({ name: member.name, email: member.email });
-        });
-        setSearchResults(results);
-        setIsLoading(false);
+        if (mode == "team-create") {
+          querySnaphot.forEach((doc) => {
+            console.log(doc.data());
+
+            if (currentUser?.email !== doc.data().email)
+              results.push({
+                name: doc.data().name,
+                email: doc.data().email,
+                uid: doc.data().uid,
+              });
+          });
+
+          setSearchResults(results);
+          setIsLoading(false);
+        }
+        if (mode == "team-edit") {
+          const querySnaphot = await getDocs(q);
+          querySnaphot.forEach((doc) => {
+            if (
+              currentUser?.email !== doc.data().email &&
+              !existingValue?.some(
+                (member) => member.email === doc.data().email
+              )
+            )
+              results.push({
+                name: doc.data().name,
+                email: doc.data().email,
+                uid: doc.data().uid,
+              });
+          });
+
+          setSearchResults(results);
+          setIsLoading(false);
+        }
+        if (mode == "task-assign") {
+          const querySnaphot = await getDocs(q);
+          querySnaphot.forEach((doc) => {
+            if (
+              currentUser?.email === doc.data().email ||
+              activeTeam?.members.some((member) => member == doc.data().uid)
+            ) {
+              results.push({
+                name: doc.data().name,
+                email: doc.data().email,
+                uid: doc.data().uid,
+              });
+            }
+          });
+
+          setSearchResults(results);
+          setIsLoading(false);
+        }
       }
     } catch (error) {
       setIsLoading(false);
@@ -75,18 +108,20 @@ const AutoCompleteField = ({
   }, 300);
 
   const handleChange = (value: TeamMemberData[]) => {
-    const selectedUsers = value.map((user) => user);
+    setSelectedValue(value);
+    const selectedUsers = value.map((user) => user.uid);
     setFieldValue(fieldName, selectedUsers);
   };
+
   return (
     <Autocomplete
       multiple
       isOptionEqualToValue={(option, value) => option.email === value.email}
       options={searchResults}
       getOptionLabel={(option) => option.name}
+      value={selectedValue}
       onChange={(event, value) => handleChange(value)}
       onInputChange={(event, value) => handleSearch(value)}
-      value={value}
       renderInput={(params) => (
         <TextField
           {...params}

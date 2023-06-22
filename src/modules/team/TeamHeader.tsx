@@ -16,9 +16,12 @@ import TeamInfo from "./TeamInfo";
 
 const TeamHeader = () => {
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
+  const teamMembers = useAppSelector(
+    (state) => state.root.team.activeTeamMembers
+  );
   const activeTeam = useTeam(activeTeamId as string);
   const currentUser = useAppSelector((state) => state.root.auth.user);
-  const isOwner = currentUser?.email == activeTeam?.owner.email;
+  const isOwner = currentUser?.uid == activeTeam?.owner;
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -56,8 +59,8 @@ const TeamHeader = () => {
             Members
           </Typography>
           <AvatarGroup max={4}>
-            {activeTeam?.members.map((member) => (
-              <Avatar alt={member.name} src={member.email} key={member.email} />
+            {teamMembers?.map((member) => (
+              <Avatar alt={member.name} src={member.email} key={member.uid} />
             ))}
           </AvatarGroup>
         </Box>

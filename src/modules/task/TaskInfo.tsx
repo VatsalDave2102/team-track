@@ -12,8 +12,14 @@ import {
 import EditTaskForm from "./EditTaskForm";
 import { useAppSelector } from "../../app/hooks";
 import useTeam from "../../custom-hook/useTeam";
-import { useState } from "react";
-import { PriorityOption, Task, Tasks, TeamData } from "../../utils/types";
+import { useEffect, useState } from "react";
+import {
+  PriorityOption,
+  Task,
+  Tasks,
+  TeamData,
+  TeamMemberData,
+} from "../../utils/types";
 import { taskColor } from "../../utils/utils";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
@@ -31,13 +37,31 @@ const TaskInfo = ({
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const activeTaskId = useAppSelector((state) => state.root.team.activeTask);
+  const [assignedTo, setAssignedTo] = useState<TeamMemberData[]>([]);
+  const teamMembers = useAppSelector(
+    (state) => state.root.team.activeTeamMembers
+  );
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const activeTeam = useTeam(activeTeamId as string);
   const [activeTask, taskColumn] = useTask(
     activeTaskId as string,
     activeTeam as TeamData
   );
-  const isOwner = currentUser?.email == activeTeam?.owner.email;
+  useEffect(() => {
+    // getting data of assigned users from teamMembers in redux using their uid
+    const result = activeTask?.assignedTo.map((uid) => {
+      const user = teamMembers?.find((member) => member.uid === uid);
+      return user ? user : null;
+    });
+    if (result) {
+      const filteredResult = result.filter(
+        (member): member is TeamMemberData => member !== null
+      );
+      setAssignedTo(filteredResult);
+    }
+  }, [setAssignedTo, activeTask?.assignedTo, teamMembers]);
+
+  const isOwner = currentUser?.uid == activeTeam?.owner;
   const handleEditFormOpen = () => {
     setIsEditFormOpen(true);
   };
@@ -102,9 +126,9 @@ const TaskInfo = ({
                 <Typography variant="h6" mb={1}>
                   Assigned to
                 </Typography>
-                {activeTask.assignedTo.map((member) => (
+                {assignedTo.map((member) => (
                   <Chip
-                  key={member.email}
+                    key={member.uid}
                     avatar={
                       <Avatar
                         alt={member.name}

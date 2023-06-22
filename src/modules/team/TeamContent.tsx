@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import TaskContainer from "../task/TaskContainer";
 import TeamHeader from "./TeamHeader";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { setActiveTeam } from "../../app/team/teamSlice";
+import { clearTeamMembers, setActiveTeam } from "../../app/team/teamSlice";
 import { useLocation } from "react-router-dom";
 import useTeam from "../../custom-hook/useTeam";
+import { fetchMembers } from "../../app/team/teamServices";
 
 const TeamContent = () => {
   const [value, setValue] = useState("2");
@@ -18,11 +19,14 @@ const TeamContent = () => {
   const teamId = endpoints[endpoints.length - 1];
   const activeTeam = useTeam(activeTeamId as string);
   useEffect(() => {
+    const uidArray = [activeTeam?.owner, ...(activeTeam?.members || [])];
     dispatch(setActiveTeam(teamId));
+    dispatch(fetchMembers(uidArray as string[]));
     return () => {
       dispatch(setActiveTeam(null));
+      dispatch(clearTeamMembers());
     };
-  }, [location, dispatch, teamId]);
+  }, [location, dispatch, teamId, activeTeam?.members, activeTeam?.owner]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);

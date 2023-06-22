@@ -5,6 +5,7 @@ import {
   createTeam,
   deleteTask,
   deleteTeam,
+  fetchMembers,
   getCurrentUserTeams,
   postComment,
   updateTask,
@@ -12,7 +13,13 @@ import {
   updateTaskOrderSameColumn,
   updateTeam,
 } from "./teamServices";
-import { Comment, Task, Tasks, TeamData } from "../../utils/types";
+import {
+  Comment,
+  Task,
+  Tasks,
+  TeamData,
+  TeamMemberData,
+} from "../../utils/types";
 
 interface TeamState {
   teamList: TeamData[];
@@ -23,6 +30,7 @@ interface TeamState {
   isTaskDelete: boolean;
   isTeamDelete: boolean;
   activeTask: string | null;
+  activeTeamMembers: TeamMemberData[] | null;
 }
 const initialState: TeamState = {
   teamList: [],
@@ -33,6 +41,7 @@ const initialState: TeamState = {
   uploadComment: false,
   isTaskDelete: false,
   isTeamDelete: false,
+  activeTeamMembers: null,
 };
 
 export const teamSlice = createSlice({
@@ -41,6 +50,9 @@ export const teamSlice = createSlice({
   reducers: {
     setActiveTeam: (state, action) => {
       state.activeTeam = action.payload;
+    },
+    clearTeamMembers: (state) => {
+      state.activeTeamMembers = null;
     },
     updateTaskOrderSame: (state, action) => {
       const {
@@ -69,8 +81,9 @@ export const teamSlice = createSlice({
       .addCase(createTeam.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(createTeam.fulfilled, (state) => {
+      .addCase(createTeam.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.teamList.push(action.payload as TeamData);
       })
       .addCase(createTeam.rejected, (state, action) => {
         state.isLoading = false;
@@ -87,6 +100,13 @@ export const teamSlice = createSlice({
       .addCase(getCurrentUserTeams.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      })
+      .addCase(fetchMembers.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchMembers.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.activeTeamMembers = action.payload as TeamMemberData[];
       })
       .addCase(updateTeam.pending, (state) => {
         state.isLoading = true;
@@ -211,6 +231,7 @@ export const teamSlice = createSlice({
 
 export const {
   setActiveTeam,
+  clearTeamMembers,
   updateTaskOrderSame,
   updateTaskOrderDifferent,
   setActiveTask,

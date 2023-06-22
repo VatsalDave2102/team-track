@@ -21,7 +21,7 @@ import InputField from "../common/components/InputField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import * as Yup from "yup";
 import dayjs from "dayjs";
-import { PriorityOption, Task, Tasks } from "../../utils/types";
+import { PriorityOption, Task, Tasks, TeamMemberData } from "../../utils/types";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import AutoCompleteField from "../common/components/AutoCompleteField";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -63,6 +63,9 @@ const EditTaskForm = ({
   const isLoading = useAppSelector((state) => state.root.team.isLoading);
   const isTaskDelete = useAppSelector((state) => state.root.team.isTaskDelete);
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
+  const teamMembers = useAppSelector(
+    (state) => state.root.team.activeTeamMembers
+  );
   const activeTeam = useTeam(activeTeamId as string);
   const dispatch = useAppDispatch();
   const initialValues = {
@@ -77,12 +80,7 @@ const EditTaskForm = ({
       dispatch(
         updateTask({ teamId: activeTeamId as string, taskData: values })
       ).then(() => {
-        dispatch(
-          getCurrentUserTeams({
-            name: currentUser.name,
-            email: currentUser.email,
-          })
-        );
+        dispatch(getCurrentUserTeams(currentUser.uid));
       });
     }
   };
@@ -114,6 +112,11 @@ const EditTaskForm = ({
       validateOnChange
     >
       {(formikProps) => {
+        // getting data of assigned users from teamMembers in redux using their uid
+        const assignedTo: TeamMemberData[] = task.assignedTo.map((uid) => {
+          const user = teamMembers?.find((member) => member.uid === uid);
+          return user ? { uid, name: user.name, email: user.email } : null;
+        }) as TeamMemberData[];
         return (
           <Form>
             <Stack
@@ -182,7 +185,7 @@ const EditTaskForm = ({
                       setFieldValue={form.setFieldValue}
                       mode="task-assign"
                       fieldName="assignedTo"
-                      value={formikProps.values.assignedTo}
+                      existingValue={assignedTo}
                     />
                   )}
                 </Field>
