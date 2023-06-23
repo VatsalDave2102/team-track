@@ -13,6 +13,9 @@ interface User {
   name: string;
   email: string;
   uid: string;
+  profileImage?: string;
+  bio?: string;
+  phone: string;
 }
 
 interface CustomListInfo {

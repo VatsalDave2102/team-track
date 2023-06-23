@@ -51,6 +51,10 @@ function NavbarComponent() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  const handleProfile = () => {
+    navigate("/user-profile");
+    handleCloseUserMenu()
+  };
   const handleLogout = async () => {
     const logoutStatus = await dispatch(logout());
     if (logoutStatus.meta.requestStatus === "rejected") {
@@ -140,7 +144,7 @@ function NavbarComponent() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={user?.name} src=" " />
+                <Avatar alt={user?.name} src={user?.profileImage} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -159,24 +163,14 @@ function NavbarComponent() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
+              <MenuItem key="profile" onClick={handleProfile}>
+                <Typography textAlign="center">Profile</Typography>
+              </MenuItem>
               <MenuItem key="logout" onClick={handleLogout}>
                 <Typography textAlign="center">Logout</Typography>
               </MenuItem>
             </Menu>
           </Box>
-
-          {/* {!user && (
-            <Stack direction="row" spacing={2}>
-              <Button
-                variant="contained"
-                color="secondary"
-                component={Link}
-                to={"/login"}
-              >
-                Login
-              </Button>
-            </Stack>
-          )} */}
         </Toolbar>
       </Container>
     </AppBar>

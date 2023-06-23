@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { User } from "../../utils/types";
-import { login, logout, signup } from "./authServices";
+import { login, logout, signup, uploadImage } from "./authServices";
 
 interface AuthState {
   user: User | null;
@@ -66,6 +66,13 @@ export const authSlice = createSlice({
       .addCase(logout.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      })
+      .addCase(uploadImage.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(uploadImage.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user!.profileImage = action.payload as string;
       });
   },
 });

@@ -8,6 +8,7 @@ import Dashboard from "../modules/dashboard/pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import TeamContent from "../modules/team/TeamContent";
 import Teams from "../modules/team/Teams";
+import UserProfile from "../modules/user/pages/UserProfile";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
           },
           { path: "teams/:teamId", element: <TeamContent /> },
         ],
+      },
+      {
+        path: "user-profile",
+        element: <ProtectedRoute Component={UserProfile} />,
       },
     ],
   },

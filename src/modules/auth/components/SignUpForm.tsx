@@ -28,7 +28,7 @@ const validationSchema = Yup.object({
 
   // phone number validation
   phone: Yup.string()
-    .matches(/^\d{10}$/, "Invalid mobile number")
+    .matches(/^\+\d{1,3} \d{10}$/, "Invalid mobile number")
     .required("Mobile number is required!"),
 
   // password validation
@@ -54,8 +54,8 @@ const SignUpForm = () => {
     }
   });
   const handleSumbit = async (values: typeof initialValues) => {
-    const { name, email, password } = values;
-    const newUser = await dispatch(signup({ name, email, password }));
+    const { name, email, password, phone } = values;
+    const newUser = await dispatch(signup({ name, email, password, phone }));
 
     if (newUser.meta.requestStatus === "rejected") {
       dispatch(setError("User already exists!"));
