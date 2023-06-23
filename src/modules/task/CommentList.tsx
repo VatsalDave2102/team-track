@@ -9,33 +9,26 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Comment, Tasks } from "../../utils/types";
+import { Comment, TeamData } from "../../utils/types";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import useTeam from "../../custom-hook/useTeam";
 import { useAppSelector } from "../../app/hooks";
 import { useState } from "react";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import useTask from "../../custom-hook/useTask";
 
 dayjs.extend(relativeTime);
 
-const CommentList = ({
-  taskId,
-  column,
-}: {
-  taskId: string;
-  column: keyof Tasks;
-}) => {
+const CommentList = ({ taskId }: { taskId: string }) => {
   const [commentOpen, setCommentOpen] = useState(false);
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const activeTeam = useTeam(activeTeamId as string);
-  let comments: Comment[] = [];
-  if (activeTeam?.tasks) {
-    const taskIndex = activeTeam?.tasks[column].findIndex(
-      (task) => task.id === taskId
-    );
-    comments = activeTeam?.tasks[column][taskIndex].comments;
-  }
+  const teamMembers = useAppSelector(
+    (state) => state.root.team.activeTeamMembers
+  );
+  const [activeTask] = useTask(taskId as string, activeTeam as TeamData);
+  const taskComments = activeTask?.comments;
   const handleCommentOpen = () => {
     setCommentOpen(!commentOpen);
   };
@@ -57,13 +50,13 @@ const CommentList = ({
 
       <Collapse in={commentOpen}>
         <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-          {comments.map((comment) => {
+          {taskComments?.map((comment) => {
             const { commentedOn, postedBy, id, text }: Comment = comment;
-
+            const user = teamMembers?.find((member) => member.uid === postedBy);
             return (
               <ListItem alignItems="flex-start" disablePadding key={id}>
                 <ListItemAvatar>
-                  <Avatar alt={postedBy.name} src="sdf" />
+                  <Avatar alt={user?.name} src="sdf" />
                 </ListItemAvatar>
                 <ListItemText
                   primary={
@@ -72,7 +65,7 @@ const CommentList = ({
                       spacing={1}
                       alignItems={"baseline"}
                     >
-                      <Typography variant="body1">{postedBy.name}</Typography>
+                      <Typography variant="body1">{user?.name}</Typography>
                       <Typography variant="body2" fontWeight={"300"}>
                         {dayjs(commentedOn).fromNow()}
                       </Typography>

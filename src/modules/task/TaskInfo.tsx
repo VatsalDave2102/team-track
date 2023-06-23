@@ -16,7 +16,6 @@ import { useEffect, useState } from "react";
 import {
   PriorityOption,
   Task,
-  Tasks,
   TeamData,
   TeamMemberData,
 } from "../../utils/types";
@@ -166,10 +165,7 @@ const TaskInfo = ({
           <AddCommentField />
 
           {activeTask.comments.length > 0 ? (
-            <CommentList
-              taskId={activeTask.id}
-              column={taskColumn as keyof Tasks}
-            />
+            <CommentList taskId={activeTask.id} />
           ) : (
             <Typography
               variant="body1"

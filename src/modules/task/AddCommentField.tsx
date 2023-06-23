@@ -10,7 +10,7 @@ import {
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import useTask from "../../custom-hook/useTask";
-import { Comment, Tasks, TeamData, User } from "../../utils/types";
+import { Comment, Tasks, TeamData } from "../../utils/types";
 import { genreateId } from "../../utils/utils";
 import { postComment } from "../../app/team/teamServices";
 import dayjs from "dayjs";
@@ -31,14 +31,14 @@ const AddCommentField = () => {
     setComment(event.target.value);
   };
   const handlePostComment = (comment: string) => {
-    const commentData: Comment = {
-      id: genreateId(6),
-      postedBy: currentUser as User,
-      text: comment,
-      commentedOn: dayjs().toString(),
-    };
-
     if (currentUser && activeTask) {
+      const commentData: Comment = {
+        id: genreateId(6),
+        postedBy: currentUser?.uid,
+        text: comment,
+        commentedOn: dayjs().toString(),
+      };
+
       dispatch(
         postComment({
           teamId: activeTeamId as string,

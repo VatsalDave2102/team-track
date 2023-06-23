@@ -20,7 +20,7 @@ const TaskContainer = () => {
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const activeTeam = useTeam(activeTeamId as string);
   const currentUser = useAppSelector((state) => state.root.auth.user);
-  const isOwner = currentUser?.email == activeTeam?.owner.email;
+  const isOwner = currentUser?.uid == activeTeam?.owner;
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
   const handleModalOpen = () => {
