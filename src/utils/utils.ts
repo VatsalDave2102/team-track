@@ -1,4 +1,4 @@
-import { TaskColor } from "./types";
+import { PriorityOption, TaskColor } from "./types";
 
 const MAX_SIZE = 2 * 1024 * 1024;
 
@@ -16,4 +16,17 @@ function genreateId(length: number) {
 }
 
 const taskColor: TaskColor[] = ["primary", "info", "warning", "error"];
-export { MAX_SIZE, genreateId, taskColor };
+
+const radioFieldOptions = [
+  { value: PriorityOption.Low.toString(), label: "Low" },
+  {
+    value: PriorityOption.Medium.toString(),
+    label: "Medium",
+  },
+  { value: PriorityOption.High.toString(), label: "High" },
+  {
+    value: PriorityOption.Urgent.toString(),
+    label: "Urgent",
+  },
+];
+export { MAX_SIZE, genreateId, taskColor, radioFieldOptions };

@@ -2,11 +2,7 @@ import {
   Button,
   CircularProgress,
   FormControl,
-  FormControlLabel,
   FormHelperText,
-  FormLabel,
-  Radio,
-  RadioGroup,
   Stack,
 } from "@mui/material";
 import {
@@ -20,15 +16,14 @@ import {
 import InputField from "../common/components/InputField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import * as Yup from "yup";
-import dayjs from "dayjs";
-import { PriorityOption, Task, Tasks, TeamMemberData } from "../../utils/types";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Task, Tasks, TeamMemberData } from "../../utils/types";
 import AutoCompleteField from "../common/components/AutoCompleteField";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { deleteTask, updateTask } from "../../app/team/teamServices";
 import useTeam from "../../custom-hook/useTeam";
-
+import RadioGroupField from "./RadioGroupField";
+import { radioFieldOptions } from "../../utils/utils";
+import DatePickerField from "./DatePickerField";
+import { isEqual } from "lodash";
 const validationSchema = Yup.object({
   // description validation
   description: Yup.string()
@@ -129,42 +124,15 @@ const EditTaskForm = ({
                 multiline
                 sx={{ width: "100%" }}
               />
-              <FormControl>
-                <FormLabel id="priority-radio-buttons">Priority</FormLabel>
-                <RadioGroup
-                  row
-                  name={"priority"}
-                  aria-labelledby="priority-radio-buttons"
-                  value={formikProps.values.priority.toString()}
-                  onChange={(event) => {
-                    formikProps.setFieldValue(
-                      "priority",
-                      event.currentTarget.value
-                    );
-                  }}
-                >
-                  <FormControlLabel
-                    value={PriorityOption.Low.toString()}
-                    control={<Radio />}
-                    label="Low"
-                  />
-                  <FormControlLabel
-                    value={PriorityOption.Medium.toString()}
-                    control={<Radio />}
-                    label="Medium"
-                  />
-                  <FormControlLabel
-                    value={PriorityOption.High.toString()}
-                    control={<Radio />}
-                    label="High"
-                  />
-                  <FormControlLabel
-                    value={PriorityOption.Urgent.toString()}
-                    control={<Radio />}
-                    label="Urgent"
-                  />
-                </RadioGroup>
-              </FormControl>
+              <RadioGroupField
+                name="priority"
+                label="Priority"
+                options={radioFieldOptions}
+                value={formikProps.values.priority.toString()}
+                onChange={(value) =>
+                  formikProps.setFieldValue("priority", value)
+                }
+              />
               <FormControl error fullWidth>
                 <Field name="assignedTo">
                   {({
@@ -189,22 +157,15 @@ const EditTaskForm = ({
                   className="error"
                 />
               </FormControl>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={["DatePicker"]}>
-                  <DatePicker
-                    disablePast
-                    label="Deadline"
-                    value={dayjs(formikProps.values.deadline)}
-                    format="DD-MM-YYYY"
-                    onChange={(value) => {
-                      formikProps.setFieldValue(
-                        "deadline",
-                        dayjs(value).toString()
-                      );
-                    }}
-                  />
-                </DemoContainer>
-              </LocalizationProvider>
+
+              <DatePickerField
+                label="Deadline"
+                value={formikProps.values.deadline}
+                onChange={(value) => {
+                  formikProps.setFieldValue("deadline", value);
+                }}
+              />
+
               <Stack direction={"row"} justifyContent={"space-evenly"}>
                 <Button
                   variant="contained"
@@ -238,7 +199,13 @@ const EditTaskForm = ({
                     />
                   )}
                 </Button>
-                <Button type="submit" variant="contained" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={
+                    isLoading || isEqual(formikProps.values, initialValues)
+                  }
+                >
                   Save changes
                   {isLoading && (
                     <CircularProgress

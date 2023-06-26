@@ -18,6 +18,7 @@ import {
 } from "../../app/team/teamServices";
 import { TeamMemberData } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
+import { isEqual } from "lodash";
 
 const validationSchema = Yup.object({
   // overview validation
@@ -78,7 +79,7 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
       onSubmit={handleSubmit}
       validateOnChange
     >
-      {() => {
+      {(formikProps) => {
         // getting data of assigned users from teamMembers in redux using their uid
         const members: TeamMemberData[] = teamMembers?.filter(
           (member) => member.uid !== activeTeam?.owner
@@ -171,7 +172,13 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
                     />
                   )}
                 </Button>
-                <Button type="submit" variant="contained" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={
+                    isLoading || isEqual(formikProps.values, initialValues)
+                  }
+                >
                   Save
                   {isLoading && (
                     <CircularProgress
