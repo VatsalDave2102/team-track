@@ -56,7 +56,7 @@ const CommentList = ({ taskId }: { taskId: string }) => {
             return (
               <ListItem alignItems="flex-start" disablePadding key={id}>
                 <ListItemAvatar>
-                  <Avatar alt={user?.name} src="sdf" />
+                  <Avatar alt={user?.name} src={user?.profileImage} />
                 </ListItemAvatar>
                 <ListItemText
                   primary={

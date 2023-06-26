@@ -2,11 +2,10 @@ import { Button, Collapse, Stack } from "@mui/material";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import InputField from "../../common/components/InputField";
+import { useAppDispatch } from "../../../app/hooks";
+import { updateUserDetails } from "../../../app/auth/authServices";
+import { User } from "../../../utils/types";
 
-const initialValues = {
-  bio: "",
-  phone: "",
-};
 const validationSchema = Yup.object({
   // bio validation
   bio: Yup.string()
@@ -25,16 +24,28 @@ const validationSchema = Yup.object({
 const UserEdit = ({
   handleClose,
   isEditFormOpen,
+  currentUser,
 }: {
   handleClose: () => void;
   isEditFormOpen: boolean;
+  currentUser: User;
 }) => {
+  const dispatch = useAppDispatch();
+  const initialValues = {
+    bio: currentUser?.bio as string,
+    phone: currentUser?.phone as string,
+  };
   const handleGoBack = () => {
     handleClose();
   };
   const handleSubmit = (values: typeof initialValues) => {
-    console.log(values);
+    dispatch(
+      updateUserDetails({ userData: values, uid: currentUser?.uid as string })
+    ).then(() => {
+      handleClose();
+    });
   };
+
   return (
     <Collapse in={isEditFormOpen}>
       <Formik
@@ -58,7 +69,7 @@ const UserEdit = ({
                   type="text"
                   rows={10}
                   multiline
-                  width={"100%"}
+                  sx={{ width: "100%" }}
                 />
                 <InputField name="phone" label="Phone" type="text" />
                 <Stack

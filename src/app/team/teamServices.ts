@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Comment, Task, Tasks, TeamData, TeamMemberData } from "../../utils/types";
+import {
+  Comment,
+  Task,
+  Tasks,
+  TeamData,
+  TeamMemberData,
+} from "../../utils/types";
 import {
   addDoc,
   arrayUnion,
@@ -75,6 +81,7 @@ export const getCurrentUserTeams = createAsyncThunk(
     }
   }
 );
+
 export const fetchMembers = createAsyncThunk(
   "team/fetchMembers",
   async (uids: string[], { rejectWithValue }) => {
@@ -88,10 +95,10 @@ export const fetchMembers = createAsyncThunk(
           name: doc.data().name,
           email: doc.data().email,
           uid: doc.data().uid,
+          profileImage: doc.data().profileImage,
         };
       });
-      console.log(membersData);
-      
+
       return membersData;
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -100,6 +107,7 @@ export const fetchMembers = createAsyncThunk(
     }
   }
 );
+
 export const updateTeam = createAsyncThunk(
   "team/updateTeam",
   async (

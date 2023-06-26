@@ -9,7 +9,7 @@ const InputField: React.FC<InputFieldProps> = ({ label, ...props }) => {
   const showError = meta.touched && meta.error;
 
   return (
-    <Box width={"100%"}>
+    <Box>
       <TextField
         sx={{ width: "100%" }}
         {...field}

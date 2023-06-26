@@ -56,7 +56,11 @@ const AddCommentField = () => {
         <Typography variant="h6">Comments</Typography>
       </Stack>
       <Stack direction={"row"} spacing={1} alignItems={"flex-start"} my={2}>
-        <Avatar alt={currentUser?.name} src="sfds" sx={{ mt: 1 }} />
+        <Avatar
+          alt={currentUser?.name}
+          src={currentUser?.profileImage}
+          sx={{ mt: 1 }}
+        />
         <TextField
           name="comment"
           label="Comment"

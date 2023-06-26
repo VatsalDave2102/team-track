@@ -63,9 +63,7 @@ const InfoModal = () => {
               Owner
             </Typography>
             <Chip
-              avatar={
-                <Avatar alt={owner?.name} src="/static/images/avatar/1.jpg" />
-              }
+              avatar={<Avatar alt={owner?.name} src={owner?.profileImage} />}
               label={owner?.name}
               variant="outlined"
             />
@@ -78,9 +76,7 @@ const InfoModal = () => {
             {teamMembers?.map((member) => (
               <Chip
                 key={member.email}
-                avatar={
-                  <Avatar alt={member.name} src="/static/images/avatar/1.jpg" />
-                }
+                avatar={<Avatar alt={member.name} src={member.profileImage} />}
                 label={member.name}
                 variant="outlined"
                 sx={{ mr: 1 }}

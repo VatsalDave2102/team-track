@@ -32,6 +32,7 @@ interface TeamMemberData {
   name: string;
   email: string;
   uid: string;
+  profileImage?: string;
 }
 interface TeamOwnerData {
   name: string;

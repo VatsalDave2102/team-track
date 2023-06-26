@@ -50,8 +50,6 @@ const AutoCompleteField = ({
 
         if (mode == "team-create") {
           querySnaphot.forEach((doc) => {
-            console.log(doc.data());
-
             if (currentUser?.email !== doc.data().email)
               results.push({
                 name: doc.data().name,

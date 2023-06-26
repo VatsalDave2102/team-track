@@ -42,7 +42,6 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
     members: activeTeam?.members as string[],
   };
   const handleSubmit = (values: typeof initialValues) => {
-    console.log(values.members);
     if (currentUser)
       dispatch(
         updateTeam({

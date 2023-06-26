@@ -2,9 +2,12 @@ import { Box, Container } from "@mui/material";
 import UserData from "../components/UserData";
 import { useState } from "react";
 import UserEdit from "../components/UserEdit";
+import { useAppSelector } from "../../../app/hooks";
+import { User } from "../../../utils/types";
 
 const UserProfile = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const currentUser = useAppSelector((state) => state.root.auth.user);
   const handleEditFormOpen = () => {
     setIsEditFormOpen(true);
   };
@@ -36,6 +39,7 @@ const UserProfile = () => {
             <UserEdit
               handleClose={handleEditFormClose}
               isEditFormOpen={isEditFormOpen}
+              currentUser={currentUser as User}
             />
           </Box>
         </Box>

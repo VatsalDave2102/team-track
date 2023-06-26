@@ -28,7 +28,10 @@ const validationSchema = Yup.object({
 
   // phone number validation
   phone: Yup.string()
-    .matches(/^\+\d{1,3} \d{10}$/, "Invalid mobile number")
+    .matches(
+      /^\+\d{1,3} \d{10}$/,
+      "Invalid mobile number, format is +91 9XXXXXXXXX0"
+    )
     .required("Mobile number is required!"),
 
   // password validation

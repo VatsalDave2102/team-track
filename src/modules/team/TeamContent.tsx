@@ -1,5 +1,5 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, Tab } from "@mui/material";
+import { Box, Tab, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import TaskContainer from "../task/TaskContainer";
 import TeamHeader from "./TeamHeader";
@@ -39,21 +39,28 @@ const TeamContent = () => {
         <TeamHeader />
         <Box>
           <TabContext value={value}>
-            <Box sx={{ borderTop: 1, borderColor: "divider" }}>
+            <Box>
               <TabList aria-label="Tabs" onChange={handleTabChange}>
                 <Tab label="Overview" value="1" />
                 <Tab label="Tasks" value="2" />
-                <Tab label="Timeline" value="3" />
               </TabList>
             </Box>
             <TabPanel value="1" sx={{ p: 1 }}>
-              {activeTeam?.overview}
+              <Box>
+                <Typography
+                  variant="h5"
+                  color={"GrayText"}
+                  textAlign={"center"}
+                  sx={{
+                    wordWrap: "break-word",
+                  }}
+                >
+                  {activeTeam?.overview}
+                </Typography>
+              </Box>
             </TabPanel>
             <TabPanel value="2" sx={{ p: 0, pt: 2 }}>
               <TaskContainer />
-            </TabPanel>
-            <TabPanel value="3" sx={{ p: 2 }}>
-              Timeline
             </TabPanel>
           </TabContext>
         </Box>

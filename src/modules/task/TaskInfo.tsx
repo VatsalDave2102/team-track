@@ -129,10 +129,7 @@ const TaskInfo = ({
                   <Chip
                     key={member.uid}
                     avatar={
-                      <Avatar
-                        alt={member.name}
-                        src="/static/images/avatar/1.jpg"
-                      />
+                      <Avatar alt={member.name} src={member.profileImage} />
                     }
                     label={member.name}
                     variant="outlined"

@@ -101,7 +101,6 @@ export const uploadImage = createAsyncThunk(
       const userDocRef = doc(db, "users", uid);
       const userDocSnapshot = await getDoc(userDocRef);
       const userData = userDocSnapshot.data();
-      console.log(userData);
 
       if (userData && userData.profileImage) {
         const existingImagePath = userData.profileImage;
@@ -132,6 +131,34 @@ export const uploadImage = createAsyncThunk(
     }
   }
 );
+
+interface UpdateUserDetails {
+  userData: { bio: string; phone: string };
+  uid: string;
+}
+export const updateUserDetails = createAsyncThunk(
+  "auth/updateUserDetails",
+  async ({ userData, uid }: UpdateUserDetails, { rejectWithValue }) => {
+    try {
+      const { bio, phone } = userData;
+      // getting user reference
+      const userDocRef = doc(db, "users", uid);
+
+      // updating user doc in firestore
+      await updateDoc(userDocRef, {
+        bio: bio,
+        phone: phone,
+      });
+      // returning the updated data
+      return userData;
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+
 export const trackCurrentUser = (): AppThunk => (dispatch) => {
   dispatch(setLoading(true));
   onAuthStateChanged(auth, async (user) => {
