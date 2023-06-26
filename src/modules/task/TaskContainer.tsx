@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Skeleton, Typography } from "@mui/material";
 import TaskList from "./TaskList";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import useTeam from "../../custom-hook/useTeam";
@@ -19,6 +19,7 @@ import {
 const TaskContainer = () => {
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const activeTeam = useTeam(activeTeamId as string);
+  const isLoading = useAppSelector((state) => state.root.team.isLoading);
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const isOwner = currentUser?.uid == activeTeam?.owner;
   const [isOpen, setIsOpen] = useState(false);
@@ -91,8 +92,9 @@ const TaskContainer = () => {
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Grid container borderRadius={3} p={1} spacing={1}>
-        {/* if tasks are availabe then render task lists/columns */}
-        {activeTeam?.tasks ? (
+        {isLoading ? (
+          <Skeleton width={'90%'} height={200} sx={{m:'auto', mt:4}} variant="rounded"/>
+        ) : activeTeam?.tasks ? (
           <>
             <Grid item xs={12} sm={6} md={3} key={"TODO"}>
               <TaskList column={"TODO"} tasks={activeTeam.tasks.todo} />

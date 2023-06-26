@@ -4,6 +4,7 @@ import {
   AvatarGroup,
   Box,
   Button,
+  Skeleton,
   Stack,
   Typography,
 } from "@mui/material";
@@ -19,6 +20,7 @@ const TeamHeader = () => {
   const teamMembers = useAppSelector(
     (state) => state.root.team.activeTeamMembers
   );
+  const isLoading = useAppSelector((state) => state.root.team.isLoading);
   const activeTeam = useTeam(activeTeamId as string);
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const isOwner = currentUser?.uid == activeTeam?.owner;
@@ -45,7 +47,7 @@ const TeamHeader = () => {
       color={"white"}
     >
       <Typography variant="h4" mb={2}>
-        {activeTeam?.teamName}
+        {isLoading ? <Skeleton width={"40%"} /> : activeTeam?.teamName}
       </Typography>
       <Stack
         spacing={2}
@@ -54,31 +56,47 @@ const TeamHeader = () => {
         alignItems={{ xs: "start", sm: "center" }}
       >
         <Box display={"flex"} alignItems={"center"}>
-          <People />
-          <Typography variant="subtitle2" px={1}>
-            Members
-          </Typography>
-          <AvatarGroup max={4}>
-            {teamMembers?.map((member) => (
-              <Avatar
-                alt={member.name}
-                src={member.profileImage}
-                key={member.uid}
-              />
-            ))}
-          </AvatarGroup>
+          {isLoading ? (
+            <>
+              <Skeleton width={"257px"} height={"44px"} />
+            </>
+          ) : (
+            <>
+              <People />
+              <Typography variant="subtitle2" px={1}>
+                Members
+              </Typography>
+
+              <AvatarGroup max={4}>
+                {teamMembers?.map((member) => (
+                  <Avatar
+                    alt={member.name}
+                    src={member.profileImage}
+                    key={member.uid}
+                  />
+                ))}
+              </AvatarGroup>
+            </>
+          )}
         </Box>
-        <Button
-          variant="contained"
-          color="secondary"
-          endIcon={<InfoOutlined />}
-          sx={{ borderRadius: "20px", color: "#333" }}
-          disableElevation
-          onClick={handleInfoModalOpen}
-        >
-          Team info
-        </Button>
-        {isOwner && (
+        {isLoading ? (
+          <Skeleton width={127} height={44} />
+        ) : (
+          <Button
+            variant="contained"
+            color="secondary"
+            endIcon={<InfoOutlined />}
+            sx={{ borderRadius: "20px", color: "#333" }}
+            disableElevation
+            onClick={handleInfoModalOpen}
+          >
+            Team info
+          </Button>
+        )}
+
+        {isOwner && isLoading ? (
+          <Skeleton width={143} height={44} />
+        ) : (
           <Button
             variant="contained"
             color="secondary"
