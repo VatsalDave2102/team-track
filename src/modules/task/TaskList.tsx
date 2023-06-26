@@ -1,12 +1,5 @@
-import { Comment, MoreHoriz } from "@mui/icons-material";
-import {
-  Box,
-  Card,
-  CardContent,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Comment } from "@mui/icons-material";
+import { Box, Card, Stack, Typography } from "@mui/material";
 import { Task } from "../../utils/types";
 import CustomModal from "../common/components/CustomModal";
 import { useState } from "react";
@@ -14,12 +7,17 @@ import { Draggable, Droppable } from "@hello-pangea/dnd";
 import TaskInfo from "./TaskInfo";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setActiveTask } from "../../app/team/teamSlice";
+import useTeam from "../../custom-hook/useTeam";
+import { taskColor } from "../../utils/utils";
 
 const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((state) => state.root.auth.user);
   const activeTask = useAppSelector((state) => state.root.team.activeTask);
-
+  const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
+  const activeTeam = useTeam(activeTeamId as string);
+  const isOwner = activeTeam?.owner === currentUser?.uid;
+  const dispatch = useAppDispatch();
   const handleTaskInfoModalOpen = (task: Task) => {
     dispatch(setActiveTask(task.id));
     setIsEditModalOpen(true);
@@ -31,20 +29,15 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
 
   return (
     <>
-      <Box
-        display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        borderBottom={"1px #ddd solid"}
-      >
+      <Box borderBottom={"1px #ddd solid"}>
         <Typography variant="h6">{column}</Typography>
-        <IconButton>
-          <MoreHoriz />
-        </IconButton>
       </Box>
 
       {/* making the task list droppable */}
-      <Droppable droppableId={column}>
+      <Droppable
+        droppableId={column}
+        isDropDisabled={column == "COMPLETED" && !isOwner}
+      >
         {(droppableProvided) => (
           <Stack
             spacing={2}
@@ -56,7 +49,16 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
             {...droppableProvided.droppableProps}
           >
             {tasks.map((task, index) => (
-              <Draggable key={task.id} draggableId={task.id} index={index}>
+              <Draggable
+                key={task.id}
+                draggableId={task.id}
+                index={index}
+                isDragDisabled={
+                  !task.assignedTo.find(
+                    (userId) => userId === currentUser?.uid
+                  ) && !isOwner
+                }
+              >
                 {(draggableProvided) => (
                   <Card
                     ref={draggableProvided.innerRef}
@@ -83,10 +85,17 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
                       {task.title}
                     </Typography>
                     {task.comments.length > 0 && (
-                      <CardContent sx={{ pb: "1px" }}>
+                      <Box p={1}>
                         <Comment color={"disabled"} />
-                      </CardContent>
+                      </Box>
                     )}
+                    <Box
+                      bgcolor={`${taskColor[Number(task.priority)]}.light`}
+                      width={"100%"}
+                      height={"4px"}
+                      m={"auto"}
+                      borderRadius={5}
+                    />
                   </Card>
                 )}
               </Draggable>

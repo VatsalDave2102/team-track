@@ -2,13 +2,12 @@
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
-  signInWithCustomToken,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
 } from "firebase/auth";
 import { auth, db, storage } from "../../firebase";
-import { setError, setLoading, setUser } from "./authSlice";
+import { setLoading, setUser } from "./authSlice";
 import { FirebaseError } from "firebase/app";
 import { AppThunk } from "../store";
 import { createAsyncThunk } from "@reduxjs/toolkit";
@@ -185,30 +184,4 @@ export const trackCurrentUser = (): AppThunk => (dispatch) => {
       dispatch(setLoading(false));
     }
   });
-};
-
-export const checkToken = (): AppThunk => (dispatch) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    signInWithCustomToken(auth, token)
-      .then(async (userCredential) => {
-        const { uid } = userCredential.user;
-        const userDocRef = doc(db, "users", uid);
-        const userDocSnapshot = await getDoc(userDocRef);
-        const userData = userDocSnapshot.data();
-        dispatch(
-          setUser({
-            name: userData?.name,
-            email: userData?.email,
-            uid,
-            phone: userData?.phone,
-            profileImage: userData?.profileImage,
-            bio: userData?.bio,
-          })
-        );
-      })
-      .catch((error) => {
-        if (error instanceof FirebaseError) dispatch(setError(error.message));
-      });
-  }
 };

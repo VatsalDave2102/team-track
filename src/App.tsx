@@ -6,13 +6,12 @@ import theme from "./utils/themeProvider";
 import { useEffect } from "react";
 import { useAppDispatch } from "./app/hooks";
 
-import { checkToken, trackCurrentUser } from "./app/auth/authServices";
+import {  trackCurrentUser } from "./app/auth/authServices";
 import { router } from "./router/Router";
 
 function App() {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(checkToken());
     dispatch(trackCurrentUser());
   }, [dispatch]);
 

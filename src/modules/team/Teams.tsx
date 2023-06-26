@@ -27,6 +27,9 @@ const Teams = () => {
         Your teams
       </Typography>
       <Grid container p={2} spacing={2}>
+        <Grid item xs={12} sm={6} md={4}>
+          <CreateTeamCard />
+        </Grid>
         {currentUserTeams.map((team) => (
           <Grid item xs={12} sm={6} md={4} key={team.id}>
             <Card sx={{ maxWidth: 300, borderRadius: 3, maxHeight: 200 }}>
@@ -35,6 +38,7 @@ const Teams = () => {
                 alt="green iguana"
                 height="100"
                 image={team.image ? team.image : DEFAULTTEAM}
+                sx={{ objectFit: "contain" }}
               />
               <CardActionArea
                 component={Link}
@@ -68,10 +72,6 @@ const Teams = () => {
             </Card>
           </Grid>
         ))}
-
-        <Grid item xs={12} sm={6} md={4}>
-          <CreateTeamCard />
-        </Grid>
       </Grid>
     </>
   );

@@ -76,7 +76,9 @@ const InfoModal = () => {
             {teamMembers?.map((member) => (
               <Chip
                 key={member.email}
-                avatar={<Avatar alt={member.name} src={member.profileImage} />}
+                avatar={
+                  <Avatar alt={member.name} src={member.profileImage} />
+                }
                 label={member.name}
                 variant="outlined"
                 sx={{ mr: 1 }}

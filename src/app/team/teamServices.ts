@@ -21,8 +21,14 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db, storage } from "../../firebase";
 import { FirebaseError } from "firebase/app";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 
 export const createTeam = createAsyncThunk(
   "team/createTeam",
@@ -32,16 +38,18 @@ export const createTeam = createAsyncThunk(
       overview: string;
       members: string[];
       owner: string;
+      image: string;
     },
     { rejectWithValue }
   ) => {
     try {
-      const { teamName, overview, members, owner } = teamData;
+      const { teamName, overview, members, owner, image } = teamData;
       const refData = await addDoc(collection(db, "teams"), {
         teamName: teamName,
         overview: overview,
         members: members,
         owner: owner,
+        image: image,
       });
 
       const newTeamData = { id: refData.id, ...teamData };
@@ -124,6 +132,7 @@ export const updateTeam = createAsyncThunk(
         overview: newOverview,
         members: newMembers,
       });
+      return { newOverview, newMembers };
     } catch (error) {
       if (error instanceof FirebaseError) {
         return rejectWithValue(error.message);
@@ -148,6 +157,42 @@ export const deleteTeam = createAsyncThunk(
   }
 );
 
+export const uploadTeamImage = createAsyncThunk(
+  "team/uploadTeamImage",
+  async (
+    { file, teamId }: { file: File; teamId: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      // checking if team has already an existing image
+      const teamDocRef = doc(db, "teams", teamId);
+      const teamDocSnapshot = await getDoc(teamDocRef);
+      const teamData = teamDocSnapshot.data();
+
+      if (teamData && teamData.image) {
+        const existingImagePath = teamData.image;
+        const existingImageRef = ref(storage, existingImagePath);
+        await deleteObject(existingImageRef);
+      }
+
+      // uploading the new profile image
+      const storageRef = ref(storage, `team-images/${teamId}/image.png`);
+      const snapshot = await uploadBytes(storageRef, file);
+
+      // getting the download url
+      const downloadURL = await getDownloadURL(snapshot.ref);
+
+      // updating the team in firestore
+      await updateDoc(teamDocRef, { image: downloadURL });
+
+      return downloadURL;
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
 export const assignTasks = createAsyncThunk(
   "team/assignTask",
   async (
@@ -225,6 +270,7 @@ export const updateTask = createAsyncThunk(
         };
 
         await updateDoc(teamRef, { tasks: updatedTask });
+        return updatedTask
       }
     } catch (error) {
       if (error instanceof FirebaseError) {

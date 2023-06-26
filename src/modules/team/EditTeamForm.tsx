@@ -1,4 +1,10 @@
-import { Button, CircularProgress, FormControl, Stack } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  CircularProgress,
+  FormControl,
+  Stack,
+} from "@mui/material";
 import { Field, FieldProps, Form, Formik, FormikProps } from "formik";
 import InputField from "../common/components/InputField";
 import AutoCompleteField from "../common/components/AutoCompleteField";
@@ -7,8 +13,8 @@ import useTeam from "../../custom-hook/useTeam";
 import * as Yup from "yup";
 import {
   deleteTeam,
-  getCurrentUserTeams,
   updateTeam,
+  uploadTeamImage,
 } from "../../app/team/teamServices";
 import { TeamMemberData } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
@@ -49,15 +55,21 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
           newOverview: values.overview,
           newMembers: values.members,
         })
-      ).then(() => {
-        dispatch(getCurrentUserTeams(currentUser.uid));
-      });
+      );
   };
   const handleDeleteTeam = (teamId: string) => {
     dispatch(deleteTeam(teamId)).then(() => {
       handleClose();
       navigate("/dashboard");
     });
+  };
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const file = event.target.files[0];
+      if (currentUser) {
+        dispatch(uploadTeamImage({ file, teamId: activeTeam?.id as string }));
+      }
+    }
   };
   return (
     <Formik
@@ -74,13 +86,35 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
         return (
           <Form>
             <Stack
-              spacing={1}
+              spacing={2}
               alignItems={"stretch"}
               justifyContent={"center"}
               width={500}
               m={"auto"}
               p={2}
             >
+              <Stack spacing={1} alignItems={"center"}>
+                <label
+                  htmlFor="image"
+                  style={{ cursor: "pointer", borderRadius: "50%" }}
+                >
+                  <Avatar
+                    sx={{
+                      width: { xs: 60, sm: 90, md: 150 },
+                      height: { xs: 60, sm: 90, md: 150 },
+                    }}
+                    alt={activeTeam?.teamName}
+                    src={activeTeam?.image}
+                  />
+                </label>
+                <input
+                  type="file"
+                  id="image"
+                  style={{ display: "none" }}
+                  accept="image/png, image/jpeg"
+                  onChange={handleImageChange}
+                />
+              </Stack>
               <InputField
                 name="overview"
                 label="Overview"

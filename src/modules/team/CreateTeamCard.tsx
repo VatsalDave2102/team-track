@@ -8,7 +8,8 @@ import {
 import CustomModal from "../common/components/CustomModal";
 import { useState } from "react";
 import CreateTeamForm from "./CreateTeamForm";
-import DEFAULTTEAM from "../../assets/team-creation.svg";
+import ADDTEAM from "../../assets/addteam.svg";
+
 const CreateTeamCard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const handleModalOpen = () => {
@@ -24,7 +25,8 @@ const CreateTeamCard = () => {
           component="img"
           alt="create team logo"
           height="100"
-          image={DEFAULTTEAM}
+          image={ADDTEAM}
+          sx={{ objectFit: "contain" }}
         />
         <CardActionArea
           onClick={handleModalOpen}

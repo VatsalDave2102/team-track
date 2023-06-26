@@ -52,6 +52,7 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
         overview: values.overview,
         members: values.members,
         owner: currentUser.uid,
+        image: ''
       };
       dispatch(createTeam(teamData));
       handleClose();

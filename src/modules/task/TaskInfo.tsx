@@ -93,6 +93,13 @@ const TaskInfo = ({
             >
               <Box>
                 <Typography variant="h6" mb={1}>
+                  Title
+                </Typography>
+                <Typography variant="body1">{activeTask.title}</Typography>
+              </Box>
+              <Divider />
+              <Box>
+                <Typography variant="h6" mb={1}>
                   Description
                 </Typography>
                 <Typography variant="body1">

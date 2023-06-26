@@ -59,7 +59,7 @@ const TeamContent = () => {
                 </Typography>
               </Box>
             </TabPanel>
-            <TabPanel value="2" sx={{ p: 0, pt: 2 }}>
+            <TabPanel value="2" sx={{ p: 0, pt: 1 }}>
               <TaskContainer />
             </TabPanel>
           </TabContext>

@@ -26,11 +26,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import AutoCompleteField from "../common/components/AutoCompleteField";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import {
-  deleteTask,
-  getCurrentUserTeams,
-  updateTask,
-} from "../../app/team/teamServices";
+import { deleteTask, updateTask } from "../../app/team/teamServices";
 import useTeam from "../../custom-hook/useTeam";
 
 const validationSchema = Yup.object({
@@ -79,9 +75,7 @@ const EditTaskForm = ({
     if (currentUser) {
       dispatch(
         updateTask({ teamId: activeTeamId as string, taskData: values })
-      ).then(() => {
-        dispatch(getCurrentUserTeams(currentUser.uid));
-      });
+      );
     }
   };
   const handleTaskDelete = (taskId: string, column: keyof Tasks) => {

@@ -12,6 +12,7 @@ import {
   updateTaskOrderDifferentColumn,
   updateTaskOrderSameColumn,
   updateTeam,
+  uploadTeamImage,
 } from "./teamServices";
 import {
   Comment,
@@ -111,11 +112,32 @@ export const teamSlice = createSlice({
       .addCase(updateTeam.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(updateTeam.fulfilled, (state) => {
+      .addCase(updateTeam.fulfilled, (state, action) => {
         state.isLoading = false;
+        const teamIndex = state.teamList.findIndex(
+          (team) => team.id === state.activeTeam
+        );
+        state.teamList[teamIndex].overview = action.payload
+          ?.newOverview as string;
+        state.teamList[teamIndex].members = action.payload
+          ?.newMembers as string[];
       })
       .addCase(updateTeam.rejected, (state, action) => {
         state.isLoading = true;
+        state.error = action.payload as string;
+      })
+      .addCase(uploadTeamImage.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(uploadTeamImage.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const teamIndex = state.teamList.findIndex(
+          (team) => team.id === state.activeTeam
+        );
+        state.teamList[teamIndex].image = action.payload;
+      })
+      .addCase(uploadTeamImage.rejected, (state, action) => {
+        state.isLoading = false;
         state.error = action.payload as string;
       })
       .addCase(assignTasks.pending, (state) => {
@@ -132,8 +154,12 @@ export const teamSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(updateTask.fulfilled, (state) => {
+      .addCase(updateTask.fulfilled, (state, action) => {
         state.isLoading = false;
+        const teamIndex = state.teamList.findIndex(
+          (team) => team.id === state.activeTeam
+        );
+        state.teamList[teamIndex].tasks = action.payload as Tasks;
         state.error = null;
       })
       .addCase(updateTask.rejected, (state, action) => {
