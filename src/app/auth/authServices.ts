@@ -18,6 +18,7 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
+import { toast } from "react-toastify";
 
 export const signup = createAsyncThunk(
   "auth/signup",
@@ -49,10 +50,11 @@ export const signup = createAsyncThunk(
       };
 
       await setDoc(doc(db, "users", user.uid), userData);
-
+      toast.success(`Welcome, ${userData.name}`);
       return userData;
     } catch (error) {
       if (error instanceof FirebaseError) {
+        toast.error(error.code);
         return rejectWithValue(error.message);
       }
     }
@@ -71,9 +73,11 @@ export const login = createAsyncThunk(
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnapshot = await getDoc(userDocRef);
       const userData = userDocSnapshot.data();
+      toast.success(`Welcome back, ${userData?.name}`);
       return userData;
     } catch (error) {
       if (error instanceof FirebaseError) {
+        toast.error(error.code);
         return rejectWithValue(error.message);
       }
     }
@@ -85,6 +89,7 @@ export const logout = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       await signOut(auth);
+      toast.success("Successfully logged out!");
     } catch (error) {
       if (error instanceof FirebaseError) {
         return rejectWithValue(error.message);
@@ -122,6 +127,7 @@ export const uploadImage = createAsyncThunk(
       if (user) {
         await updateProfile(user, { photoURL: downloadURL });
       }
+      toast.success("Image updated successfully");
       return downloadURL;
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -149,6 +155,7 @@ export const updateUserDetails = createAsyncThunk(
         phone: phone,
       });
       // returning the updated data
+      toast.success("User details updated!");
       return userData;
     } catch (error) {
       if (error instanceof FirebaseError) {

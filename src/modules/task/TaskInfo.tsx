@@ -74,10 +74,11 @@ const TaskInfo = ({
         <>
           <Stack
             direction={"row"}
-            width={500}
+            width={{ xs: "100%", sm: 500 }}
             alignItems={"center"}
             spacing={1}
             mt={"auto"}
+            p={{ xs: 1, sm: 2 }}
           >
             <FormatListBulleted sx={{ color: "GrayText" }} />
             <Typography variant="h6">Task details</Typography>
@@ -87,7 +88,7 @@ const TaskInfo = ({
               spacing={1}
               alignItems={"stretch"}
               justifyContent={"center"}
-              width={500}
+              width={{ xs: "100%", sm: 500 }}
               m={"auto"}
               p={2}
             >
@@ -151,6 +152,7 @@ const TaskInfo = ({
                     startIcon={<Edit />}
                     variant="contained"
                     onClick={handleEditFormOpen}
+                    size="small"
                   >
                     Edit
                   </Button>

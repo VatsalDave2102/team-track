@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setActiveTask } from "../../app/team/teamSlice";
 import useTeam from "../../custom-hook/useTeam";
 import { taskColor } from "../../utils/utils";
+import useColorMode from "../theme/useColorMode";
 
 const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -17,6 +18,7 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const activeTeam = useTeam(activeTeamId as string);
   const isOwner = activeTeam?.owner === currentUser?.uid;
+  const { colorMode } = useColorMode();
   const dispatch = useAppDispatch();
   const handleTaskInfoModalOpen = (task: Task) => {
     dispatch(setActiveTask(task.id));
@@ -43,7 +45,7 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
             spacing={2}
             my={1}
             p={1}
-            bgcolor={"#eee"}
+            bgcolor={colorMode === "dark" ? "#222" : "#eee"}
             borderRadius={2}
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}

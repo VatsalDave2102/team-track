@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   CircularProgress,
   FormControl,
@@ -27,7 +28,9 @@ const initialValues: CreateTeamValues = {
 };
 const validationSchema = Yup.object({
   // teamName validation
-  teamName: Yup.string().required("Team name is required!"),
+  teamName: Yup.string()
+    .max(15, "Team name too long!")
+    .required("Team name is required!"),
 
   // overview validation
   overview: Yup.string()
@@ -52,7 +55,7 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
         overview: values.overview,
         members: values.members,
         owner: currentUser.uid,
-        image: ''
+        image: "",
       };
       dispatch(createTeam(teamData));
       handleClose();
@@ -68,9 +71,9 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
       <Form>
         <Stack
           spacing={1}
-          alignItems={"center"}
+          alignItems={"stretch"}
           justifyContent={"center"}
-          width={300}
+          width={{ xs: 250, sm: 500 }}
           m={"auto"}
           p={2}
         >
@@ -81,7 +84,6 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
             type="text"
             rows={5}
             multiline
-            sx={{ p: 0 }}
           />
           <FormControl error fullWidth>
             <Field name="members">
@@ -107,21 +109,23 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
               className="error"
             />
           </FormControl>
-          <Button type="submit" variant="contained" disabled={isLoading}>
-            Create team
-            {isLoading && (
-              <CircularProgress
-                size={24}
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  marginTop: "-12px",
-                  marginLeft: "-12px",
-                }}
-              />
-            )}
-          </Button>
+          <Box display={"flex"} justifyContent={"center"}>
+            <Button type="submit" variant="contained" disabled={isLoading}>
+              Create team
+              {isLoading && (
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    marginTop: "-12px",
+                    marginLeft: "-12px",
+                  }}
+                />
+              )}
+            </Button>
+          </Box>
         </Stack>
       </Form>
     </Formik>

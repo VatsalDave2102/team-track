@@ -29,6 +29,7 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
+import { toast } from "react-toastify";
 
 export const createTeam = createAsyncThunk(
   "team/createTeam",
@@ -51,7 +52,7 @@ export const createTeam = createAsyncThunk(
         owner: owner,
         image: image,
       });
-
+      toast.success("Team created successfully!");
       const newTeamData = { id: refData.id, ...teamData };
       return newTeamData;
     } catch (error) {
@@ -132,6 +133,7 @@ export const updateTeam = createAsyncThunk(
         overview: newOverview,
         members: newMembers,
       });
+      toast.success("Team updated successfully!");
       return { newOverview, newMembers };
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -147,7 +149,7 @@ export const deleteTeam = createAsyncThunk(
     try {
       const teamRef = doc(db, "teams", teamId);
       await deleteDoc(teamRef);
-
+      toast.success("Team deleted successfully!");
       return teamId;
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -185,6 +187,7 @@ export const uploadTeamImage = createAsyncThunk(
       // updating the team in firestore
       await updateDoc(teamDocRef, { image: downloadURL });
 
+      toast.success("Team image updated!");
       return downloadURL;
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -193,6 +196,7 @@ export const uploadTeamImage = createAsyncThunk(
     }
   }
 );
+
 export const assignTasks = createAsyncThunk(
   "team/assignTask",
   async (
@@ -216,6 +220,7 @@ export const assignTasks = createAsyncThunk(
           { merge: true }
         );
       }
+      toast.success("New task assigned!");
     } catch (error) {
       if (error instanceof FirebaseError) {
         return rejectWithValue(error.message);
@@ -270,7 +275,9 @@ export const updateTask = createAsyncThunk(
         };
 
         await updateDoc(teamRef, { tasks: updatedTask });
-        return updatedTask
+
+        toast.success("Task details updated!");
+        return updatedTask;
       }
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -399,6 +406,7 @@ export const deleteTask = createAsyncThunk(
       await updateDoc(teamRef, {
         ["tasks." + column]: updatedTasksArray,
       });
+      toast.success("Task deleted successfully!");
       return { taskId, column };
     } catch (error) {
       if (error instanceof FirebaseError) {

@@ -124,7 +124,7 @@ const AutoCompleteField = ({
         <TextField
           {...params}
           name="members"
-          label="Search to add members"
+          label="Search members"
           InputProps={{
             ...params.InputProps,
             endAdornment: (

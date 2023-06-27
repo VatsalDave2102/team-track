@@ -21,7 +21,9 @@ const CustomModal: React.FC<CustomModalProps> = ({
       >
         {title}
       </DialogTitle>
-      <DialogContent dividers={true}>{children}</DialogContent>
+      <DialogContent dividers={true} sx={{ p: 0 }}>
+        {children}
+      </DialogContent>
     </Dialog>
   );
 };

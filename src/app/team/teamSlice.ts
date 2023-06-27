@@ -197,26 +197,18 @@ export const teamSlice = createSlice({
         state.error = action.payload as string;
         state.uploadComment = false;
       })
-      .addCase(updateTaskOrderSameColumn.pending, (state) => {
-        state.isLoading = true;
-      })
+
       .addCase(updateTaskOrderSameColumn.fulfilled, (state) => {
-        state.isLoading = false;
         state.error = null;
       })
       .addCase(updateTaskOrderSameColumn.rejected, (state, action) => {
-        state.isLoading = false;
         state.error = action.payload as string;
       })
-      .addCase(updateTaskOrderDifferentColumn.pending, (state) => {
-        state.isLoading = true;
-      })
+
       .addCase(updateTaskOrderDifferentColumn.fulfilled, (state) => {
-        state.isLoading = false;
         state.error = null;
       })
       .addCase(updateTaskOrderDifferentColumn.rejected, (state, action) => {
-        state.isLoading = false;
         state.error = action.payload as string;
       })
       .addCase(deleteTask.pending, (state) => {

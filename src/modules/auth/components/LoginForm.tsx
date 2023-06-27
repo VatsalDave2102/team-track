@@ -1,13 +1,12 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import InputField from "../../common/components/InputField";
 import { LoginUserValues } from "../../../utils/types";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useAppDispatch } from "../../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../../app/auth/authServices";
 import { useEffect } from "react";
-import { setError } from "../../../app/auth/authSlice";
 
 const initialValues: LoginUserValues = {
   email: "",
@@ -24,13 +23,12 @@ const validationSchema = Yup.object({
     .min(6, "Password must be atleast 6 characters long")
     .required("Password is required!"),
 });
-const token = localStorage.getItem("token");
 const LoginForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const error = useAppSelector((state) => state.root.auth.error);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
     if (token) {
       navigate("/dashboard");
     } else {
@@ -42,13 +40,7 @@ const LoginForm = () => {
     const { email, password } = values;
 
     const userExists = await dispatch(login({ email, password }));
-    if (userExists.meta.requestStatus === "rejected") {
-      dispatch(setError("User not found!"));
-
-      setTimeout(() => {
-        dispatch(setError(null));
-      }, 5000);
-    } else {
+    if (userExists.meta.requestStatus !== "rejected") {
       navigate("/dashboard");
     }
   };
@@ -81,11 +73,6 @@ const LoginForm = () => {
                     Reset
                   </Button>
                 </Stack>
-                {error && (
-                  <Typography variant="subtitle1" color={"red"}>
-                    {error}
-                  </Typography>
-                )}
               </Stack>
             </Form>
           );

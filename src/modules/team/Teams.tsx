@@ -53,6 +53,7 @@ const Teams = () => {
                       backgroundColor: "primary.light",
                       color: "white",
                     },
+                    borderTop: "1px solid #eee",
                   }}
                 >
                   <Typography

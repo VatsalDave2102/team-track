@@ -59,8 +59,10 @@ const UserEdit = ({
             <Form>
               <Stack
                 spacing={1}
-                alignItems={"center"}
+                alignItems={"stretch"}
                 justifyContent={"center"}
+                maxWidth={'100%'}
+                m={'auto'}
                 p={2}
               >
                 <InputField

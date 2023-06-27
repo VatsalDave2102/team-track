@@ -22,11 +22,14 @@ import {
   ListItemIcon,
   ListItemText,
   Stack,
+  Switch,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { logout } from "../../../../app/auth/authServices";
 import { setError } from "../../../../app/auth/authSlice";
+import useColorMode from "../../../theme/useColorMode";
+import { DarkMode, LightMode } from "@mui/icons-material";
 
 const pages = ["Dashboard", "Teams"];
 
@@ -36,7 +39,7 @@ function NavbarComponent() {
   const user = useAppSelector((state) => state.root.auth.user);
   const [anchorElNav, setAnchorElNav] = useState<boolean>(false);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-
+  const { toggleColorMode, colorMode } = useColorMode();
   const handleOpenNavMenu = () => {
     setAnchorElNav(true);
   };
@@ -53,7 +56,7 @@ function NavbarComponent() {
   };
   const handleProfile = () => {
     navigate("/user-profile");
-    handleCloseUserMenu()
+    handleCloseUserMenu();
   };
   const handleLogout = async () => {
     const logoutStatus = await dispatch(logout());
@@ -69,7 +72,7 @@ function NavbarComponent() {
   };
   return (
     <AppBar position="static">
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" sx={{ px: { xs: 0, sm: 2 } }}>
         <Toolbar
           disableGutters
           sx={{ display: "flex", justifyContent: "space-between" }}
@@ -110,14 +113,14 @@ function NavbarComponent() {
           </Box>
 
           <Stack direction="row" alignItems="center">
-            <Box>
+            <Box display={{ xs: "none", sm: "block" }}>
               <img src={TEAMTRACK} width={60} />
             </Box>
             <Typography
               variant="h5"
               noWrap
-              component="a"
-              href="/"
+              component={Link}
+              to={"/"}
               sx={{
                 mr: 2,
                 fontWeight: 700,
@@ -142,8 +145,17 @@ function NavbarComponent() {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
+            <Switch
+              checked={colorMode === "dark"}
+              onChange={toggleColorMode}
+              icon={<LightMode sx={{ fontSize: "22px" }} />}
+              checkedIcon={<DarkMode sx={{ fontSize: "22px" }} />}
+            />
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <IconButton
+                onClick={handleOpenUserMenu}
+                sx={{ p: 0, mx: { xs: 1, sm: 3 } }}
+              >
                 <Avatar alt={user?.name} src={user?.profileImage} />
               </IconButton>
             </Tooltip>

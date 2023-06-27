@@ -37,7 +37,9 @@ const initialValues: Task = {
 
 const validationSchema = Yup.object({
   // title validation
-  title: Yup.string().required("Provide a title for task!"),
+  title: Yup.string()
+    .max(15, "Task title too long!")
+    .required("Provide a title for task!"),
 
   // description validation
   description: Yup.string()
@@ -87,10 +89,10 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
               spacing={3}
               alignItems={"center"}
               justifyContent={"center"}
-              width={500}
+              width={{ xs: "100%", sm: 500 }}
               m={"auto"}
-              direction={"row"}
-              p={1}
+              direction={{ xs: "column", sm: "row" }}
+              p={2}
             >
               <Stack spacing={1}>
                 <InputField name="title" label="Title" type="text" />
@@ -102,7 +104,7 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
                   multiline
                 />
               </Stack>
-              <Stack spacing={1}>
+              <Stack spacing={2}>
                 <RadioGroupField
                   name="priority"
                   label="Priority"
@@ -121,14 +123,16 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
                     }: {
                       field: FieldProps["field"];
                       form: FormikProps<FormData>;
-                    }) => (
-                      <AutoCompleteField
-                        {...field}
-                        setFieldValue={form.setFieldValue}
-                        mode="task-assign"
-                        fieldName="assignedTo"
-                      />
-                    )}
+                    }) => {
+                      return (
+                        <AutoCompleteField
+                          {...field}
+                          setFieldValue={form.setFieldValue}
+                          mode="task-assign"
+                          fieldName="assignedTo"
+                        />
+                      );
+                    }}
                   </Field>
 
                   <ErrorMessage
@@ -147,8 +151,13 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
                 />
               </Stack>
             </Stack>
-            <Box display={"flex"} justifyContent={"center"} mt={2}>
-              <Button type="submit" variant="contained" disabled={isLoading}>
+            <Box display={"flex"} justifyContent={"center"} my={2}>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={isLoading}
+                size="small"
+              >
                 Assign task
                 {isLoading && (
                   <CircularProgress

@@ -90,7 +90,7 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
               spacing={2}
               alignItems={"stretch"}
               justifyContent={"center"}
-              width={500}
+              width={{ xs: "100%", sm: 500 }}
               m={"auto"}
               p={2}
             >
@@ -143,11 +143,16 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
                   )}
                 </Field>
               </FormControl>
-              <Stack direction={"row"} justifyContent={"space-evenly"}>
+              <Stack
+                direction={"row"}
+                justifyContent={"space-evenly"}
+                alignItems={"center"}
+              >
                 <Button
                   variant="contained"
                   color="secondary"
                   onClick={() => handleClose()}
+                  size="small"
                 >
                   Back
                 </Button>
@@ -157,8 +162,9 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
                   variant="contained"
                   disabled={isTeamDelete}
                   onClick={() => handleDeleteTeam(activeTeamId as string)}
+                  size="small"
                 >
-                  Delete team
+                  Delete
                   {isTeamDelete && (
                     <CircularProgress
                       size={24}
@@ -178,6 +184,7 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
                   disabled={
                     isLoading || isEqual(formikProps.values, initialValues)
                   }
+                  size="small"
                 >
                   Save
                   {isLoading && (

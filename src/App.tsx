@@ -1,13 +1,11 @@
 import { RouterProvider } from "react-router-dom";
-
-import { ThemeProvider } from "@emotion/react";
-import theme from "./utils/themeProvider";
-// import { router } from "./router/Router";
 import { useEffect } from "react";
 import { useAppDispatch } from "./app/hooks";
-
-import {  trackCurrentUser } from "./app/auth/authServices";
+import { trackCurrentUser } from "./app/auth/authServices";
 import { router } from "./router/Router";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import { ColorModeProvider } from "./modules/theme/ColorModeContext";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -16,9 +14,10 @@ function App() {
   }, [dispatch]);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ColorModeProvider>
       <RouterProvider router={router} />
-    </ThemeProvider>
+      <ToastContainer />
+    </ColorModeProvider>
   );
 }
 

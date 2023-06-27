@@ -1,9 +1,9 @@
 import {
+  CalendarViewDayRounded,
   Dashboard,
   ExpandLess,
   ExpandMore,
   Group,
-  Star,
 } from "@mui/icons-material";
 import {
   Box,
@@ -34,7 +34,7 @@ const Sidebar = () => {
     items[1].children?.push({
       label: team.teamName,
       link: `teams/${team.id}`,
-      icon: <Star />,
+      icon: <CalendarViewDayRounded />,
     });
   });
 
@@ -52,13 +52,11 @@ const Sidebar = () => {
             <React.Fragment key={`${item.info.label}`}>
               <ListItemButton
                 key={item.info.label}
-                sx={{ borderRadius: "20px",   }}
+                sx={{ borderRadius: "20px" }}
                 onClick={handleClick}
               >
                 <ListItem>
-                  <ListItemIcon  >
-                    {item.info.icon}
-                  </ListItemIcon>
+                  <ListItemIcon>{item.info.icon}</ListItemIcon>
                   <ListItemText primary={item.info.label} />
                   {open ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
@@ -74,7 +72,7 @@ const Sidebar = () => {
                       }
                       component={Link}
                       to={childItem.link}
-                      sx={{ borderRadius: "20px",  pl:5 }}
+                      sx={{ borderRadius: "20px", pl: 5 }}
                     >
                       <ListItemIcon>{childItem.icon}</ListItemIcon>
                       <ListItemText primary={childItem.label} />
@@ -89,7 +87,7 @@ const Sidebar = () => {
               selected={location.pathname === `/dashboard`}
               component={Link}
               to={item.info.link}
-              sx={{ borderRadius: "20px",  }}
+              sx={{ borderRadius: "20px" }}
             >
               <ListItem>
                 <ListItemIcon>{item.info.icon}</ListItemIcon>

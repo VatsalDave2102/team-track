@@ -38,7 +38,7 @@ const CreateTeamCard = () => {
             },
           }}
         >
-          <CardContent>
+          <CardContent sx={{ borderTop: "1px solid #eee" }}>
             <Typography
               gutterBottom
               variant="h6"

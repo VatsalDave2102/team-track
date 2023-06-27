@@ -67,7 +67,7 @@ const TeamHeader = () => {
                 Members
               </Typography>
 
-              <AvatarGroup max={4}>
+              <AvatarGroup max={3}>
                 {teamMembers?.map((member) => (
                   <Avatar
                     alt={member.name}

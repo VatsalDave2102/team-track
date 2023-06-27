@@ -34,7 +34,7 @@ const CommentList = ({ taskId }: { taskId: string }) => {
   };
   return (
     <>
-      <Button onClick={handleCommentOpen}>
+      <Button onClick={handleCommentOpen} sx={{ px: { xs: 1, sm: 2 } }}>
         {commentOpen ? (
           <>
             <Typography variant="body1">Hide comments</Typography>{" "}
@@ -49,7 +49,13 @@ const CommentList = ({ taskId }: { taskId: string }) => {
       </Button>
 
       <Collapse in={commentOpen}>
-        <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+        <List
+          sx={{
+            width: "100%",
+            bgcolor: "background.paper",
+            p: { xs: 1, sm: 2 },
+          }}
+        >
           {taskComments?.map((comment) => {
             const { commentedOn, postedBy, id, text }: Comment = comment;
             const user = teamMembers?.find((member) => member.uid === postedBy);

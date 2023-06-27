@@ -34,10 +34,11 @@ const InfoModal = () => {
     <>
       <Stack
         direction={"row"}
-        width={500}
+        width={{ xs: "100%", sm: 500 }}
         alignItems={"center"}
         spacing={1}
         m={"auto"}
+        p={{ xs: 1, sm: 2 }}
       >
         <Groups sx={{ color: "GrayText" }} />
         <Typography variant="h5">Team details</Typography>
@@ -47,7 +48,7 @@ const InfoModal = () => {
           spacing={1}
           alignItems={"stretch"}
           justifyContent={"center"}
-          width={500}
+          width={{ xs: "100%", sm: 500 }}
           m={"auto"}
           p={2}
         >
@@ -55,7 +56,14 @@ const InfoModal = () => {
             <Typography variant="h6" mb={1}>
               Overview
             </Typography>
-            <Typography variant="body1">{activeTeam?.overview}</Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                wordBreak: "break-word",
+              }}
+            >
+              {activeTeam?.overview}
+            </Typography>
           </Box>
           <Divider />
           <Box>
@@ -76,9 +84,7 @@ const InfoModal = () => {
             {teamMembers?.map((member) => (
               <Chip
                 key={member.email}
-                avatar={
-                  <Avatar alt={member.name} src={member.profileImage} />
-                }
+                avatar={<Avatar alt={member.name} src={member.profileImage} />}
                 label={member.name}
                 variant="outlined"
                 sx={{ mr: 1 }}
@@ -92,6 +98,7 @@ const InfoModal = () => {
                 startIcon={<Edit />}
                 variant="contained"
                 onClick={handleEditFormOpen}
+                size="small"
               >
                 Edit
               </Button>

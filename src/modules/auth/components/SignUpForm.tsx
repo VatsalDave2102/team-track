@@ -1,13 +1,12 @@
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import InputField from "../../common/components/InputField";
 import { SignUpUserValues } from "../../../utils/types";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useAppDispatch } from "../../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { signup } from "../../../app/auth/authServices";
 import { useEffect } from "react";
-import { setError } from "../../../app/auth/authSlice";
 
 const initialValues: SignUpUserValues = {
   name: "",
@@ -44,12 +43,12 @@ const validationSchema = Yup.object({
     .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Enter password again to confirm!"),
 });
-const token = localStorage.getItem("token");
+
 const SignUpForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const error = useAppSelector((state) => state.root.auth.error);
   useEffect(() => {
+    const token = localStorage.getItem("token");
     if (token) {
       navigate("/dashboard");
     } else {
@@ -60,13 +59,7 @@ const SignUpForm = () => {
     const { name, email, password, phone } = values;
     const newUser = await dispatch(signup({ name, email, password, phone }));
 
-    if (newUser.meta.requestStatus === "rejected") {
-      dispatch(setError("User already exists!"));
-
-      setTimeout(() => {
-        dispatch(setError(null));
-      }, 5000);
-    } else {
+    if (newUser.meta.requestStatus !== "rejected") {
       navigate("/dashboard");
     }
   };
@@ -105,11 +98,6 @@ const SignUpForm = () => {
                     Reset
                   </Button>
                 </Stack>
-                {error && (
-                  <Typography variant="subtitle1" color={"red"}>
-                    {error}
-                  </Typography>
-                )}
               </Stack>
             </Form>
           );

@@ -112,7 +112,7 @@ const EditTaskForm = ({
               spacing={2}
               alignItems={"stretch"}
               justifyContent={"center"}
-              width={500}
+              width={{ xs: "100%", sm: 500 }}
               m={"auto"}
               p={2}
             >
@@ -166,7 +166,11 @@ const EditTaskForm = ({
                 }}
               />
 
-              <Stack direction={"row"} justifyContent={"space-evenly"}>
+              <Stack
+                direction={"row"}
+                justifyContent={"space-evenly"}
+                alignItems={"center"}
+              >
                 <Button
                   variant="contained"
                   color="secondary"
@@ -185,7 +189,7 @@ const EditTaskForm = ({
                   }
                   color="error"
                 >
-                  Delete task
+                  Delete
                   {isTaskDelete && (
                     <CircularProgress
                       size={24}
@@ -206,7 +210,7 @@ const EditTaskForm = ({
                     isLoading || isEqual(formikProps.values, initialValues)
                   }
                 >
-                  Save changes
+                  Save
                   {isLoading && (
                     <CircularProgress
                       size={24}

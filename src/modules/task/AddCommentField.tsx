@@ -51,11 +51,25 @@ const AddCommentField = () => {
   };
   return (
     <>
-      <Stack direction={"row"} alignItems={"center"} spacing={1} mt={5}>
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        spacing={1}
+        mt={5}
+        px={{ xs: 1, sm: 2 }}
+        width={{ xs: "100%", sm: 500 }}
+      >
         <CommentIcon sx={{ color: "GrayText" }} />
         <Typography variant="h6">Comments</Typography>
       </Stack>
-      <Stack direction={"row"} spacing={1} alignItems={"flex-start"} my={2}>
+      <Stack
+        direction={"row"}
+        spacing={1}
+        alignItems={"flex-start"}
+        my={2}
+        width={{ xs: "100%", sm: 500 }}
+        p={1}
+      >
         <Avatar
           alt={currentUser?.name}
           src={currentUser?.profileImage}
