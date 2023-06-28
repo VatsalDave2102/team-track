@@ -34,7 +34,7 @@ const CommentList = ({ taskId }: { taskId: string }) => {
   };
   return (
     <>
-      <Button onClick={handleCommentOpen} sx={{ px: { xs: 1, sm: 2 } }}>
+      <Button onClick={handleCommentOpen} sx={{ p: { xs: 1, sm: 2 } }}>
         {commentOpen ? (
           <>
             <Typography variant="body1">Hide comments</Typography>{" "}
@@ -52,7 +52,6 @@ const CommentList = ({ taskId }: { taskId: string }) => {
         <List
           sx={{
             width: "100%",
-            bgcolor: "background.paper",
             p: { xs: 1, sm: 2 },
           }}
         >

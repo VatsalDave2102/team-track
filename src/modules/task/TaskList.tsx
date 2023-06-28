@@ -1,5 +1,5 @@
-import { Comment } from "@mui/icons-material";
-import { Box, Card, Stack, Typography } from "@mui/material";
+import { Comment, Visibility } from "@mui/icons-material";
+import { Box, Card, Stack, Tooltip, Typography } from "@mui/material";
 import { Task } from "../../utils/types";
 import CustomModal from "../common/components/CustomModal";
 import { useState } from "react";
@@ -69,9 +69,10 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
                     onClick={() => handleTaskInfoModalOpen(task)}
                     sx={{
                       "&:hover": {
-                        backgroundColor: "#edf3f3",
+                        bgcolor: colorMode === "dark" ? "#333" : "#edf3f3",
                       },
                       borderRadius: 3,
+                      cursor:'grab'
                     }}
                   >
                     <Typography
@@ -86,11 +87,33 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
                     >
                       {task.title}
                     </Typography>
-                    {task.comments.length > 0 && (
-                      <Box p={1}>
-                        <Comment color={"disabled"} />
-                      </Box>
-                    )}
+                    <Stack direction={"row"} spacing={1} >
+                      {task.assignedTo.find(
+                        (userId) => userId === currentUser?.uid
+                      ) && (
+                        <Tooltip title='Assigned to you'>
+                        <Box pl={"5px"}>
+                          <Visibility
+                            color={"disabled"}
+                            sx={{ fontSize: "20px" }}
+                          />
+                        </Box>
+                        </Tooltip>
+                      )}
+                      {task.comments.length > 0 && (
+                        <Tooltip title='Comments'>
+                        <Box pl={"5px"} display={"flex"} alignItems={"center"}>
+                          <Comment
+                            color={"disabled"}
+                            sx={{ fontSize: "20px" }}
+                          />
+                          <Typography variant="body2" pl={1} color={"GrayText"}>
+                            {task.comments.length}
+                          </Typography>
+                        </Box>
+                        </Tooltip>
+                      )}
+                    </Stack>
                     <Box
                       bgcolor={`${taskColor[Number(task.priority)]}.light`}
                       width={"100%"}

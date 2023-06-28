@@ -9,29 +9,17 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import TEAMTRACK from "../../../../assets/TeamTrack.svg";
-import InboxIcon from "@mui/icons-material/Inbox";
-import DraftsIcon from "@mui/icons-material/Drafts";
-import {
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Stack,
-  Switch,
-} from "@mui/material";
+import { Drawer, Stack, Switch } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { logout } from "../../../../app/auth/authServices";
 import { setError } from "../../../../app/auth/authSlice";
 import useColorMode from "../../../theme/useColorMode";
 import { DarkMode, LightMode } from "@mui/icons-material";
-
-const pages = ["Dashboard", "Teams"];
+import NavList from "../../../common/components/NavList";
 
 function NavbarComponent() {
   const dispatch = useAppDispatch();
@@ -93,21 +81,8 @@ function NavbarComponent() {
               open={anchorElNav}
               onClose={handleCloseNavMenu}
             >
-              <Box p={2} width="200px" textAlign="center">
-                <List component="nav" aria-label="main mailbox folders">
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <InboxIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Dashboard" />
-                  </ListItemButton>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <DraftsIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Teams" />
-                  </ListItemButton>
-                </List>
+              <Box width="200px" textAlign="center">
+                <NavList />
               </Box>
             </Drawer>
           </Box>
@@ -120,7 +95,7 @@ function NavbarComponent() {
               variant="h5"
               noWrap
               component={Link}
-              to={"/"}
+              to={"/dashboard"}
               sx={{
                 mr: 2,
                 fontWeight: 700,
@@ -131,18 +106,6 @@ function NavbarComponent() {
               TeamTrack
             </Typography>
           </Stack>
-
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Switch

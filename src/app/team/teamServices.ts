@@ -1,12 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  Comment,
-  Task,
-  Tasks,
-  TeamData,
-  TeamMemberData,
-} from "../../utils/types";
+import { Task, TeamData, TeamMemberData } from "../../utils/types";
 import {
   addDoc,
   arrayUnion,
@@ -30,21 +24,26 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import { toast } from "react-toastify";
+import {
+  AssignTaskParams,
+  CreateTeamParams,
+  DeleteTaskParams,
+  PostCommentParams,
+  UpdateTaskOrderDifferentColumnParams,
+  UpdateTaskOrderSameColumnParams,
+  UpdateTaskParams,
+  UpdateTeamParams,
+  uploadTeamImageParams,
+} from "./types";
 
+// thunk to create team
 export const createTeam = createAsyncThunk(
   "team/createTeam",
-  async (
-    teamData: {
-      teamName: string;
-      overview: string;
-      members: string[];
-      owner: string;
-      image: string;
-    },
-    { rejectWithValue }
-  ) => {
+  async (teamData: CreateTeamParams, { rejectWithValue }) => {
     try {
       const { teamName, overview, members, owner, image } = teamData;
+
+      // adding team date to firestore
       const refData = await addDoc(collection(db, "teams"), {
         teamName: teamName,
         overview: overview,
@@ -54,6 +53,8 @@ export const createTeam = createAsyncThunk(
       });
       toast.success("Team created successfully!");
       const newTeamData = { id: refData.id, ...teamData };
+
+      // returning newly created team with id
       return newTeamData;
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -63,11 +64,15 @@ export const createTeam = createAsyncThunk(
   }
 );
 
+// thunk to get current user's team
 export const getCurrentUserTeams = createAsyncThunk(
   "teams/getCurrentUserTeams",
   async (currentUser: string, { rejectWithValue }) => {
     try {
+      // getting reference of teams collection
       const teamsRef = collection(db, "teams");
+
+      // query for getting user's team where he is owner/member
       const teamsQuery = query(
         teamsRef,
         or(
@@ -75,9 +80,10 @@ export const getCurrentUserTeams = createAsyncThunk(
           where("members", "array-contains", currentUser)
         )
       );
-
       const querySnapshot = await getDocs(teamsQuery);
       const teams: TeamData[] = [];
+
+      // mapping team data and returning it
       querySnapshot.forEach((doc) => {
         const team = { ...doc.data(), id: doc.id } as TeamData;
         teams.push(team);
@@ -91,14 +97,17 @@ export const getCurrentUserTeams = createAsyncThunk(
   }
 );
 
+// thunk to fetch team members of specific team
 export const fetchMembers = createAsyncThunk(
   "team/fetchMembers",
   async (uids: string[], { rejectWithValue }) => {
     try {
       const usersRef = collection(db, "users");
+      // query to find those members from users collection
       const q = query(usersRef, where("uid", "in", uids));
       const querySnapshot = await getDocs(q);
 
+      // mapping members data and returning it
       const membersData: TeamMemberData[] = querySnapshot.docs.map((doc) => {
         return {
           name: doc.data().name,
@@ -117,22 +126,24 @@ export const fetchMembers = createAsyncThunk(
   }
 );
 
+// thunk to update team details
 export const updateTeam = createAsyncThunk(
   "team/updateTeam",
   async (
-    {
-      teamId,
-      newOverview,
-      newMembers,
-    }: { teamId: string; newOverview: string; newMembers: string[] },
+    { teamId, newOverview, newMembers }: UpdateTeamParams,
     { rejectWithValue }
   ) => {
     try {
+      // getting the team using id
       const teamRef = doc(db, "teams", teamId);
+
+      // updating team in firestore
       await updateDoc(teamRef, {
         overview: newOverview,
         members: newMembers,
       });
+
+      // returning new updates
       toast.success("Team updated successfully!");
       return { newOverview, newMembers };
     } catch (error) {
@@ -143,11 +154,14 @@ export const updateTeam = createAsyncThunk(
   }
 );
 
+// thunk to delete the team
 export const deleteTeam = createAsyncThunk(
   "team/deleteTeam",
   async (teamId: string, { rejectWithValue }) => {
     try {
       const teamRef = doc(db, "teams", teamId);
+
+      // deleting the team
       await deleteDoc(teamRef);
       toast.success("Team deleted successfully!");
       return teamId;
@@ -159,18 +173,17 @@ export const deleteTeam = createAsyncThunk(
   }
 );
 
+// thunk to upload team image
 export const uploadTeamImage = createAsyncThunk(
   "team/uploadTeamImage",
-  async (
-    { file, teamId }: { file: File; teamId: string },
-    { rejectWithValue }
-  ) => {
+  async ({ file, teamId }: uploadTeamImageParams, { rejectWithValue }) => {
     try {
       // checking if team has already an existing image
       const teamDocRef = doc(db, "teams", teamId);
       const teamDocSnapshot = await getDoc(teamDocRef);
       const teamData = teamDocSnapshot.data();
 
+      // if exist then delete that image
       if (teamData && teamData.image) {
         const existingImagePath = teamData.image;
         const existingImageRef = ref(storage, existingImagePath);
@@ -197,21 +210,22 @@ export const uploadTeamImage = createAsyncThunk(
   }
 );
 
+// thunk to assign tasks
 export const assignTasks = createAsyncThunk(
   "team/assignTask",
-  async (
-    { teamId, taskData }: { teamId: string; taskData: Task },
-    { rejectWithValue }
-  ) => {
+  async ({ teamId, taskData }: AssignTaskParams, { rejectWithValue }) => {
     try {
+      // getting team reference
       const teamRef = doc(db, "teams", teamId);
-
       const team = await getDoc(teamRef);
+
+      // if tasks object already exists then add task to todo
       if (team.data()?.tasks) {
         await updateDoc(teamRef, {
           "tasks.todo": arrayUnion(taskData),
         });
       } else {
+        // if not then create a new object and add task
         await setDoc(
           teamRef,
           {
@@ -229,28 +243,16 @@ export const assignTasks = createAsyncThunk(
   }
 );
 
+// thunk to update task
 export const updateTask = createAsyncThunk(
   "team/updateTask",
-  async (
-    {
-      teamId,
-      taskData,
-    }: {
-      teamId: string;
-      taskData: {
-        id: string;
-        description: string;
-        deadline: string;
-        priority: string;
-        assignedTo: string[];
-      };
-    },
-    { rejectWithValue }
-  ) => {
+  async ({ teamId, taskData }: UpdateTaskParams, { rejectWithValue }) => {
     try {
+      // getting team reference
       const teamRef = doc(db, "teams", teamId);
       const teamDoc = await getDoc(teamRef);
 
+      // function to find the task in a array and update it
       const updateTaskArray = (taskArray: Task[] | undefined) => {
         return taskArray?.map((task) => {
           if (task.id === taskData.id) {
@@ -264,8 +266,9 @@ export const updateTask = createAsyncThunk(
       };
       if (teamDoc.exists()) {
         const teamData: TeamData = teamDoc.data() as TeamData;
-
         const { tasks } = teamData;
+
+        // updating task data in columns
         const updatedTask = {
           ...tasks,
           todo: updateTaskArray(tasks?.todo),
@@ -274,6 +277,7 @@ export const updateTask = createAsyncThunk(
           completed: updateTaskArray(tasks?.completed),
         };
 
+        // update the team
         await updateDoc(teamRef, { tasks: updatedTask });
 
         toast.success("Task details updated!");
@@ -287,20 +291,11 @@ export const updateTask = createAsyncThunk(
   }
 );
 
+// thunk to post comment
 export const postComment = createAsyncThunk(
   "team/postComment",
   async (
-    {
-      teamId,
-      taskId,
-      newComment,
-      column,
-    }: {
-      teamId: string;
-      taskId: string;
-      newComment: Comment;
-      column: keyof Tasks;
-    },
+    { teamId, taskId, newComment, column }: PostCommentParams,
     { rejectWithValue }
   ) => {
     try {
@@ -337,19 +332,18 @@ export const postComment = createAsyncThunk(
   }
 );
 
+// thunk to update task order in same column when dragged
 export const updateTaskOrderSameColumn = createAsyncThunk(
   "team/updateTaskOrderSameColumn",
   async (
-    {
-      teamId,
-      updatedTasks,
-      column,
-    }: { teamId: string; updatedTasks: Task[]; column: keyof Tasks },
+    { teamId, updatedTasks, column }: UpdateTaskOrderSameColumnParams,
     { rejectWithValue }
   ) => {
     try {
+      // getting the team
       const teamRef = doc(db, "teams", teamId);
 
+      // updating the order
       await updateDoc(teamRef, {
         ["tasks." + column]: updatedTasks,
       });
@@ -361,18 +355,18 @@ export const updateTaskOrderSameColumn = createAsyncThunk(
   }
 );
 
+// thunk to update task order in different column when dragged
 export const updateTaskOrderDifferentColumn = createAsyncThunk(
   "team/updateTaskOrderDifferentColumn",
   async (
-    {
-      teamId,
-      updatedTasksObject,
-    }: { teamId: string; updatedTasksObject: Tasks },
+    { teamId, updatedTasksObject }: UpdateTaskOrderDifferentColumnParams,
     { rejectWithValue }
   ) => {
     try {
+      // getting the team
       const teamRef = doc(db, "teams", teamId);
 
+      // updating the task object in team
       await updateDoc(teamRef, {
         tasks: updatedTasksObject,
       });
@@ -384,25 +378,18 @@ export const updateTaskOrderDifferentColumn = createAsyncThunk(
   }
 );
 
+// thunk to delete the task
 export const deleteTask = createAsyncThunk(
   "team/deletTask",
   async (
-    {
-      teamId,
-      taskId,
-      updatedTasksArray,
-      column,
-    }: {
-      teamId: string;
-      taskId: string;
-      updatedTasksArray: Task[];
-      column: keyof Tasks;
-    },
+    { teamId, taskId, updatedTasksArray, column }: DeleteTaskParams,
     { rejectWithValue }
   ) => {
     try {
+      // getting the team
       const teamRef = doc(db, "teams", teamId);
 
+      // updating the task's column
       await updateDoc(teamRef, {
         ["tasks." + column]: updatedTasksArray,
       });

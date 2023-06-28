@@ -22,9 +22,9 @@ import {
 import { taskColor } from "../../utils/utils";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import CommentList from "./CommentList";
+import CommentList from "../comment/CommentList";
 import useTask from "../../custom-hook/useTask";
-import AddCommentField from "./AddCommentField";
+import AddCommentField from "../comment/AddCommentField";
 
 dayjs.extend(localizedFormat);
 
@@ -67,6 +67,9 @@ const TaskInfo = ({
   const handleEditFormClose = () => {
     setIsEditFormOpen(false);
   };
+  const today = dayjs();
+  console.log(today);
+  const isDeadlineOver = today.diff(activeTask?.deadline);
 
   return (
     <>
@@ -124,7 +127,10 @@ const TaskInfo = ({
                 <Typography variant="h6" mb={1}>
                   Deadline
                 </Typography>
-                <Typography variant="body1">
+                <Typography
+                  variant="body1"
+                  color={isDeadlineOver > 0 ? "error" : "inherit"}
+                >
                   {dayjs(activeTask.deadline).format("LLLL")}
                 </Typography>
               </Box>

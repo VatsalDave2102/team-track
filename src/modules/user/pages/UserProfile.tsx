@@ -4,10 +4,12 @@ import { useState } from "react";
 import UserEdit from "../components/UserEdit";
 import { useAppSelector } from "../../../app/hooks";
 import { User } from "../../../utils/types";
+import useColorMode from "../../theme/useColorMode";
 
 const UserProfile = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const currentUser = useAppSelector((state) => state.root.auth.user);
+  const { colorMode } = useColorMode();
   const handleEditFormOpen = () => {
     setIsEditFormOpen(true);
   };
@@ -19,7 +21,7 @@ const UserProfile = () => {
       <Container maxWidth="lg" sx={{ position: "relative" }}>
         <Box minHeight={"90vh"}>
           <Box
-            bgcolor={"rgba(240, 212, 187,0.4)"}
+            bgcolor={colorMode === "dark" ? "#222" : "rgba(240, 212, 187,0.4)"}
             borderRadius={"50%"}
             sx={{
               position: "absolute",

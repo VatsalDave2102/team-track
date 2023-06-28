@@ -21,12 +21,13 @@ const Teams = () => {
     <>
       <Typography
         variant="h5"
-        paddingBottom={2}
+        paddingBottom={1}
+        marginBottom={2}
         borderBottom={"1px #ddd solid"}
       >
         Your teams
       </Typography>
-      <Grid container p={2} spacing={2}>
+      <Grid container p={2} spacing={2}  sx={{overflowY:'auto'}} maxHeight={'80vh'}>
         <Grid item xs={12} sm={6} md={4}>
           <CreateTeamCard />
         </Grid>

@@ -1,6 +1,11 @@
 import {
   Button,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormHelperText,
   Stack,
@@ -24,6 +29,8 @@ import RadioGroupField from "./RadioGroupField";
 import { radioFieldOptions } from "../../utils/utils";
 import DatePickerField from "./DatePickerField";
 import { isEqual } from "lodash";
+import { useState } from "react";
+
 const validationSchema = Yup.object({
   // description validation
   description: Yup.string()
@@ -50,6 +57,7 @@ const EditTaskForm = ({
   handleModalClose: () => void;
   handleFormClose: () => void;
 }) => {
+  const [open, setOpen] = useState(false);
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const isLoading = useAppSelector((state) => state.root.team.isLoading);
   const isTaskDelete = useAppSelector((state) => state.root.team.isTaskDelete);
@@ -73,6 +81,13 @@ const EditTaskForm = ({
       );
     }
   };
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const handleTaskDelete = (taskId: string, column: keyof Tasks) => {
     if (activeTeam?.tasks) {
       const updatedTasksArray = Array.from(activeTeam.tasks[column]);
@@ -94,142 +109,164 @@ const EditTaskForm = ({
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-      validateOnChange
-    >
-      {(formikProps) => {
-        // getting data of assigned users from teamMembers in redux using their uid
-        const assignedTo: TeamMemberData[] = task.assignedTo.map((uid) => {
-          const user = teamMembers?.find((member) => member.uid === uid);
-          return user ? { uid, name: user.name, email: user.email } : null;
-        }) as TeamMemberData[];
-        return (
-          <Form>
-            <Stack
-              spacing={2}
-              alignItems={"stretch"}
-              justifyContent={"center"}
-              width={{ xs: "100%", sm: 500 }}
-              m={"auto"}
-              p={2}
-            >
-              <InputField
-                name="description"
-                label="Description"
-                type="text"
-                rows={5}
-                multiline
-                sx={{ width: "100%" }}
-              />
-              <RadioGroupField
-                name="priority"
-                label="Priority"
-                options={radioFieldOptions}
-                value={formikProps.values.priority.toString()}
-                onChange={(value) =>
-                  formikProps.setFieldValue("priority", value)
-                }
-              />
-              <FormControl error fullWidth>
-                <Field name="assignedTo">
-                  {({
-                    field,
-                    form,
-                  }: {
-                    field: FieldProps["field"];
-                    form: FormikProps<FormData>;
-                  }) => (
-                    <AutoCompleteField
-                      {...field}
-                      setFieldValue={form.setFieldValue}
-                      mode="task-assign"
-                      fieldName="assignedTo"
-                      existingValue={assignedTo}
-                    />
-                  )}
-                </Field>
-                <ErrorMessage
-                  name="assignedTo"
-                  component={FormHelperText}
-                  className="error"
+    <>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        validateOnChange
+      >
+        {(formikProps) => {
+          // getting data of assigned users from teamMembers in redux using their uid
+          const assignedTo: TeamMemberData[] = task.assignedTo.map((uid) => {
+            const user = teamMembers?.find((member) => member.uid === uid);
+            return user ? { uid, name: user.name, email: user.email } : null;
+          }) as TeamMemberData[];
+          return (
+            <Form>
+              <Stack
+                spacing={2}
+                alignItems={"stretch"}
+                justifyContent={"center"}
+                width={{ xs: "100%", sm: 500 }}
+                m={"auto"}
+                p={2}
+              >
+                <InputField
+                  name="description"
+                  label="Description"
+                  type="text"
+                  rows={5}
+                  multiline
+                  sx={{ width: "100%" }}
                 />
-              </FormControl>
+                <RadioGroupField
+                  name="priority"
+                  label="Priority"
+                  options={radioFieldOptions}
+                  value={formikProps.values.priority.toString()}
+                  onChange={(value) =>
+                    formikProps.setFieldValue("priority", value)
+                  }
+                />
+                <FormControl error fullWidth>
+                  <Field name="assignedTo">
+                    {({
+                      field,
+                      form,
+                    }: {
+                      field: FieldProps["field"];
+                      form: FormikProps<FormData>;
+                    }) => (
+                      <AutoCompleteField
+                        {...field}
+                        setFieldValue={form.setFieldValue}
+                        mode="task-assign"
+                        fieldName="assignedTo"
+                        existingValue={assignedTo}
+                      />
+                    )}
+                  </Field>
+                  <ErrorMessage
+                    name="assignedTo"
+                    component={FormHelperText}
+                    className="error"
+                  />
+                </FormControl>
 
-              <DatePickerField
-                label="Deadline"
-                value={formikProps.values.deadline}
-                onChange={(value) => {
-                  formikProps.setFieldValue("deadline", value);
+                <DatePickerField
+                  label="Deadline"
+                  value={formikProps.values.deadline}
+                  onChange={(value) => {
+                    formikProps.setFieldValue("deadline", value);
+                  }}
+                />
+
+                <Stack
+                  direction={"row"}
+                  justifyContent={"space-evenly"}
+                  alignItems={"center"}
+                >
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleFormClose()}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    variant="contained"
+                    disabled={isTaskDelete}
+                    onClick={handleClickOpen}
+                    color="error"
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={
+                      isLoading || isEqual(formikProps.values, initialValues)
+                    }
+                  >
+                    Save
+                    {isLoading && (
+                      <CircularProgress
+                        size={24}
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          marginTop: "-12px",
+                          marginLeft: "-12px",
+                        }}
+                      />
+                    )}
+                  </Button>
+                </Stack>
+              </Stack>
+            </Form>
+          );
+        }}
+      </Formik>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">Delete task</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Delete the task permanently?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button
+            onClick={() =>
+              handleTaskDelete(task.id, column.toLowerCase() as keyof Tasks)
+            }
+            autoFocus
+            color="error"
+          >
+            Delete
+            {isTaskDelete && (
+              <CircularProgress
+                size={24}
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  marginTop: "-12px",
+                  marginLeft: "-12px",
                 }}
               />
-
-              <Stack
-                direction={"row"}
-                justifyContent={"space-evenly"}
-                alignItems={"center"}
-              >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleFormClose()}
-                >
-                  Back
-                </Button>
-                <Button
-                  variant="contained"
-                  disabled={isTaskDelete}
-                  onClick={() =>
-                    handleTaskDelete(
-                      task.id,
-                      column.toLowerCase() as keyof Tasks
-                    )
-                  }
-                  color="error"
-                >
-                  Delete
-                  {isTaskDelete && (
-                    <CircularProgress
-                      size={24}
-                      sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        marginTop: "-12px",
-                        marginLeft: "-12px",
-                      }}
-                    />
-                  )}
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={
-                    isLoading || isEqual(formikProps.values, initialValues)
-                  }
-                >
-                  Save
-                  {isLoading && (
-                    <CircularProgress
-                      size={24}
-                      sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        marginTop: "-12px",
-                        marginLeft: "-12px",
-                      }}
-                    />
-                  )}
-                </Button>
-              </Stack>
-            </Stack>
-          </Form>
-        );
-      }}
-    </Formik>
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

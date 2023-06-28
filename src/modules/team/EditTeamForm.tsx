@@ -2,6 +2,11 @@ import {
   Avatar,
   Button,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   Stack,
 } from "@mui/material";
@@ -19,6 +24,7 @@ import {
 import { TeamMemberData } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
 import { isEqual } from "lodash";
+import { useState } from "react";
 
 const validationSchema = Yup.object({
   // overview validation
@@ -33,9 +39,10 @@ interface UpdateTeamValues {
   overview: string;
   members: string[];
 }
-const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
+const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const isLoading = useAppSelector((state) => state.root.team.isLoading);
   const isTeamDelete = useAppSelector((state) => state.root.team.isTeamDelete);
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
@@ -47,6 +54,12 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
   const initialValues: UpdateTeamValues = {
     overview: activeTeam?.overview as string,
     members: activeTeam?.members as string[],
+  };
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
   };
   const handleSubmit = (values: typeof initialValues) => {
     if (currentUser)
@@ -60,7 +73,6 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
   };
   const handleDeleteTeam = (teamId: string) => {
     dispatch(deleteTeam(teamId)).then(() => {
-      handleClose();
       navigate("/dashboard");
     });
   };
@@ -73,139 +85,164 @@ const EditTeamForm = ({ handleClose }: { handleClose: () => void }) => {
     }
   };
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-      validateOnChange
-    >
-      {(formikProps) => {
-        // getting data of assigned users from teamMembers in redux using their uid
-        const members: TeamMemberData[] = teamMembers?.filter(
-          (member) => member.uid !== activeTeam?.owner
-        ) as TeamMemberData[];
-        return (
-          <Form>
-            <Stack
-              spacing={2}
-              alignItems={"stretch"}
-              justifyContent={"center"}
-              width={{ xs: "100%", sm: 500 }}
-              m={"auto"}
-              p={2}
-            >
-              <Stack spacing={1} alignItems={"center"}>
-                <label
-                  htmlFor="image"
-                  style={{ cursor: "pointer", borderRadius: "50%" }}
-                >
-                  <Avatar
-                    sx={{
-                      width: { xs: 60, sm: 90, md: 150 },
-                      height: { xs: 60, sm: 90, md: 150 },
-                    }}
-                    alt={activeTeam?.teamName}
-                    src={activeTeam?.image}
-                  />
-                </label>
-                <input
-                  type="file"
-                  id="image"
-                  style={{ display: "none" }}
-                  accept="image/png, image/jpeg"
-                  onChange={handleImageChange}
-                />
-              </Stack>
-              <InputField
-                name="overview"
-                label="Overview"
-                type="text"
-                rows={5}
-                multiline
-                sx={{ width: "100%" }}
-              />
-              <FormControl error fullWidth>
-                <Field name="members">
-                  {({
-                    field,
-                    form,
-                  }: {
-                    field: FieldProps["field"];
-                    form: FormikProps<FormData>;
-                  }) => (
-                    <AutoCompleteField
-                      {...field}
-                      setFieldValue={form.setFieldValue}
-                      mode="team-edit"
-                      fieldName="members"
-                      existingValue={members}
-                    />
-                  )}
-                </Field>
-              </FormControl>
+    <>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        validateOnChange
+      >
+        {(formikProps) => {
+          // getting data of assigned users from teamMembers in redux using their uid
+          const members: TeamMemberData[] = teamMembers?.filter(
+            (member) => member.uid !== activeTeam?.owner
+          ) as TeamMemberData[];
+          return (
+            <Form>
               <Stack
-                direction={"row"}
-                justifyContent={"space-evenly"}
-                alignItems={"center"}
+                spacing={2}
+                alignItems={"stretch"}
+                justifyContent={"center"}
+                width={{ xs: "100%", sm: 500 }}
+                m={"auto"}
+                p={2}
               >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleClose()}
-                  size="small"
+                <Stack spacing={1} alignItems={"center"}>
+                  <label
+                    htmlFor="image"
+                    style={{ cursor: "pointer", borderRadius: "50%" }}
+                  >
+                    <Avatar
+                      sx={{
+                        width: { xs: 60, sm: 90, md: 150 },
+                        height: { xs: 60, sm: 90, md: 150 },
+                      }}
+                      alt={activeTeam?.teamName}
+                      src={activeTeam?.image}
+                    />
+                  </label>
+                  <input
+                    type="file"
+                    id="image"
+                    style={{ display: "none" }}
+                    accept="image/png, image/jpeg"
+                    onChange={handleImageChange}
+                  />
+                </Stack>
+                <InputField
+                  name="overview"
+                  label="Overview"
+                  type="text"
+                  rows={5}
+                  multiline
+                  sx={{ width: "100%" }}
+                />
+                <FormControl error fullWidth>
+                  <Field name="members">
+                    {({
+                      field,
+                      form,
+                    }: {
+                      field: FieldProps["field"];
+                      form: FormikProps<FormData>;
+                    }) => (
+                      <AutoCompleteField
+                        {...field}
+                        setFieldValue={form.setFieldValue}
+                        mode="team-edit"
+                        fieldName="members"
+                        existingValue={members}
+                      />
+                    )}
+                  </Field>
+                </FormControl>
+                <Stack
+                  direction={"row"}
+                  justifyContent={"space-evenly"}
+                  alignItems={"center"}
                 >
-                  Back
-                </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleFormClose()}
+                    size="small"
+                  >
+                    Back
+                  </Button>
 
-                <Button
-                  color="error"
-                  variant="contained"
-                  disabled={isTeamDelete}
-                  onClick={() => handleDeleteTeam(activeTeamId as string)}
-                  size="small"
-                >
-                  Delete
-                  {isTeamDelete && (
-                    <CircularProgress
-                      size={24}
-                      sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        marginTop: "-12px",
-                        marginLeft: "-12px",
-                      }}
-                    />
-                  )}
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={
-                    isLoading || isEqual(formikProps.values, initialValues)
-                  }
-                  size="small"
-                >
-                  Save
-                  {isLoading && (
-                    <CircularProgress
-                      size={24}
-                      sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        marginTop: "-12px",
-                        marginLeft: "-12px",
-                      }}
-                    />
-                  )}
-                </Button>
+                  <Button
+                    color="error"
+                    variant="contained"
+                    disabled={isTeamDelete}
+                    onClick={handleClickOpen}
+                    size="small"
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={
+                      isLoading || isEqual(formikProps.values, initialValues)
+                    }
+                    size="small"
+                  >
+                    Save
+                    {isLoading && (
+                      <CircularProgress
+                        size={24}
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          marginTop: "-12px",
+                          marginLeft: "-12px",
+                        }}
+                      />
+                    )}
+                  </Button>
+                </Stack>
               </Stack>
-            </Stack>
-          </Form>
-        );
-      }}
-    </Formik>
+            </Form>
+          );
+        }}
+      </Formik>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">Delete team</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Delete the team permanently?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button
+            onClick={() => handleDeleteTeam(activeTeamId as string)}
+            autoFocus
+            color="error"
+          >
+            Delete
+            {isTeamDelete && (
+              <CircularProgress
+                size={24}
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  marginTop: "-12px",
+                  marginLeft: "-12px",
+                }}
+              />
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

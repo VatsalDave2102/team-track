@@ -19,26 +19,27 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import { toast } from "react-toastify";
+import {
+  ImageUploadParams,
+  LoginParams,
+  SignupParams,
+  UpdateUserDetailsParams,
+} from "./types";
 
+// thunk to singup user
 export const signup = createAsyncThunk(
   "auth/signup",
-  async (
-    credentials: {
-      name: string;
-      email: string;
-      password: string;
-      phone: string;
-    },
-    { rejectWithValue }
-  ) => {
+  async (credentials: SignupParams, { rejectWithValue }) => {
     try {
       const { name, email, password, phone } = credentials;
+
+      // firebase method to signup user
       const { user } = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-
+      // updating user profile in auth service of firebase
       await updateProfile(user, { displayName: name });
       const userData = {
         name: user.displayName,
@@ -48,7 +49,7 @@ export const signup = createAsyncThunk(
         bio: "",
         phone: phone,
       };
-
+      // adding user to firestore
       await setDoc(doc(db, "users", user.uid), userData);
       toast.success(`Welcome, ${userData.name}`);
       return userData;
@@ -61,15 +62,17 @@ export const signup = createAsyncThunk(
   }
 );
 
+// thunk for logging in user
 export const login = createAsyncThunk(
   "auth/login",
-  async (
-    credentials: { email: string; password: string },
-    { rejectWithValue }
-  ) => {
+  async (credentials: LoginParams, { rejectWithValue }) => {
     try {
       const { email, password } = credentials;
+
+      // logging in user
       const { user } = await signInWithEmailAndPassword(auth, email, password);
+
+      // getting that user data from firestore
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnapshot = await getDoc(userDocRef);
       const userData = userDocSnapshot.data();
@@ -83,7 +86,7 @@ export const login = createAsyncThunk(
     }
   }
 );
-
+// thunk to logout user
 export const logout = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
@@ -97,9 +100,11 @@ export const logout = createAsyncThunk(
     }
   }
 );
+
+// thunk to upload image of user
 export const uploadImage = createAsyncThunk(
   "auth/uploadImage",
-  async ({ file, uid }: { file: File; uid: string }, { rejectWithValue }) => {
+  async ({ file, uid }: ImageUploadParams, { rejectWithValue }) => {
     try {
       // checking if user has already an existing profile image
       const userDocRef = doc(db, "users", uid);
@@ -137,13 +142,10 @@ export const uploadImage = createAsyncThunk(
   }
 );
 
-interface UpdateUserDetails {
-  userData: { bio: string; phone: string };
-  uid: string;
-}
+// thunk to update user details
 export const updateUserDetails = createAsyncThunk(
   "auth/updateUserDetails",
-  async ({ userData, uid }: UpdateUserDetails, { rejectWithValue }) => {
+  async ({ userData, uid }: UpdateUserDetailsParams, { rejectWithValue }) => {
     try {
       const { bio, phone } = userData;
       // getting user reference
@@ -165,12 +167,18 @@ export const updateUserDetails = createAsyncThunk(
   }
 );
 
+// thunk to track current user
 export const trackCurrentUser = (): AppThunk => (dispatch) => {
   dispatch(setLoading(true));
+  // tracking user's auth state
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       const { uid, refreshToken } = user;
+
+      // storing token in localstorage
       localStorage.setItem("token", refreshToken);
+      
+      // getting that user from firestore
       const userDocRef = doc(db, "users", uid);
       const userDocSnapshot = await getDoc(userDocRef);
       const userData = userDocSnapshot.data();

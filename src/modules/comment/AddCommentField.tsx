@@ -65,10 +65,10 @@ const AddCommentField = () => {
       <Stack
         direction={"row"}
         spacing={1}
-        alignItems={"flex-start"}
+        justifyContent={'center'}
         my={2}
         width={{ xs: "100%", sm: 500 }}
-        p={1}
+        p={{xs:1,sm:2}}
       >
         <Avatar
           alt={currentUser?.name}

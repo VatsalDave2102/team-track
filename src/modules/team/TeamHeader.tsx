@@ -94,19 +94,21 @@ const TeamHeader = () => {
           </Button>
         )}
 
-        {isOwner && isLoading ? (
+        {isLoading ? (
           <Skeleton width={143} height={44} />
         ) : (
-          <Button
-            variant="contained"
-            color="secondary"
-            endIcon={<Add />}
-            sx={{ borderRadius: "20px", color: "#333" }}
-            disableElevation
-            onClick={handleCreateModalOpen}
-          >
-            Assign Task
-          </Button>
+          isOwner && (
+            <Button
+              variant="contained"
+              color="secondary"
+              endIcon={<Add />}
+              sx={{ borderRadius: "20px", color: "#333" }}
+              disableElevation
+              onClick={handleCreateModalOpen}
+            >
+              Assign Task
+            </Button>
+          )
         )}
       </Stack>
       <CustomModal

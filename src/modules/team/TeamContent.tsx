@@ -11,15 +11,15 @@ import { fetchMembers } from "../../app/team/teamServices";
 import NoTeamExist from "./NoTeamExist";
 
 const TeamContent = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState("2");
   const [teamExists, setTeamExists] = useState(true);
   const teamList = useAppSelector((state) => state.root.team.teamList);
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const { teamId } = useParams();
   const dispatch = useAppDispatch();
-
   const activeTeam = useTeam(activeTeamId as string);
+  const teamIdArray = teamList.map((team) => team.id);
   useEffect(() => {
     const uidArray = [activeTeam?.owner, ...(activeTeam?.members || [])];
     dispatch(setActiveTeam(teamId));
@@ -29,7 +29,7 @@ const TeamContent = () => {
       dispatch(setActiveTeam(null));
       dispatch(clearTeamMembers());
     };
-  }, [dispatch, teamId, activeTeam?.members, activeTeam?.owner, teamList]);
+  }, [dispatch, teamId, activeTeam?.members, activeTeam?.owner]);
 
   useEffect(() => {
     if (teamList.length === 0) {
@@ -37,13 +37,13 @@ const TeamContent = () => {
     }
     if (teamList.length > 0) {
       setIsLoading(false);
-      const teamIndex = teamList.findIndex((team) => team.id === teamId);
+      const teamIndex = teamIdArray.findIndex((id) => id === teamId);
 
       if (teamIndex === -1) {
         setTeamExists(false);
       }
     }
-  }, [teamId, teamList]);
+  }, [teamId, teamList.length, teamIdArray]);
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
