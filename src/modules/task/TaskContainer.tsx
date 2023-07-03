@@ -29,12 +29,18 @@ const TaskContainer = () => {
   const isOwner = currentUser?.uid == activeTeam?.owner;
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
+
+  // function to open assign task modal
   const handleModalOpen = () => {
     setIsOpen(true);
   };
+
+  // function to close assign task modal
   const handleModalClose = () => {
     setIsOpen(false);
   };
+
+  // function to handle dragging to tasks
   const handleDragEnd = (result: DropResult) => {
     const { destination, source } = result;
 
@@ -51,6 +57,7 @@ const TaskContainer = () => {
       destination.droppableId === source.droppableId &&
       destination.index !== source.index
     ) {
+      // creating an updated array by removing the dragged task from it's initial position and placing in new position
       const column = destination.droppableId.toLowerCase() as keyof Tasks;
       if (activeTeam?.tasks) {
         const tasks = activeTeam?.tasks[column];
@@ -70,18 +77,26 @@ const TaskContainer = () => {
         }
       }
     }
-    // if user drop in another column
+    // if user drops in another column
     if (destination.droppableId !== source.droppableId) {
+      // creating new task objects by removing task from source column and adding it in destination column
       const sourceCol = source.droppableId.toLowerCase() as keyof Tasks;
       const destinationCol =
         destination.droppableId.toLowerCase() as keyof Tasks;
+
+      // cloning task object
       const updatedTasksObject = structuredClone(activeTeam?.tasks) as Tasks;
+
+      // removing moved task
       const [movedTask] = updatedTasksObject[sourceCol].splice(source.index, 1);
+
+      // adding it in new columnd
       updatedTasksObject[destinationCol].splice(
         destination.index,
         0,
         movedTask
       );
+
       if (activeTeam) {
         dispatch(
           updateTaskOrderDifferentColumn({
@@ -107,15 +122,19 @@ const TaskContainer = () => {
             />
           ) : activeTeam?.tasks ? (
             <>
+              {/* todo column */}
               <Grid item xs={12} sm={6} md={3} key={"TODO"}>
                 <TaskList column={"TODO"} tasks={activeTeam.tasks.todo} />
               </Grid>
+              {/* ongoing column */}
               <Grid item xs={12} sm={6} md={3} key={"ONGOING"}>
                 <TaskList column={"ONGOING"} tasks={activeTeam.tasks.ongoing} />
               </Grid>
+              {/* review column */}
               <Grid item xs={12} sm={6} md={3} key={"REVIEW"}>
                 <TaskList column={"REVIEW"} tasks={activeTeam.tasks.review} />
               </Grid>
+              {/* completed column */}
               <Grid item xs={12} sm={6} md={3} key={"COMPLETED"}>
                 <TaskList
                   column={"COMPLETED"}
@@ -124,8 +143,10 @@ const TaskContainer = () => {
               </Grid>
             </>
           ) : (
+            // if there are no tasks
             <Grid item xs={12}>
               <Box display={"flex"} flexDirection={"column"}>
+                {/* if user is owner */}
                 {isOwner ? (
                   <>
                     <Typography
@@ -142,6 +163,7 @@ const TaskContainer = () => {
                     </Button>
                   </>
                 ) : (
+                  // if user is team member
                   <Typography
                     variant="h5"
                     mb={2}

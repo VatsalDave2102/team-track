@@ -29,11 +29,14 @@ const CommentList = ({ taskId }: { taskId: string }) => {
   );
   const [activeTask] = useTask(taskId as string, activeTeam as TeamData);
   const taskComments = activeTask?.comments;
+
+  // function handle show/hide comments
   const handleCommentOpen = () => {
     setCommentOpen(!commentOpen);
   };
   return (
     <>
+      {/* Button to show/hide comments */}
       <Button onClick={handleCommentOpen} sx={{ p: { xs: 1, sm: 2 } }}>
         {commentOpen ? (
           <>
@@ -48,6 +51,7 @@ const CommentList = ({ taskId }: { taskId: string }) => {
         )}
       </Button>
 
+      {/* Collapsible comment list */}
       <Collapse in={commentOpen}>
         <List
           sx={{
@@ -55,14 +59,17 @@ const CommentList = ({ taskId }: { taskId: string }) => {
             p: { xs: 1, sm: 2 },
           }}
         >
+          {/* mapping through all comments */}
           {taskComments?.map((comment) => {
             const { commentedOn, postedBy, id, text }: Comment = comment;
             const user = teamMembers?.find((member) => member.uid === postedBy);
             return (
               <ListItem alignItems="flex-start" disablePadding key={id}>
+                {/* avatar of user */}
                 <ListItemAvatar>
                   <Avatar alt={user?.name} src={user?.profileImage} />
                 </ListItemAvatar>
+                {/* Text body of comment */}
                 <ListItemText
                   primary={
                     <Stack

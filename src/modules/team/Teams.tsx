@@ -15,11 +15,14 @@ import { setActiveTeam } from "../../app/team/teamSlice";
 const Teams = () => {
   const currentUserTeams = useAppSelector((state) => state.root.team.teamList);
   const dispatch = useAppDispatch();
+
+  // function to set active team
   const handleTeamClick = (teamId: string) => {
     dispatch(setActiveTeam(teamId));
   };
   return (
     <>
+      {/* Header */}
       <Typography
         variant="h5"
         paddingBottom={1}
@@ -35,9 +38,12 @@ const Teams = () => {
         sx={{ overflowY: "auto" }}
         maxHeight={"80vh"}
       >
+        {/* Create team card */}
         <Grid item xs={12} sm={6} md={4}>
           <CreateTeamCard />
         </Grid>
+
+        {/* Mapping throung all teams of user */}
         {currentUserTeams.map((team) => (
           <Grid item xs={12} sm={6} md={4} key={team.id}>
             <Card sx={{ maxWidth: 300, borderRadius: 3, maxHeight: 200 }}>

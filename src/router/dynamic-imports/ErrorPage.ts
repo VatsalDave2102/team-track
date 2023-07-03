@@ -1,4 +1,4 @@
 import { lazy } from "react";
 
-const ErrorPage = lazy(() => import("../../modules/error/ErrorPage"));
+const ErrorPage = lazy(() => import("../../modules/layout/pages/ErrorPage"));
 export default ErrorPage

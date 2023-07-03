@@ -12,6 +12,7 @@ import TEAMTRACKGREEN from "../../../assets/TeamTrackGreen.svg";
 import { Suspense, lazy, useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 
+// dynamically importing SignUpForm
 const SignUpForm = lazy(() => import("../components/SignUpForm"));
 
 const Signup = () => {
@@ -19,10 +20,12 @@ const Signup = () => {
   useEffect(() => {
     setShowForm(true);
   }, []);
+
   return (
     <Suspense>
       <Grow in={showForm} timeout={800}>
         <Container maxWidth="lg" sx={{ paddingTop: "2rem" }}>
+          {/* Signup header */}
           <Stack direction="row" justifyContent="center">
             <Box>
               <img
@@ -40,6 +43,7 @@ const Signup = () => {
             Streamline Your Task Management Journey - Sign Up and Get Started
             Today!
           </Typography>
+          {/* Signup form and icon grid */}
           <Grid
             container
             alignItems="center"
@@ -48,9 +52,11 @@ const Signup = () => {
             borderBottom={2}
             borderColor={"primary.main"}
           >
+            {/* signup form */}
             <Grid item xs={12} md={7}>
               <SignUpForm />
             </Grid>
+            {/* icon */}
             <Grid item xs={5} sx={{ display: { xs: "none", md: "flex" } }}>
               <Box>
                 <img

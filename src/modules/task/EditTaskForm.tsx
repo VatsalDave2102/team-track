@@ -70,13 +70,17 @@ const EditTaskForm = ({
   );
   const activeTeam = useTeam(activeTeamId as string);
   const dispatch = useAppDispatch();
-  const initialValues = {
+
+  // initial values for task edit form
+  const initialValues: Omit<Task, "title" | "comments"> = {
     id: task.id,
     description: task.description,
     priority: task.priority,
     deadline: task.deadline,
     assignedTo: task.assignedTo,
   };
+
+  // function to handle submit
   const handleSubmit = (values: typeof initialValues) => {
     if (currentUser) {
       dispatch(
@@ -84,20 +88,30 @@ const EditTaskForm = ({
       );
     }
   };
+
+  // function to open delete dialog
   const handleClickOpen = () => {
     setOpen(true);
   };
+
+  // function to close delete dialog
   const handleClose = () => {
     setOpen(false);
   };
 
+  // function to handle task deletion
   const handleTaskDelete = (taskId: string, column: keyof Tasks) => {
     if (activeTeam?.tasks) {
+      // creating a copy of that column in which task was present
       const updatedTasksArray = Array.from(activeTeam.tasks[column]);
+
+      // finding the task index and removing it from array
       const taskIndex = updatedTasksArray.findIndex(
         (task) => task.id === taskId
       );
       updatedTasksArray.splice(taskIndex, 1);
+
+      // dispatching to update firestore and redux store
       dispatch(
         deleteTask({
           teamId: activeTeamId as string,
@@ -135,6 +149,7 @@ const EditTaskForm = ({
                 m={"auto"}
                 p={2}
               >
+                {/* Description field */}
                 <InputField
                   name="description"
                   label="Description"
@@ -143,6 +158,8 @@ const EditTaskForm = ({
                   multiline
                   sx={{ width: "100%" }}
                 />
+
+                {/* Priority field */}
                 <RadioGroupField
                   name="priority"
                   label="Priority"
@@ -152,6 +169,8 @@ const EditTaskForm = ({
                     formikProps.setFieldValue("priority", value)
                   }
                 />
+
+                {/* Autocomplete field  */}
                 <FormControl error fullWidth>
                   <Field name="assignedTo">
                     {({
@@ -177,6 +196,7 @@ const EditTaskForm = ({
                   />
                 </FormControl>
 
+                {/* Deadline field */}
                 <DatePickerField
                   label="Deadline"
                   value={formikProps.values.deadline}
@@ -185,6 +205,7 @@ const EditTaskForm = ({
                   }}
                 />
 
+                {/* Back, delete, save buttons */}
                 <Stack
                   direction={"row"}
                   justifyContent={"space-evenly"}
@@ -235,6 +256,8 @@ const EditTaskForm = ({
           );
         }}
       </Formik>
+
+      {/* Delete dialog */}
       <Dialog
         open={open}
         onClose={handleClose}

@@ -1,4 +1,4 @@
 import { lazy } from "react";
 
-const Root = lazy(() => import("../../modules/root/Root"));
+const Root = lazy(() => import("../../modules/layout/pages/Root"));
 export default Root

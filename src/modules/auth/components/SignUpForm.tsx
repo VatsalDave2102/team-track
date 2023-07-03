@@ -7,8 +7,10 @@ import { useNavigate } from "react-router-dom";
 import { signup } from "../../../app/auth/authServices";
 import { Suspense, lazy, useEffect } from "react";
 
+// dynamically importing input field
 const InputField = lazy(() => import("../../common/components/InputField"));
 
+// initial values for signup for
 const initialValues: SignUpUserValues = {
   name: "",
   email: "",
@@ -17,6 +19,7 @@ const initialValues: SignUpUserValues = {
   confirmPassword: "",
 };
 
+// validation schema
 const validationSchema = Yup.object({
   // name validation
   name: Yup.string().max(40, "Too Long!").required("Name is required!"),
@@ -48,6 +51,8 @@ const validationSchema = Yup.object({
 const SignUpForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  // effect to check if user is already logged in
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -56,6 +61,8 @@ const SignUpForm = () => {
       return;
     }
   });
+
+  // form submit handler
   const handleSumbit = async (values: typeof initialValues) => {
     const { name, email, password, phone } = values;
     const newUser = await dispatch(signup({ name, email, password, phone }));
@@ -78,19 +85,30 @@ const SignUpForm = () => {
             return (
               <Form>
                 <Stack spacing={1} sx={{ alignItems: { xs: "center" } }}>
+                  {/* Name field */}
                   <InputField name="name" label="Name" type="text" />
+
+                  {/* Email field */}
                   <InputField name="email" label="Email" type="email" />
+
+                  {/* Passoword field */}
                   <InputField
                     name="password"
                     label="Password"
                     type="password"
                   />
+
+                  {/* Confirm field passoword */}
                   <InputField
                     name="confirmPassword"
                     label="Confirm Password"
                     type="password"
                   />
+
+                  {/* Phone number field */}
                   <InputField name="phone" label="Phone number" type="text" />
+
+                  {/* Signup and reset button */}
                   <Stack direction={"row"} spacing={3}>
                     <Button type="submit" variant="contained">
                       Sign Up

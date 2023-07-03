@@ -27,6 +27,8 @@ const TeamContent = () => {
   const dispatch = useAppDispatch();
   const activeTeam = useTeam(activeTeamId as string);
   const teamIdArray = teamList.map((team) => team.id);
+
+  // effect to fetch members of current team
   useEffect(() => {
     const uidArray = [activeTeam?.owner, ...(activeTeam?.members || [])];
     dispatch(setActiveTeam(teamId));
@@ -38,6 +40,7 @@ const TeamContent = () => {
     };
   }, [dispatch, teamId, activeTeam?.members, activeTeam?.owner]);
 
+  // effect to check if team exists or not
   useEffect(() => {
     if (teamList.length === 0) {
       setIsLoading(true);
@@ -51,9 +54,13 @@ const TeamContent = () => {
       }
     }
   }, [teamId, teamList.length, teamIdArray]);
+
+  // function handle tab changes
   const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
+
+  // skeletons
   if (isLoading) {
     return (
       <Box border={"1px #ddd solid"} borderRadius={3}>
@@ -79,8 +86,10 @@ const TeamContent = () => {
       <Box p={2} border={"1px #ddd solid"} borderRadius={3}>
         {teamExists ? (
           <>
+            {/* Team header */}
             <TeamHeader />
             <Box>
+              {/* Tab panel */}
               <TabContext value={value}>
                 <Box>
                   <TabList aria-label="Tabs" onChange={handleTabChange}>
@@ -88,6 +97,8 @@ const TeamContent = () => {
                     <Tab label="Tasks" value="2" />
                   </TabList>
                 </Box>
+
+                {/* Overview */}
                 <TabPanel value="1" sx={{ p: 1 }}>
                   <Box>
                     <Typography
@@ -102,6 +113,8 @@ const TeamContent = () => {
                     </Typography>
                   </Box>
                 </TabPanel>
+
+                {/* Task container */}
                 <TabPanel value="2" sx={{ p: 0, pt: 1 }}>
                   <TaskContainer />
                 </TabPanel>

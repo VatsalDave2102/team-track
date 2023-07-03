@@ -7,12 +7,16 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../../../app/auth/authServices";
 import { Suspense, lazy, useEffect } from "react";
 
+// dynamically importing input field
 const InputField = lazy(() => import("../../common/components/InputField"));
 
+// initial values for login form
 const initialValues: LoginUserValues = {
   email: "",
   password: "",
 };
+
+// validation schema
 const validationSchema = Yup.object({
   // email validation
   email: Yup.string()
@@ -24,10 +28,12 @@ const validationSchema = Yup.object({
     .min(6, "Password must be atleast 6 characters long")
     .required("Password is required!"),
 });
+
 const LoginForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  //  effect to check if user is already logged in
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -37,6 +43,7 @@ const LoginForm = () => {
     }
   });
 
+  // form submit handler
   const handleSubmit = async (values: typeof initialValues) => {
     const { email, password } = values;
 
@@ -59,13 +66,15 @@ const LoginForm = () => {
             return (
               <Form>
                 <Stack spacing={1} sx={{ alignItems: { xs: "center" } }}>
+                  {/* Email field */}
                   <InputField name="email" label="Email" type="email" />
+                  {/* Password field */}
                   <InputField
                     name="password"
                     label="Password"
                     type="password"
                   />
-
+                  {/* Login and reset button */}
                   <Stack direction={"row"} spacing={3}>
                     <Button type="submit" variant="contained">
                       Login

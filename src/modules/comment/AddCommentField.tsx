@@ -27,9 +27,13 @@ const AddCommentField = () => {
     activeTaskId as string,
     activeTeam as TeamData
   );
+
+  // function to handle comment input field
   const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setComment(event.target.value);
   };
+
+  // handler to post comment
   const handlePostComment = (comment: string) => {
     if (currentUser && activeTask) {
       const commentData: Comment = {
@@ -47,10 +51,14 @@ const AddCommentField = () => {
           column: taskColumn as keyof Tasks,
         })
       );
+
+      // resetting field to empty string
+      setComment("");
     }
   };
   return (
     <>
+      {/* Field header */}
       <Stack
         direction={"row"}
         alignItems={"center"}
@@ -62,19 +70,23 @@ const AddCommentField = () => {
         <CommentIcon sx={{ color: "GrayText" }} />
         <Typography variant="h6">Comments</Typography>
       </Stack>
+
+      {/* Comment field */}
       <Stack
         direction={"row"}
         spacing={1}
-        justifyContent={'center'}
+        justifyContent={"center"}
         my={2}
         width={{ xs: "100%", sm: 500 }}
-        p={{xs:1,sm:2}}
+        p={{ xs: 1, sm: 2 }}
       >
+        {/* Current user avatar */}
         <Avatar
           alt={currentUser?.name}
           src={currentUser?.profileImage}
           sx={{ mt: 1 }}
         />
+        {/* Text field */}
         <TextField
           name="comment"
           label="Comment"
@@ -82,6 +94,7 @@ const AddCommentField = () => {
           fullWidth
           onChange={handleCommentChange}
           value={comment}
+          // send button
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

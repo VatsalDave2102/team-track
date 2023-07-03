@@ -19,7 +19,7 @@ import {
   updateTeam,
   uploadTeamImage,
 } from "../../app/team/teamServices";
-import { TeamMemberData } from "../../utils/types";
+import { CreateTeamValues, TeamMemberData } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
 import { isEqual } from "lodash";
 import { Suspense, lazy, useState } from "react";
@@ -29,6 +29,7 @@ const AutoCompleteField = lazy(
   () => import("../common/components/AutoCompleteField")
 );
 
+// validation schema
 const validationSchema = Yup.object({
   // overview validation
   overview: Yup.string()
@@ -38,10 +39,7 @@ const validationSchema = Yup.object({
   // members validation
   members: Yup.array().min(1, "Must add atleast one member!"),
 });
-interface UpdateTeamValues {
-  overview: string;
-  members: string[];
-}
+
 const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -54,16 +52,24 @@ const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
     (state) => state.root.team.activeTeamMembers
   );
   const activeTeam = useTeam(activeTeamId as string);
-  const initialValues: UpdateTeamValues = {
+
+  // initial values
+  const initialValues: Pick<CreateTeamValues, "overview" | "members"> = {
     overview: activeTeam?.overview as string,
     members: activeTeam?.members as string[],
   };
+
+  // function to open delete dialog
   const handleClickOpen = () => {
     setOpen(true);
   };
+
+  // function to close delete dialog
   const handleClose = () => {
     setOpen(false);
   };
+
+  // function to handle submit
   const handleSubmit = (values: typeof initialValues) => {
     if (currentUser)
       dispatch(
@@ -74,11 +80,15 @@ const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
         })
       );
   };
+
+  // function handle deletion of team
   const handleDeleteTeam = (teamId: string) => {
     dispatch(deleteTeam(teamId)).then(() => {
       navigate("/dashboard");
     });
   };
+
+  // function to handle image changing of team
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0];
@@ -87,6 +97,7 @@ const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
       }
     }
   };
+
   return (
     <Suspense fallback={null}>
       <Formik
@@ -110,6 +121,7 @@ const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
                 m={"auto"}
                 p={2}
               >
+                {/* Image field */}
                 <Stack spacing={1} alignItems={"center"}>
                   <label
                     htmlFor="image"
@@ -124,6 +136,8 @@ const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
                       src={activeTeam?.image}
                     />
                   </label>
+
+                  {/* hidden input field */}
                   <input
                     type="file"
                     id="image"
@@ -132,6 +146,8 @@ const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
                     onChange={handleImageChange}
                   />
                 </Stack>
+
+                {/* Overview field */}
                 <InputField
                   name="overview"
                   label="Overview"
@@ -140,6 +156,8 @@ const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
                   multiline
                   sx={{ width: "100%" }}
                 />
+
+                {/* Members autocomplete field */}
                 <FormControl error fullWidth>
                   <Field name="members">
                     {({
@@ -159,6 +177,8 @@ const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
                     )}
                   </Field>
                 </FormControl>
+
+                {/* Back, delete, save buttons */}
                 <Stack
                   direction={"row"}
                   justifyContent={"space-evenly"}
@@ -210,6 +230,8 @@ const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
           );
         }}
       </Formik>
+
+      {/* Delete team dialog */}
       <Dialog
         open={open}
         onClose={handleClose}

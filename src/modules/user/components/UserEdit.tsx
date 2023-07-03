@@ -37,9 +37,13 @@ const UserEdit = ({
     bio: currentUser?.bio as string,
     phone: currentUser?.phone as string,
   };
+
+  // function to close edit user form
   const handleGoBack = () => {
     handleClose();
   };
+
+  // function to handle submit
   const handleSubmit = (values: typeof initialValues) => {
     dispatch(
       updateUserDetails({ userData: values, uid: currentUser?.uid as string })
@@ -68,6 +72,7 @@ const UserEdit = ({
                   m={"auto"}
                   p={2}
                 >
+                  {/* User bio field */}
                   <InputField
                     name="bio"
                     label="Bio"
@@ -76,7 +81,11 @@ const UserEdit = ({
                     multiline
                     sx={{ width: "100%" }}
                   />
+
+                  {/* User phone number field */}
                   <InputField name="phone" label="Phone" type="text" />
+
+                  {/* Back and save buttons */}
                   <Stack
                     direction={"row"}
                     justifyContent={"space-around"}

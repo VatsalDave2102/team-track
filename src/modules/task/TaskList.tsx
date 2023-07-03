@@ -12,7 +12,7 @@ import { taskColor } from "../../utils/utils";
 import useColorMode from "../theme/useColorMode";
 
 const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const activeTask = useAppSelector((state) => state.root.team.activeTask);
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
@@ -20,13 +20,17 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
   const isOwner = activeTeam?.owner === currentUser?.uid;
   const { colorMode } = useColorMode();
   const dispatch = useAppDispatch();
+
+  // function to open task info modal
   const handleTaskInfoModalOpen = (task: Task) => {
     dispatch(setActiveTask(task.id));
-    setIsEditModalOpen(true);
+    setIsModalOpen(true);
   };
+
+  // function to close task info modal
   const handleTaskInfoModalClose = () => {
     dispatch(setActiveTask(null));
-    setIsEditModalOpen(false);
+    setIsModalOpen(false);
   };
 
   return (
@@ -62,6 +66,7 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
                 }
               >
                 {(draggableProvided) => (
+                  // Task card
                   <Card
                     ref={draggableProvided.innerRef}
                     {...draggableProvided.draggableProps}
@@ -75,6 +80,7 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
                       cursor: "grab",
                     }}
                   >
+                    {/* Task title */}
                     <Typography
                       variant="subtitle1"
                       sx={{
@@ -88,6 +94,7 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
                       {task.title}
                     </Typography>
                     <Stack direction={"row"} spacing={1}>
+                      {/* Icon to show if it is assigned to current user */}
                       {task.assignedTo.find(
                         (userId) => userId === currentUser?.uid
                       ) && (
@@ -100,6 +107,8 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
                           </Box>
                         </Tooltip>
                       )}
+
+                      {/* Icon to show if there are comments on task */}
                       {task.comments.length > 0 && (
                         <Tooltip title="Comments">
                           <Box
@@ -122,6 +131,8 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
                         </Tooltip>
                       )}
                     </Stack>
+
+                    {/* To highlight priority level */}
                     <Box
                       bgcolor={`${taskColor[Number(task.priority)]}.light`}
                       width={"100%"}
@@ -137,9 +148,11 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
           </Stack>
         )}
       </Droppable>
+
+      {/* Task info modal */}
       {activeTask && (
         <CustomModal
-          isOpen={isEditModalOpen}
+          isOpen={isModalOpen}
           handleClose={handleTaskInfoModalClose}
           title={`In ${column}`}
           children={

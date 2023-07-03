@@ -25,12 +25,17 @@ const TeamInfo = () => {
   const activeTeam = useTeam(activeTeamId as string);
   const isOwner = currentUser?.uid == activeTeam?.owner;
   const owner = teamMembers?.find((member) => member.uid === activeTeam?.owner);
+
+  // function to open edit team form
   const handleEditFormOpen = () => {
     setIsEditFormOpen(true);
   };
+
+  // function to close edit team form
   const handleEditFormClose = () => {
     setIsEditFormOpen(false);
   };
+
   return (
     <Suspense>
       <Stack
@@ -41,6 +46,7 @@ const TeamInfo = () => {
         m={"auto"}
         p={{ xs: 1, sm: 2 }}
       >
+        {/* Header */}
         <Groups sx={{ color: "GrayText" }} />
         <Typography variant="h5">Team details</Typography>
       </Stack>
@@ -53,6 +59,7 @@ const TeamInfo = () => {
           m={"auto"}
           p={2}
         >
+          {/* Overview */}
           <Box>
             <Typography variant="h6" mb={1}>
               Overview
@@ -67,6 +74,8 @@ const TeamInfo = () => {
             </Typography>
           </Box>
           <Divider />
+
+          {/* Owner name */}
           <Box>
             <Typography variant="h6" mb={1}>
               Owner
@@ -78,6 +87,8 @@ const TeamInfo = () => {
             />
           </Box>
           <Divider />
+
+          {/* Members name */}
           <Box>
             <Typography variant="h6" mb={1}>
               Members
@@ -92,6 +103,8 @@ const TeamInfo = () => {
               />
             ))}
           </Box>
+
+          {/* Edit button if owner */}
           {isOwner && (
             <Box display={"flex"} justifyContent={"flex-end"}>
               <Button
@@ -107,6 +120,8 @@ const TeamInfo = () => {
           )}
         </Stack>
       </Collapse>
+
+      {/* edit team form */}
       <Collapse in={isEditFormOpen}>
         <EditTeamForm handleFormClose={handleEditFormClose} />
       </Collapse>

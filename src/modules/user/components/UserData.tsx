@@ -23,9 +23,13 @@ const UserData = ({
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  // function to navigate back
   const handleBackClick = () => {
     navigate(-1);
   };
+
+  // function to update user image
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const file = event.target.files[0];
@@ -40,10 +44,13 @@ const UserData = ({
         <IconButton color="primary" onClick={handleBackClick}>
           <ArrowBack />
         </IconButton>
+        {/* Header */}
         <Typography variant="h4" color={"primary"} fontWeight={700}>
           My details
         </Typography>
       </Stack>
+
+      {/* Image, name, email display */}
       <Stack
         spacing={2}
         alignItems={"stretch"}
@@ -51,6 +58,7 @@ const UserData = ({
         m={"auto"}
         p={2}
       >
+        {/* User image */}
         <Stack spacing={1} alignItems={"center"}>
           <label
             htmlFor="image"
@@ -65,6 +73,7 @@ const UserData = ({
               src={currentUser?.profileImage}
             />
           </label>
+          {/* hidden image */}
           <input
             type="file"
             id="image"
@@ -72,6 +81,7 @@ const UserData = ({
             accept="image/png, image/jpeg"
             onChange={handleImageChange}
           />
+          {/* name and email */}
           <Box>
             <Typography variant="h6" textAlign={"center"}>
               {currentUser?.name}
@@ -81,8 +91,11 @@ const UserData = ({
             </Typography>
           </Box>
         </Stack>
+
+        {/* User bio and phone */}
         <Collapse in={!isEditFormOpen}>
           <Stack spacing={2}>
+            {/* bio */}
             <Box>
               <Typography variant="h6" mb={1} color={"primary"}>
                 Bio
@@ -90,6 +103,7 @@ const UserData = ({
               <Typography variant="body1">{currentUser?.bio}</Typography>
             </Box>
             <Divider />
+            {/* phone */}
             <Box>
               <Typography variant="h6" mb={1} color={"primary"}>
                 Phone number

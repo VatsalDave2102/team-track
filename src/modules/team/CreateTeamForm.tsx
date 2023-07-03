@@ -25,11 +25,14 @@ const AutoCompleteField = lazy(
   () => import("../common/components/AutoCompleteField")
 );
 
+// initial values for creating team
 const initialValues: CreateTeamValues = {
   teamName: "",
   overview: "",
   members: [],
 };
+
+// validation schema
 const validationSchema = Yup.object({
   // teamName validation
   teamName: Yup.string()
@@ -50,8 +53,9 @@ const validationSchema = Yup.object({
 const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const isLoading = useAppSelector((state) => state.root.team.isLoading);
-
   const dispatch = useAppDispatch();
+
+  // function to handle submit
   const handleSubmit = (values: typeof initialValues) => {
     if (currentUser) {
       const teamData = {
@@ -82,7 +86,10 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
             m={"auto"}
             p={2}
           >
+            {/* Team name field */}
             <InputField name="teamName" label="Team name" type="text" />
+
+            {/* Team overview field */}
             <InputField
               name="overview"
               label="Overview"
@@ -90,6 +97,8 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
               rows={5}
               multiline
             />
+
+            {/* Team members autocomplete field */}
             <FormControl error fullWidth>
               <Field name="members">
                 {({
@@ -114,6 +123,8 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
                 className="error"
               />
             </FormControl>
+
+            {/* Create team button */}
             <Box display={"flex"} justifyContent={"center"}>
               <Button type="submit" variant="contained" disabled={isLoading}>
                 Create team

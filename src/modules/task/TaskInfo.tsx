@@ -47,6 +47,7 @@ const TaskInfo = ({
     activeTaskId as string,
     activeTeam as TeamData
   );
+
   useEffect(() => {
     // getting data of assigned users from teamMembers in redux using their uid
     const result = activeTask?.assignedTo.map((uid) => {
@@ -61,20 +62,27 @@ const TaskInfo = ({
     }
   }, [setAssignedTo, activeTask?.assignedTo, teamMembers]);
 
+  // boolean to check if user is owner of team
   const isOwner = currentUser?.uid == activeTeam?.owner;
+  const today = dayjs();
+  // boolean to check is deadline over or not
+  const isDeadlineOver = today.diff(activeTask?.deadline);
+
+  // function to open task edit form
   const handleEditFormOpen = () => {
     setIsEditFormOpen(true);
   };
+
+  // function to close task edit form
   const handleEditFormClose = () => {
     setIsEditFormOpen(false);
   };
-  const today = dayjs();
-  const isDeadlineOver = today.diff(activeTask?.deadline);
 
   return (
     <Suspense fallback={null}>
       {activeTask && (
         <>
+          {/* Header */}
           <Stack
             direction={"row"}
             width={{ xs: "100%", sm: 500 }}
@@ -95,6 +103,7 @@ const TaskInfo = ({
               m={"auto"}
               p={2}
             >
+              {/* Task title */}
               <Box>
                 <Typography variant="h6" mb={1}>
                   Title
@@ -102,6 +111,8 @@ const TaskInfo = ({
                 <Typography variant="body1">{activeTask.title}</Typography>
               </Box>
               <Divider />
+
+              {/* Task description */}
               <Box>
                 <Typography variant="h6" mb={1}>
                   Description
@@ -111,6 +122,7 @@ const TaskInfo = ({
                 </Typography>
               </Box>
               <Divider />
+              {/* Task priority */}
               <Box>
                 <Typography variant="h6" mb={1}>
                   Priority
@@ -123,6 +135,8 @@ const TaskInfo = ({
                 />
               </Box>
               <Divider />
+
+              {/* Task deadline */}
               <Box>
                 <Typography variant="h6" mb={1}>
                   Deadline
@@ -135,6 +149,8 @@ const TaskInfo = ({
                 </Typography>
               </Box>
               <Divider />
+
+              {/* Task assigned to */}
               <Box>
                 <Typography variant="h6" mb={1}>
                   Assigned to
@@ -151,6 +167,8 @@ const TaskInfo = ({
                   />
                 ))}
               </Box>
+
+              {/* Edit button if user is owner */}
               {isOwner && (
                 <Box display={"flex"} justifyContent={"flex-end"}>
                   <Button
@@ -166,6 +184,8 @@ const TaskInfo = ({
               )}
             </Stack>
           </Collapse>
+
+          {/* Collapsible edit form */}
           <Collapse in={isEditFormOpen}>
             <EditTaskForm
               handleModalClose={handleTaskInfoModalClose}
@@ -174,11 +194,15 @@ const TaskInfo = ({
               handleFormClose={handleEditFormClose}
             />
           </Collapse>
+
+          {/* Field to add comments */}
           <AddCommentField />
 
+          {/* If there are comments */}
           {activeTask.comments.length > 0 ? (
             <CommentList taskId={activeTask.id} />
           ) : (
+            // if there are no comments
             <Typography
               variant="body1"
               mb={2}

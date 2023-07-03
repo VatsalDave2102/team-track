@@ -22,6 +22,7 @@ import { assignTasks, getCurrentUserTeams } from "../../app/team/teamServices";
 import { genreateId, radioFieldOptions } from "../../utils/utils";
 import { lazy } from "react";
 
+// dynamically importing input, autocomplete, datepicker, radio field
 const InputField = lazy(() => import("../common/components/InputField"));
 const AutoCompleteField = lazy(
   () => import("../common/components/AutoCompleteField")
@@ -29,6 +30,7 @@ const AutoCompleteField = lazy(
 const DatePickerField = lazy(() => import("./DatePickerField"));
 const RadioGroupField = lazy(() => import("./RadioGroupField"));
 
+// initial values of task create form
 const initialValues: Task = {
   title: "",
   description: "",
@@ -39,6 +41,7 @@ const initialValues: Task = {
   comments: [],
 };
 
+// validation schema
 const validationSchema = Yup.object({
   // title validation
   title: Yup.string()
@@ -67,7 +70,10 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const dispatch = useAppDispatch();
+
+  // function to handle submit
   const handleSubmit = (values: typeof initialValues) => {
+    // generating unique id for task
     values.id = genreateId(6);
 
     if (activeTeamId && currentUser) {
@@ -79,6 +85,7 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
       handleClose();
     }
   };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -99,7 +106,9 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
               p={2}
             >
               <Stack spacing={1}>
+                {/* Task title field */}
                 <InputField name="title" label="Title" type="text" />
+                {/* Description field */}
                 <InputField
                   name="description"
                   label="Description"
@@ -109,6 +118,7 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
                 />
               </Stack>
               <Stack spacing={2}>
+                {/* Priority field */}
                 <RadioGroupField
                   name="priority"
                   label="Priority"
@@ -119,8 +129,10 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
                   }
                 />
 
+                {/* Assigned to field */}
                 <FormControl error fullWidth>
                   <Field name="assignedTo">
+                    {/* passing field and form props to autocomplete field */}
                     {({
                       field,
                       form,
@@ -139,6 +151,7 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
                     }}
                   </Field>
 
+                  {/* Error message of autocomplete */}
                   <ErrorMessage
                     name="assignedTo"
                     component={FormHelperText}
@@ -146,6 +159,7 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
                   />
                 </FormControl>
 
+                {/* Deadline field */}
                 <DatePickerField
                   label="Deadline"
                   value={formikProps.values.deadline}
@@ -155,6 +169,7 @@ const CreateTaskForm = ({ handleClose }: { handleClose: () => void }) => {
                 />
               </Stack>
             </Stack>
+            {/* Assign task button */}
             <Box display={"flex"} justifyContent={"center"} my={2}>
               <Button
                 type="submit"

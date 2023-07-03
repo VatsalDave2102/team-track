@@ -25,17 +25,24 @@ const TeamHeader = () => {
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const isOwner = currentUser?.uid == activeTeam?.owner;
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
   const [isOpen, setIsOpen] = useState(false);
+
+  // function to open info modal
   const handleInfoModalOpen = () => {
     setIsOpen(true);
   };
+
+  // function to close info modal
   const handleInfoModalClose = () => {
     setIsOpen(false);
   };
+
+  // function to open assign task modal
   const handleCreateModalOpen = () => {
     setIsCreateModalOpen(true);
   };
+
+  // function to close assign task modal
   const handleCreateModalClose = () => {
     setIsCreateModalOpen(false);
   };
@@ -46,6 +53,7 @@ const TeamHeader = () => {
       borderRadius={3}
       color={"white"}
     >
+      {/* Team name */}
       <Typography variant="h4" mb={2}>
         {isLoading ? <Skeleton width={"40%"} /> : activeTeam?.teamName}
       </Typography>
@@ -55,6 +63,7 @@ const TeamHeader = () => {
         direction={{ xs: "column", sm: "row" }}
         alignItems={{ xs: "start", sm: "center" }}
       >
+        {/* skeletons */}
         <Box display={"flex"} alignItems={"center"}>
           {isLoading ? (
             <>
@@ -66,7 +75,7 @@ const TeamHeader = () => {
               <Typography variant="subtitle2" px={1}>
                 Members
               </Typography>
-
+              {/* Avatar group to display number of members */}
               <AvatarGroup max={3}>
                 {teamMembers?.map((member) => (
                   <Avatar
@@ -82,6 +91,7 @@ const TeamHeader = () => {
         {isLoading ? (
           <Skeleton width={127} height={44} />
         ) : (
+          // button to open team info
           <Button
             variant="contained"
             color="secondary"
@@ -98,6 +108,7 @@ const TeamHeader = () => {
           <Skeleton width={143} height={44} />
         ) : (
           isOwner && (
+            // button to open assign task modal
             <Button
               variant="contained"
               color="secondary"
@@ -111,12 +122,15 @@ const TeamHeader = () => {
           )
         )}
       </Stack>
+      {/* Team info modal */}
       <CustomModal
         isOpen={isOpen}
         handleClose={handleInfoModalClose}
         title={activeTeam?.teamName as string}
         children={<TeamInfo />}
       />
+
+      {/* Assign task modal */}
       <CustomModal
         isOpen={isCreateModalOpen}
         handleClose={handleCreateModalClose}

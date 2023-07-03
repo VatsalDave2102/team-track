@@ -11,9 +11,13 @@ const UserProfile = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const { colorMode } = useColorMode();
+
+  // function to open edit form
   const handleEditFormOpen = () => {
     setIsEditFormOpen(true);
   };
+
+  // function to close edit form
   const handleEditFormClose = () => {
     setIsEditFormOpen(false);
   };
@@ -33,12 +37,14 @@ const UserProfile = () => {
             }}
           />
           <Box>
+            {/* User data */}
             <UserData
               handleOpen={handleEditFormOpen}
               isEditFormOpen={isEditFormOpen}
             />
           </Box>
           <Box>
+            {/* User edit form */}
             <UserEdit
               handleClose={handleEditFormClose}
               isEditFormOpen={isEditFormOpen}
