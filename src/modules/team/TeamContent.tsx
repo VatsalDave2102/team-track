@@ -1,14 +1,21 @@
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Box, Skeleton, Tab, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import TaskContainer from "../task/TaskContainer";
-import TeamHeader from "./TeamHeader";
+import {
+  Box,
+  CircularProgress,
+  Skeleton,
+  Tab,
+  Typography,
+} from "@mui/material";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { clearTeamMembers, setActiveTeam } from "../../app/team/teamSlice";
 import { useParams } from "react-router-dom";
 import useTeam from "../../custom-hook/useTeam";
 import { fetchMembers } from "../../app/team/teamServices";
-import NoTeamExist from "./NoTeamExist";
+
+const NoTeamExist = lazy(() => import("./NoTeamExist"));
+const TaskContainer = lazy(() => import("../task/TaskContainer"));
+const TeamHeader = lazy(() => import("./TeamHeader"));
 
 const TeamContent = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +51,7 @@ const TeamContent = () => {
       }
     }
   }, [teamId, teamList.length, teamIdArray]);
-  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
   if (isLoading) {
@@ -55,7 +62,19 @@ const TeamContent = () => {
     );
   }
   return (
-    <>
+    <Suspense
+      fallback={
+        <CircularProgress
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            marginTop: "-12px",
+            marginLeft: "-12px",
+          }}
+        />
+      }
+    >
       {/* project header */}
       <Box p={2} border={"1px #ddd solid"} borderRadius={3}>
         {teamExists ? (
@@ -93,7 +112,7 @@ const TeamContent = () => {
           <NoTeamExist />
         )}
       </Box>
-    </>
+    </Suspense>
   );
 };
 

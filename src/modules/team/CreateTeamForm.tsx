@@ -15,11 +15,15 @@ import {
   FormikProps,
 } from "formik";
 import * as Yup from "yup";
-import InputField from "../common/components/InputField";
-import AutoCompleteField from "../common/components/AutoCompleteField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { createTeam } from "../../app/team/teamServices";
 import { CreateTeamValues } from "../../utils/types";
+import { Suspense, lazy } from "react";
+
+const InputField = lazy(() => import("../common/components/InputField"));
+const AutoCompleteField = lazy(
+  () => import("../common/components/AutoCompleteField")
+);
 
 const initialValues: CreateTeamValues = {
   teamName: "",
@@ -62,73 +66,75 @@ const CreateTeamForm = ({ handleClose }: { handleClose: () => void }) => {
     }
   };
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-      validateOnChange
-    >
-      <Form>
-        <Stack
-          spacing={1}
-          alignItems={"stretch"}
-          justifyContent={"center"}
-          width={{ xs: 250, sm: 500 }}
-          m={"auto"}
-          p={2}
-        >
-          <InputField name="teamName" label="Team name" type="text" />
-          <InputField
-            name="overview"
-            label="Overview"
-            type="text"
-            rows={5}
-            multiline
-          />
-          <FormControl error fullWidth>
-            <Field name="members">
-              {({
-                field,
-                form,
-              }: {
-                field: FieldProps["field"];
-                form: FormikProps<FormData>;
-              }) => (
-                <AutoCompleteField
-                  {...field}
-                  setFieldValue={form.setFieldValue}
-                  mode="team-create"
-                  fieldName="members"
-                />
-              )}
-            </Field>
-
-            <ErrorMessage
-              name="members"
-              component={FormHelperText}
-              className="error"
+    <Suspense fallback={null}>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        validateOnChange
+      >
+        <Form>
+          <Stack
+            spacing={1}
+            alignItems={"stretch"}
+            justifyContent={"center"}
+            width={{ xs: 250, sm: 500 }}
+            m={"auto"}
+            p={2}
+          >
+            <InputField name="teamName" label="Team name" type="text" />
+            <InputField
+              name="overview"
+              label="Overview"
+              type="text"
+              rows={5}
+              multiline
             />
-          </FormControl>
-          <Box display={"flex"} justifyContent={"center"}>
-            <Button type="submit" variant="contained" disabled={isLoading}>
-              Create team
-              {isLoading && (
-                <CircularProgress
-                  size={24}
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    marginTop: "-12px",
-                    marginLeft: "-12px",
-                  }}
-                />
-              )}
-            </Button>
-          </Box>
-        </Stack>
-      </Form>
-    </Formik>
+            <FormControl error fullWidth>
+              <Field name="members">
+                {({
+                  field,
+                  form,
+                }: {
+                  field: FieldProps["field"];
+                  form: FormikProps<FormData>;
+                }) => (
+                  <AutoCompleteField
+                    {...field}
+                    setFieldValue={form.setFieldValue}
+                    mode="team-create"
+                    fieldName="members"
+                  />
+                )}
+              </Field>
+
+              <ErrorMessage
+                name="members"
+                component={FormHelperText}
+                className="error"
+              />
+            </FormControl>
+            <Box display={"flex"} justifyContent={"center"}>
+              <Button type="submit" variant="contained" disabled={isLoading}>
+                Create team
+                {isLoading && (
+                  <CircularProgress
+                    size={24}
+                    sx={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      marginTop: "-12px",
+                      marginLeft: "-12px",
+                    }}
+                  />
+                )}
+              </Button>
+            </Box>
+          </Stack>
+        </Form>
+      </Formik>
+    </Suspense>
   );
 };
 

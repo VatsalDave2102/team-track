@@ -1,12 +1,13 @@
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { Box, Button, Stack } from "@mui/material";
-import InputField from "../../common/components/InputField";
 import { SignUpUserValues } from "../../../utils/types";
 import { useAppDispatch } from "../../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { signup } from "../../../app/auth/authServices";
-import { useEffect } from "react";
+import { Suspense, lazy, useEffect } from "react";
+
+const InputField = lazy(() => import("../../common/components/InputField"));
 
 const initialValues: SignUpUserValues = {
   name: "",
@@ -65,45 +66,51 @@ const SignUpForm = () => {
   };
 
   return (
-    <Box>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSumbit}
-        validateOnChange
-      >
-        {(formikProps) => {
-          return (
-            <Form>
-              <Stack spacing={1} sx={{ alignItems: { xs: "center" } }}>
-                <InputField name="name" label="Name" type="text" />
-                <InputField name="email" label="Email" type="email" />
-                <InputField name="password" label="Password" type="password" />
-                <InputField
-                  name="confirmPassword"
-                  label="Confirm Password"
-                  type="password"
-                />
-                <InputField name="phone" label="Phone number" type="text" />
-                <Stack direction={"row"} spacing={3}>
-                  <Button type="submit" variant="contained">
-                    Sign Up
-                  </Button>
-                  <Button
-                    type="reset"
-                    variant="contained"
-                    color="warning"
-                    onClick={() => formikProps.resetForm()}
-                  >
-                    Reset
-                  </Button>
+    <Suspense>
+      <Box>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSumbit}
+          validateOnChange
+        >
+          {(formikProps) => {
+            return (
+              <Form>
+                <Stack spacing={1} sx={{ alignItems: { xs: "center" } }}>
+                  <InputField name="name" label="Name" type="text" />
+                  <InputField name="email" label="Email" type="email" />
+                  <InputField
+                    name="password"
+                    label="Password"
+                    type="password"
+                  />
+                  <InputField
+                    name="confirmPassword"
+                    label="Confirm Password"
+                    type="password"
+                  />
+                  <InputField name="phone" label="Phone number" type="text" />
+                  <Stack direction={"row"} spacing={3}>
+                    <Button type="submit" variant="contained">
+                      Sign Up
+                    </Button>
+                    <Button
+                      type="reset"
+                      variant="contained"
+                      color="warning"
+                      onClick={() => formikProps.resetForm()}
+                    >
+                      Reset
+                    </Button>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </Form>
-          );
-        }}
-      </Formik>
-    </Box>
+              </Form>
+            );
+          }}
+        </Formik>
+      </Box>
+    </Suspense>
   );
 };
 

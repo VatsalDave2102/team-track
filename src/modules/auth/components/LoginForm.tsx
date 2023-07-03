@@ -1,12 +1,13 @@
-import { Box, Button, Stack } from "@mui/material";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import InputField from "../../common/components/InputField";
+import { Box, Button, Stack } from "@mui/material";
 import { LoginUserValues } from "../../../utils/types";
 import { useAppDispatch } from "../../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../../app/auth/authServices";
-import { useEffect } from "react";
+import { Suspense, lazy, useEffect } from "react";
+
+const InputField = lazy(() => import("../../common/components/InputField"));
 
 const initialValues: LoginUserValues = {
   email: "",
@@ -46,39 +47,45 @@ const LoginForm = () => {
   };
 
   return (
-    <Box>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-        validateOnChange
-      >
-        {(formikProps) => {
-          return (
-            <Form>
-              <Stack spacing={1} sx={{ alignItems: { xs: "center" } }}>
-                <InputField name="email" label="Email" type="email" />
-                <InputField name="password" label="Password" type="password" />
+    <Suspense fallback={null}>
+      <Box>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+          validateOnChange
+        >
+          {(formikProps) => {
+            return (
+              <Form>
+                <Stack spacing={1} sx={{ alignItems: { xs: "center" } }}>
+                  <InputField name="email" label="Email" type="email" />
+                  <InputField
+                    name="password"
+                    label="Password"
+                    type="password"
+                  />
 
-                <Stack direction={"row"} spacing={3}>
-                  <Button type="submit" variant="contained">
-                    Login
-                  </Button>
-                  <Button
-                    type="reset"
-                    variant="contained"
-                    color="warning"
-                    onClick={() => formikProps.resetForm()}
-                  >
-                    Reset
-                  </Button>
+                  <Stack direction={"row"} spacing={3}>
+                    <Button type="submit" variant="contained">
+                      Login
+                    </Button>
+                    <Button
+                      type="reset"
+                      variant="contained"
+                      color="warning"
+                      onClick={() => formikProps.resetForm()}
+                    >
+                      Reset
+                    </Button>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </Form>
-          );
-        }}
-      </Formik>
-    </Box>
+              </Form>
+            );
+          }}
+        </Formik>
+      </Box>
+    </Suspense>
   );
 };
 

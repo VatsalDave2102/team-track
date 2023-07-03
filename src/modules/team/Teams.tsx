@@ -11,6 +11,7 @@ import CreateTeamCard from "./CreateTeamCard";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import DEFAULTTEAM from "../../assets/team-creation.svg";
 import { setActiveTeam } from "../../app/team/teamSlice";
+
 const Teams = () => {
   const currentUserTeams = useAppSelector((state) => state.root.team.teamList);
   const dispatch = useAppDispatch();
@@ -27,7 +28,13 @@ const Teams = () => {
       >
         Your teams
       </Typography>
-      <Grid container p={2} spacing={2}  sx={{overflowY:'auto'}} maxHeight={'80vh'}>
+      <Grid
+        container
+        p={2}
+        spacing={2}
+        sx={{ overflowY: "auto" }}
+        maxHeight={"80vh"}
+      >
         <Grid item xs={12} sm={6} md={4}>
           <CreateTeamCard />
         </Grid>

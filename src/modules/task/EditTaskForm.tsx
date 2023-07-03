@@ -18,18 +18,21 @@ import {
   Formik,
   FormikProps,
 } from "formik";
-import InputField from "../common/components/InputField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import * as Yup from "yup";
 import { Task, Tasks, TeamMemberData } from "../../utils/types";
-import AutoCompleteField from "../common/components/AutoCompleteField";
 import { deleteTask, updateTask } from "../../app/team/teamServices";
 import useTeam from "../../custom-hook/useTeam";
-import RadioGroupField from "./RadioGroupField";
 import { radioFieldOptions } from "../../utils/utils";
-import DatePickerField from "./DatePickerField";
 import { isEqual } from "lodash";
-import { useState } from "react";
+import { Suspense, lazy, useState } from "react";
+
+const InputField = lazy(() => import("../common/components/InputField"));
+const AutoCompleteField = lazy(
+  () => import("../common/components/AutoCompleteField")
+);
+const DatePickerField = lazy(() => import("./DatePickerField"));
+const RadioGroupField = lazy(() => import("./RadioGroupField"));
 
 const validationSchema = Yup.object({
   // description validation
@@ -109,7 +112,7 @@ const EditTaskForm = ({
   };
 
   return (
-    <>
+    <Suspense fallback={null}>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -190,6 +193,7 @@ const EditTaskForm = ({
                   <Button
                     variant="contained"
                     color="secondary"
+                    size="small"
                     onClick={() => handleFormClose()}
                   >
                     Back
@@ -198,6 +202,7 @@ const EditTaskForm = ({
                     variant="contained"
                     disabled={isTaskDelete}
                     onClick={handleClickOpen}
+                    size="small"
                     color="error"
                   >
                     Delete
@@ -205,6 +210,7 @@ const EditTaskForm = ({
                   <Button
                     type="submit"
                     variant="contained"
+                    size="small"
                     disabled={
                       isLoading || isEqual(formikProps.values, initialValues)
                     }
@@ -266,7 +272,7 @@ const EditTaskForm = ({
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Suspense>
   );
 };
 

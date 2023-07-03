@@ -1,4 +1,11 @@
+import { Suspense, lazy, useEffect, useState } from "react";
 import { Edit, FormatListBulleted } from "@mui/icons-material";
+import { useAppSelector } from "../../app/hooks";
+import useTeam from "../../custom-hook/useTeam";
+import { taskColor } from "../../utils/utils";
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import useTask from "../../custom-hook/useTask";
 import {
   Avatar,
   Box,
@@ -9,22 +16,16 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import EditTaskForm from "./EditTaskForm";
-import { useAppSelector } from "../../app/hooks";
-import useTeam from "../../custom-hook/useTeam";
-import { useEffect, useState } from "react";
 import {
   PriorityOption,
   Task,
   TeamData,
   TeamMemberData,
 } from "../../utils/types";
-import { taskColor } from "../../utils/utils";
-import dayjs from "dayjs";
-import localizedFormat from "dayjs/plugin/localizedFormat";
-import CommentList from "../comment/CommentList";
-import useTask from "../../custom-hook/useTask";
-import AddCommentField from "../comment/AddCommentField";
+
+const EditTaskForm = lazy(() => import("./EditTaskForm"));
+const CommentList = lazy(() => import("../comment/CommentList"));
+const AddCommentField = lazy(() => import("../comment/AddCommentField"));
 
 dayjs.extend(localizedFormat);
 
@@ -68,11 +69,10 @@ const TaskInfo = ({
     setIsEditFormOpen(false);
   };
   const today = dayjs();
-  console.log(today);
   const isDeadlineOver = today.diff(activeTask?.deadline);
 
   return (
-    <>
+    <Suspense fallback={null}>
       {activeTask && (
         <>
           <Stack
@@ -190,7 +190,7 @@ const TaskInfo = ({
           )}
         </>
       )}
-    </>
+    </Suspense>
   );
 };
 

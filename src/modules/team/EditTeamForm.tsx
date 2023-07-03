@@ -11,8 +11,6 @@ import {
   Stack,
 } from "@mui/material";
 import { Field, FieldProps, Form, Formik, FormikProps } from "formik";
-import InputField from "../common/components/InputField";
-import AutoCompleteField from "../common/components/AutoCompleteField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import useTeam from "../../custom-hook/useTeam";
 import * as Yup from "yup";
@@ -24,7 +22,12 @@ import {
 import { TeamMemberData } from "../../utils/types";
 import { useNavigate } from "react-router-dom";
 import { isEqual } from "lodash";
-import { useState } from "react";
+import { Suspense, lazy, useState } from "react";
+
+const InputField = lazy(() => import("../common/components/InputField"));
+const AutoCompleteField = lazy(
+  () => import("../common/components/AutoCompleteField")
+);
 
 const validationSchema = Yup.object({
   // overview validation
@@ -85,7 +88,7 @@ const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
     }
   };
   return (
-    <>
+    <Suspense fallback={null}>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -164,7 +167,7 @@ const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick={() => handleFormClose()}
+                    onClick={handleFormClose}
                     size="small"
                   >
                     Back
@@ -242,7 +245,7 @@ const EditTeamForm = ({ handleFormClose }: { handleFormClose: () => void }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Suspense>
   );
 };
 

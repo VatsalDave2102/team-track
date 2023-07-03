@@ -1,10 +1,11 @@
 import { Box, Container } from "@mui/material";
-import UserData from "../components/UserData";
-import { useState } from "react";
-import UserEdit from "../components/UserEdit";
+import { Suspense, lazy, useState } from "react";
 import { useAppSelector } from "../../../app/hooks";
 import { User } from "../../../utils/types";
 import useColorMode from "../../theme/useColorMode";
+
+const UserData = lazy(() => import("../components/UserData"));
+const UserEdit = lazy(() => import("../components/UserEdit"));
 
 const UserProfile = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
@@ -17,7 +18,7 @@ const UserProfile = () => {
     setIsEditFormOpen(false);
   };
   return (
-    <>
+    <Suspense fallback={null}>
       <Container maxWidth="lg" sx={{ position: "relative" }}>
         <Box minHeight={"90vh"}>
           <Box
@@ -46,7 +47,7 @@ const UserProfile = () => {
           </Box>
         </Box>
       </Container>
-    </>
+    </Suspense>
   );
 };
 

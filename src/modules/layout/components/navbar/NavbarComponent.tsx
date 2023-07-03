@@ -12,13 +12,16 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import TEAMTRACK from "../../../../assets/TeamTrack.svg";
-import { Drawer, Stack, Switch } from "@mui/material";
+import Drawer from "@mui/material/Drawer";
+import Stack from "@mui/material/Stack";
+import Switch from "@mui/material/Switch";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { logout } from "../../../../app/auth/authServices";
 import { setError } from "../../../../app/auth/authSlice";
 import useColorMode from "../../../theme/useColorMode";
-import { DarkMode, LightMode } from "@mui/icons-material";
+import DarkMode from "@mui/icons-material/DarkMode";
+import LightMode from "@mui/icons-material/LightMode";
 import NavList from "../../../common/components/NavList";
 
 function NavbarComponent() {

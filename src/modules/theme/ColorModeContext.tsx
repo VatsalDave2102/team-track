@@ -1,6 +1,7 @@
-import { CssBaseline } from "@mui/material";
-import { ThemeProvider } from "@mui/material/styles";
-import { createTheme, responsiveFontSizes } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import ThemeProvider from "@mui/material/styles/ThemeProvider";
+import createTheme from "@mui/material/styles/createTheme";
+import responsiveFontSizes from "@mui/material/styles/responsiveFontSizes";
 import { createContext, useEffect, useMemo, useState } from "react";
 
 export type ColorMode = "light" | "dark";

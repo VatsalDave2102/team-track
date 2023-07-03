@@ -14,16 +14,20 @@ import {
   Formik,
   FormikProps,
 } from "formik";
-import InputField from "../common/components/InputField";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { PriorityOption, Task } from "../../utils/types";
 import * as Yup from "yup";
 import dayjs from "dayjs";
-import AutoCompleteField from "../common/components/AutoCompleteField";
 import { assignTasks, getCurrentUserTeams } from "../../app/team/teamServices";
 import { genreateId, radioFieldOptions } from "../../utils/utils";
-import RadioGroupField from "./RadioGroupField";
-import DatePickerField from "./DatePickerField";
+import { lazy } from "react";
+
+const InputField = lazy(() => import("../common/components/InputField"));
+const AutoCompleteField = lazy(
+  () => import("../common/components/AutoCompleteField")
+);
+const DatePickerField = lazy(() => import("./DatePickerField"));
+const RadioGroupField = lazy(() => import("./RadioGroupField"));
 
 const initialValues: Task = {
   title: "",

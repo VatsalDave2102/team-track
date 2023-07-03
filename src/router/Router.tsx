@@ -1,20 +1,21 @@
 import { createBrowserRouter } from "react-router-dom";
-import Login from "../modules/auth/pages/Login";
-import Root from "../modules/root/Root";
-import ErrorPage from "../modules/error/ErrorPage";
-import LandingPage from "../modules/landing-page/LandingPage";
-import Signup from "../modules/auth/pages/Signup";
-import Dashboard from "../modules/dashboard/pages/Dashboard";
-import ProtectedRoute from "./ProtectedRoute";
-import TeamContent from "../modules/team/TeamContent";
-import Teams from "../modules/team/Teams";
-import UserProfile from "../modules/user/pages/UserProfile";
+import Login from "./dynamic-imports/Login";
+import Root from "./dynamic-imports/Root";
+import ErrorPage from "./dynamic-imports/ErrorPage";
+import LandingPage from "./dynamic-imports/LandingPage";
+import Signup from "./dynamic-imports/Signup";
+import Dashboard from "./dynamic-imports/Dashboard";
+import ProtectedRoute from "./dynamic-imports/ProtectedRoute";
+import TeamContent from "./dynamic-imports/TeamContent";
+import Teams from "./dynamic-imports/Teams";
+import UserProfile from "./dynamic-imports/UserProfile";
+import SuspendedRoute from "./SuspendedRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
-    errorElement: <ErrorPage />,
+    element: <SuspendedRoute Component={Root} />,
+    errorElement: <SuspendedRoute Component={ErrorPage} />,
     children: [
       {
         path: "dashboard",
@@ -33,7 +34,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  { path: "/signup", element: <Signup /> },
-  { path: "/login", element: <Login /> },
-  { index: true, element: <LandingPage /> },
+  { path: "/signup", element: <SuspendedRoute Component={Signup} /> },
+  { path: "/login", element: <SuspendedRoute Component={Login} /> },
+  { index: true, element: <SuspendedRoute Component={LandingPage} /> },
 ]);

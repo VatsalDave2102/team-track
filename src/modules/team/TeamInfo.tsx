@@ -11,10 +11,11 @@ import {
 import { useAppSelector } from "../../app/hooks";
 import useTeam from "../../custom-hook/useTeam";
 import { Edit, Groups } from "@mui/icons-material";
-import { useState } from "react";
-import EditTeamForm from "./EditTeamForm";
+import { Suspense, lazy, useState } from "react";
 
-const InfoModal = () => {
+const EditTeamForm = lazy(() => import("./EditTeamForm"));
+
+const TeamInfo = () => {
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
   const currentUser = useAppSelector((state) => state.root.auth.user);
   const teamMembers = useAppSelector(
@@ -31,7 +32,7 @@ const InfoModal = () => {
     setIsEditFormOpen(false);
   };
   return (
-    <>
+    <Suspense>
       <Stack
         direction={"row"}
         width={{ xs: "100%", sm: 500 }}
@@ -107,10 +108,10 @@ const InfoModal = () => {
         </Stack>
       </Collapse>
       <Collapse in={isEditFormOpen}>
-        <EditTeamForm handleClose={handleEditFormClose} />
+        <EditTeamForm handleFormClose={handleEditFormClose} />
       </Collapse>
-    </>
+    </Suspense>
   );
 };
 
-export default InfoModal;
+export default TeamInfo;

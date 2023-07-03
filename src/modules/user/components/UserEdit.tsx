@@ -1,10 +1,12 @@
 import { Button, Collapse, Stack } from "@mui/material";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import InputField from "../../common/components/InputField";
 import { useAppDispatch } from "../../../app/hooks";
 import { updateUserDetails } from "../../../app/auth/authServices";
 import { User } from "../../../utils/types";
+import { Suspense, lazy } from "react";
+
+const InputField = lazy(() => import("../../common/components/InputField"));
 
 const validationSchema = Yup.object({
   // bio validation
@@ -47,58 +49,60 @@ const UserEdit = ({
   };
 
   return (
-    <Collapse in={isEditFormOpen}>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-        validateOnChange
-      >
-        {(formikProps) => {
-          return (
-            <Form>
-              <Stack
-                spacing={1}
-                alignItems={"stretch"}
-                justifyContent={"center"}
-                maxWidth={'100%'}
-                m={'auto'}
-                p={2}
-              >
-                <InputField
-                  name="bio"
-                  label="Bio"
-                  type="text"
-                  rows={10}
-                  multiline
-                  sx={{ width: "100%" }}
-                />
-                <InputField name="phone" label="Phone" type="text" />
+    <Suspense>
+      <Collapse in={isEditFormOpen}>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+          validateOnChange
+        >
+          {(formikProps) => {
+            return (
+              <Form>
                 <Stack
-                  direction={"row"}
-                  justifyContent={"space-around"}
-                  width={"100%"}
+                  spacing={1}
+                  alignItems={"stretch"}
+                  justifyContent={"center"}
+                  maxWidth={"100%"}
+                  m={"auto"}
+                  p={2}
                 >
-                  <Button
-                    onClick={() => {
-                      handleGoBack();
-                      formikProps.resetForm();
-                    }}
-                    color="secondary"
-                    variant="contained"
+                  <InputField
+                    name="bio"
+                    label="Bio"
+                    type="text"
+                    rows={10}
+                    multiline
+                    sx={{ width: "100%" }}
+                  />
+                  <InputField name="phone" label="Phone" type="text" />
+                  <Stack
+                    direction={"row"}
+                    justifyContent={"space-around"}
+                    width={"100%"}
                   >
-                    Back
-                  </Button>
-                  <Button type="submit" color="primary" variant="contained">
-                    Save
-                  </Button>
+                    <Button
+                      onClick={() => {
+                        handleGoBack();
+                        formikProps.resetForm();
+                      }}
+                      color="secondary"
+                      variant="contained"
+                    >
+                      Back
+                    </Button>
+                    <Button type="submit" color="primary" variant="contained">
+                      Save
+                    </Button>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </Form>
-          );
-        }}
-      </Formik>
-    </Collapse>
+              </Form>
+            );
+          }}
+        </Formik>
+      </Collapse>
+    </Suspense>
   );
 };
 

@@ -1,10 +1,11 @@
-import { Box, Button, Grid, Skeleton, Typography } from "@mui/material";
-import TaskList from "./TaskList";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import Skeleton from "@mui/material/Skeleton";
+import Typography from "@mui/material/Typography";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import useTeam from "../../custom-hook/useTeam";
-import { useState } from "react";
-import CustomModal from "../common/components/CustomModal";
-import CreateTaskForm from "./CreateTaskForm";
+import { lazy, Suspense, useState } from "react";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { Tasks } from "../../utils/types";
 import {
@@ -15,6 +16,10 @@ import {
   updateTaskOrderDifferent,
   updateTaskOrderSame,
 } from "../../app/team/teamSlice";
+import CustomModal from "../common/components/CustomModal";
+import CreateTaskForm from "./CreateTaskForm";
+
+const TaskList = lazy(() => import("./TaskList"));
 
 const TaskContainer = () => {
   const activeTeamId = useAppSelector((state) => state.root.team.activeTeam);
@@ -90,67 +95,74 @@ const TaskContainer = () => {
   };
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <Grid container borderRadius={3} p={1} spacing={1}>
-        {isLoading ? (
-          <Skeleton width={'90%'} height={200} sx={{m:'auto', mt:4}} variant="rounded"/>
-        ) : activeTeam?.tasks ? (
-          <>
-            <Grid item xs={12} sm={6} md={3} key={"TODO"}>
-              <TaskList column={"TODO"} tasks={activeTeam.tasks.todo} />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3} key={"ONGOING"}>
-              <TaskList column={"ONGOING"} tasks={activeTeam.tasks.ongoing} />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3} key={"REVIEW"}>
-              <TaskList column={"REVIEW"} tasks={activeTeam.tasks.review} />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3} key={"COMPLETED"}>
-              <TaskList
-                column={"COMPLETED"}
-                tasks={activeTeam.tasks.completed}
-              />
-            </Grid>
-          </>
-        ) : (
-          <Grid item xs={12}>
-            <Box display={"flex"} flexDirection={"column"}>
-              {isOwner ? (
-                <>
+    <Suspense fallback={null}>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Grid container borderRadius={3} p={1} spacing={1}>
+          {isLoading ? (
+            <Skeleton
+              width={"90%"}
+              height={200}
+              sx={{ m: "auto", mt: 4 }}
+              variant="rounded"
+            />
+          ) : activeTeam?.tasks ? (
+            <>
+              <Grid item xs={12} sm={6} md={3} key={"TODO"}>
+                <TaskList column={"TODO"} tasks={activeTeam.tasks.todo} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} key={"ONGOING"}>
+                <TaskList column={"ONGOING"} tasks={activeTeam.tasks.ongoing} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} key={"REVIEW"}>
+                <TaskList column={"REVIEW"} tasks={activeTeam.tasks.review} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={3} key={"COMPLETED"}>
+                <TaskList
+                  column={"COMPLETED"}
+                  tasks={activeTeam.tasks.completed}
+                />
+              </Grid>
+            </>
+          ) : (
+            <Grid item xs={12}>
+              <Box display={"flex"} flexDirection={"column"}>
+                {isOwner ? (
+                  <>
+                    <Typography
+                      variant="h5"
+                      mb={2}
+                      textAlign={"center"}
+                      color={"gray"}
+                    >
+                      Ready to conquer your goals? Let's get started by
+                      assigning some tasks!
+                    </Typography>
+                    <Button size="large" onClick={handleModalOpen}>
+                      Assign tasks
+                    </Button>
+                  </>
+                ) : (
                   <Typography
                     variant="h5"
                     mb={2}
                     textAlign={"center"}
                     color={"gray"}
                   >
-                    Ready to conquer your goals? Let's get started by assigning
-                    some tasks!
+                    Ready and waiting for your next task assignment. Stay tuned!
                   </Typography>
-                  <Button size="large" onClick={handleModalOpen}>
-                    Assign tasks
-                  </Button>
-                </>
-              ) : (
-                <Typography
-                  variant="h5"
-                  mb={2}
-                  textAlign={"center"}
-                  color={"gray"}
-                >
-                  Ready and waiting for your next task assignment. Stay tuned!
-                </Typography>
-              )}
-            </Box>
-          </Grid>
-        )}
-        <CustomModal
-          isOpen={isOpen}
-          handleClose={handleModalClose}
-          title="Assign tasks"
-          children={<CreateTaskForm handleClose={handleModalClose} />}
-        />
-      </Grid>
-    </DragDropContext>
+                )}
+              </Box>
+            </Grid>
+          )}
+          <CustomModal
+            isOpen={isOpen}
+            handleClose={handleModalClose}
+            title="Assign tasks"
+            children={<CreateTaskForm handleClose={handleModalClose} />}
+          />
+        </Grid>
+      </DragDropContext>
+    </Suspense>
   );
 };
 

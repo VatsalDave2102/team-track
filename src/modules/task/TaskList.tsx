@@ -72,7 +72,7 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
                         bgcolor: colorMode === "dark" ? "#333" : "#edf3f3",
                       },
                       borderRadius: 3,
-                      cursor:'grab'
+                      cursor: "grab",
                     }}
                   >
                     <Typography
@@ -87,30 +87,38 @@ const TaskList = ({ column, tasks }: { column: string; tasks: Task[] }) => {
                     >
                       {task.title}
                     </Typography>
-                    <Stack direction={"row"} spacing={1} >
+                    <Stack direction={"row"} spacing={1}>
                       {task.assignedTo.find(
                         (userId) => userId === currentUser?.uid
                       ) && (
-                        <Tooltip title='Assigned to you'>
-                        <Box pl={"5px"}>
-                          <Visibility
-                            color={"disabled"}
-                            sx={{ fontSize: "20px" }}
-                          />
-                        </Box>
+                        <Tooltip title="Assigned to you">
+                          <Box pl={"5px"}>
+                            <Visibility
+                              color={"disabled"}
+                              sx={{ fontSize: "20px" }}
+                            />
+                          </Box>
                         </Tooltip>
                       )}
                       {task.comments.length > 0 && (
-                        <Tooltip title='Comments'>
-                        <Box pl={"5px"} display={"flex"} alignItems={"center"}>
-                          <Comment
-                            color={"disabled"}
-                            sx={{ fontSize: "20px" }}
-                          />
-                          <Typography variant="body2" pl={1} color={"GrayText"}>
-                            {task.comments.length}
-                          </Typography>
-                        </Box>
+                        <Tooltip title="Comments">
+                          <Box
+                            pl={"5px"}
+                            display={"flex"}
+                            alignItems={"center"}
+                          >
+                            <Comment
+                              color={"disabled"}
+                              sx={{ fontSize: "20px" }}
+                            />
+                            <Typography
+                              variant="body2"
+                              pl={1}
+                              color={"GrayText"}
+                            >
+                              {task.comments.length}
+                            </Typography>
+                          </Box>
                         </Tooltip>
                       )}
                     </Stack>

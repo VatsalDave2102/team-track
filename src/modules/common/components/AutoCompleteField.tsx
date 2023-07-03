@@ -118,8 +118,8 @@ const AutoCompleteField = ({
       options={searchResults}
       getOptionLabel={(option) => option.name}
       value={selectedValue}
-      onChange={(event, value) => handleChange(value)}
-      onInputChange={(event, value) => handleSearch(value)}
+      onChange={(_event, value) => handleChange(value)}
+      onInputChange={(_event, value) => handleSearch(value)}
       renderInput={(params) => (
         <TextField
           {...params}
