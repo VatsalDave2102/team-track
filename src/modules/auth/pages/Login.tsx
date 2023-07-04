@@ -87,7 +87,7 @@ const Login = () => {
             </Grid>
           </Grid>
           <Typography variant="h6" mt={2} textAlign={"center"}>
-            New user?
+            New user?{" "}
             <Link component={RouterLink} color="primary.main" to="/signup">
               Sign up here
             </Link>

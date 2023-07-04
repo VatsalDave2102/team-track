@@ -1,11 +1,12 @@
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, IconButton, InputAdornment, Stack } from "@mui/material";
 import { LoginUserValues } from "../../../utils/types";
 import { useAppDispatch } from "../../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../../app/auth/authServices";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 // dynamically importing input field
 const InputField = lazy(() => import("../../common/components/InputField"));
@@ -30,9 +31,19 @@ const validationSchema = Yup.object({
 });
 
 const LoginForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const handleClickShowPassword = () => {
+    setShowPassword((show) => !show);
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
   // form submit handler
   const handleSubmit = async (values: typeof initialValues) => {
     const { email, password } = values;
@@ -54,15 +65,30 @@ const LoginForm = () => {
         >
           {(formikProps) => {
             return (
-              <Form>
-                <Stack spacing={1} sx={{ alignItems: { xs: "center" } }}>
+              <Form style={{ display: "flex", justifyContent: "center" }}>
+                <Stack spacing={1} sx={{ alignItems: { xs: "center" } }}  width={344}>
                   {/* Email field */}
                   <InputField name="email" label="Email" type="email" />
                   {/* Password field */}
                   <InputField
                     name="password"
                     label="Password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment
+                          aria-label="toggle-password-visibilty"
+                          position="end"
+                        >
+                          <IconButton
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                   {/* Login and reset button */}
                   <Stack direction={"row"} spacing={3}>
