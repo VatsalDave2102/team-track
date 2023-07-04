@@ -5,7 +5,7 @@ import { LoginUserValues } from "../../../utils/types";
 import { useAppDispatch } from "../../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../../app/auth/authServices";
-import { Suspense, lazy, useEffect } from "react";
+import { Suspense, lazy } from "react";
 
 // dynamically importing input field
 const InputField = lazy(() => import("../../common/components/InputField"));
@@ -32,16 +32,6 @@ const validationSchema = Yup.object({
 const LoginForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  //  effect to check if user is already logged in
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      navigate("/dashboard");
-    } else {
-      return;
-    }
-  });
 
   // form submit handler
   const handleSubmit = async (values: typeof initialValues) => {

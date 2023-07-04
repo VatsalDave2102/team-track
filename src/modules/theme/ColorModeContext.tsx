@@ -4,6 +4,7 @@ import createTheme from "@mui/material/styles/createTheme";
 import responsiveFontSizes from "@mui/material/styles/responsiveFontSizes";
 import { createContext, useEffect, useMemo, useState } from "react";
 
+// color mode type
 export type ColorMode = "light" | "dark";
 
 interface ColorModeContextType {
@@ -11,6 +12,7 @@ interface ColorModeContextType {
   toggleColorMode: () => void;
 }
 
+// context for color mode, contains colormode and a method to change color mode
 export const ColorModeContext = createContext<ColorModeContextType>({
   colorMode: "light",
   toggleColorMode: () => {
@@ -22,11 +24,13 @@ interface ColorModeProviderProps {
   children: React.ReactNode;
 }
 
+// colormode provider components
 export const ColorModeProvider: React.FC<ColorModeProviderProps> = ({
   children,
 }) => {
   const [colorMode, setColorMode] = useState<ColorMode>("light");
 
+  // effect to set last color mode from localstorage
   useEffect(() => {
     const savedColorMode = localStorage.getItem("colorMode") as ColorMode;
     if (savedColorMode) {
@@ -39,12 +43,14 @@ export const ColorModeProvider: React.FC<ColorModeProviderProps> = ({
     }
   }, []);
 
+  // method to change color mode
   const toggleColorMode = () => {
     const newColorMode = colorMode === "light" ? "dark" : "light";
     setColorMode(newColorMode);
     localStorage.setItem("colorMode", newColorMode);
   };
 
+  // custom material ui theme
   const theme = useMemo(
     () =>
       responsiveFontSizes(

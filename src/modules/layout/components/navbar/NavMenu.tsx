@@ -29,7 +29,7 @@ const NavMenu = () => {
         <MenuIcon />
       </IconButton>
       <Drawer anchor="left" open={anchorElNav} onClose={handleCloseNavMenu}>
-        <Box width="200px" textAlign="center">
+        <Box width="250px" textAlign="center">
           <NavList />
         </Box>
       </Drawer>

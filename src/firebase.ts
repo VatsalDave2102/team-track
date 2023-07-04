@@ -1,21 +1,25 @@
 import { initializeApp } from "firebase/app";
-import { browserLocalPersistence, getAuth, setPersistence } from "firebase/auth";
+import {
+  browserLocalPersistence,
+  getAuth,
+  setPersistence,
+} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
- 
+
 const firebaseConfig = {
-  apiKey: "AIzaSyD0nxSz0G5rBOEFul-nfgMEbYB7Ae57oe8",
-  authDomain: "team-track-dev.firebaseapp.com",
-  projectId: "team-track-dev",
-  storageBucket: "team-track-dev.appspot.com",
-  messagingSenderId: "1029028600324",
-  appId: "1:1029028600324:web:cde9cf791e36bfed2b7351"
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTHDOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app)
-export const db = getFirestore(app)
-export const storage = getStorage(app)
-setPersistence(auth, browserLocalPersistence)
-export default app
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+setPersistence(auth, browserLocalPersistence);
+export default app;

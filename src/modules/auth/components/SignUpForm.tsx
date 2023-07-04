@@ -5,7 +5,7 @@ import { SignUpUserValues } from "../../../utils/types";
 import { useAppDispatch } from "../../../app/hooks";
 import { useNavigate } from "react-router-dom";
 import { signup } from "../../../app/auth/authServices";
-import { Suspense, lazy, useEffect } from "react";
+import { Suspense, lazy } from "react";
 
 // dynamically importing input field
 const InputField = lazy(() => import("../../common/components/InputField"));
@@ -51,16 +51,6 @@ const validationSchema = Yup.object({
 const SignUpForm = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  // effect to check if user is already logged in
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      navigate("/dashboard");
-    } else {
-      return;
-    }
-  });
 
   // form submit handler
   const handleSumbit = async (values: typeof initialValues) => {

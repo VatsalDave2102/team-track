@@ -1,20 +1,29 @@
 import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
-import GOODTEAM from "../../assets/goodTeam.svg";
-import TEAMSELECT from "../../assets/teamSelection.svg";
-import ENGINEERTEAM from "../../assets/engineeringTeam.svg";
+import GOODTEAM from "../../../assets/goodTeam.svg";
+import TEAMSELECT from "../../../assets/teamSelection.svg";
+import ENGINEERTEAM from "../../../assets/engineeringTeam.svg";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Loader from "../../../router/Loader";
 
 const token = localStorage.getItem("token");
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [loader, setLoader] = useState(true);
   useEffect(() => {
     if (token) {
+      setLoader(false);
       navigate("/dashboard");
     } else {
+      setLoader(false);
       return;
     }
-  });
+  },[navigate]);
+
+  if (loader) {
+    return <Loader />;
+  }
+  
   return (
     <Container maxWidth="lg" sx={{ paddingTop: "2rem" }}>
       <Grid container spacing={2} alignItems="center" pt={2} mb={5}>

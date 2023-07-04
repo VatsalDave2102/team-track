@@ -9,17 +9,37 @@ import {
 } from "@mui/material";
 import TEAMTRACKGREEN from "../../../assets/TeamTrackGreen.svg";
 import { Suspense, lazy, useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import Loader from "../../../router/Loader";
 
 // dynamically importing login form
 const LoginForm = lazy(() => import("../components/LoginForm"));
 
 const Login = () => {
   const [showForm, setShowForm] = useState(false);
+  const [loader, setLoader] = useState(true);
+  const navigate = useNavigate();
+
+  //  effect to check if user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setLoader(false);
+      navigate("/dashboard");
+    } else {
+      setLoader(false);
+      return;
+    }
+  }, [navigate]);
+
   useEffect(() => {
     setShowForm(true);
   }, []);
-  
+
+  if (loader) {
+    return <Loader />;
+  }
+
   return (
     <Suspense>
       <Grow in={showForm} timeout={800}>
@@ -41,7 +61,6 @@ const Login = () => {
           <Typography variant="h6" color="primary" mb={2} textAlign="center">
             Access Your Tasks with Ease - Log In and Stay Organized!
           </Typography>
-
           {/* Login form and icon grid*/}
           <Grid
             container
@@ -56,7 +75,6 @@ const Login = () => {
             <Grid item xs={12} md={7}>
               <LoginForm />
             </Grid>
-
             {/* Icon */}
             <Grid item xs={5} sx={{ display: { xs: "none", md: "flex" } }}>
               <Box>

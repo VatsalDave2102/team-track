@@ -1,6 +1,6 @@
 import { lazy } from "react";
 
 const LandingPage = lazy(
-  () => import("../../modules/landing-page/LandingPage")
+  () => import("../../modules/layout/pages/LandingPage")
 );
 export default LandingPage;

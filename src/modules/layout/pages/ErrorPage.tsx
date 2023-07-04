@@ -1,6 +1,6 @@
 import { Box, Button, Container, Stack, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
-import PAGENOTFOUND from "../../assets/404.svg";
+import PAGENOTFOUND from "../../../assets/404.svg";
 import { useAppSelector } from "../../../app/hooks";
 const ErrorPage = () => {
   const currentUser = useAppSelector((state) => state.root.auth.user);

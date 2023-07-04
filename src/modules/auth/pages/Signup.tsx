@@ -10,16 +10,36 @@ import {
 import SIGNUP from "../../../assets/signup.svg";
 import TEAMTRACKGREEN from "../../../assets/TeamTrackGreen.svg";
 import { Suspense, lazy, useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import Loader from "../../../router/Loader";
 
 // dynamically importing SignUpForm
 const SignUpForm = lazy(() => import("../components/SignUpForm"));
 
 const Signup = () => {
   const [showForm, setShowForm] = useState(false);
+  const [loader, setLoader] = useState(true);
+  const navigate = useNavigate();
+
+  //  effect to check if user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setLoader(false);
+      navigate("/dashboard");
+    } else {
+      setLoader(false);
+      return;
+    }
+  }, [navigate]);
+
   useEffect(() => {
     setShowForm(true);
   }, []);
+
+  if (loader) {
+    return <Loader />;
+  }
 
   return (
     <Suspense>
